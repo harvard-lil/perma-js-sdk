@@ -7,6 +7,14 @@
  */
 
 //------------------------------------------------------------------------------
+// System
+//------------------------------------------------------------------------------
+/**
+ * @typedef {Object} PermaApiError
+ * @property {string} detail
+ */
+
+//------------------------------------------------------------------------------
 // Pagination
 //------------------------------------------------------------------------------
 /**
@@ -33,6 +41,20 @@
  */
 
 //------------------------------------------------------------------------------
+// Users
+//------------------------------------------------------------------------------
+/**
+ * Information about a user (as returned by the API).
+ * @typedef {Object} PermaUser
+ * @property {number} id 
+ * @property {string} first_name
+ * @property {string} last_name
+ * @property {string} short_name
+ * @property {string} [full_name]
+ * @property {PermaFolder[]} [top_level_folders]
+ */
+
+//------------------------------------------------------------------------------
 // Folders
 //------------------------------------------------------------------------------
 /**
@@ -50,15 +72,6 @@
 // Archives
 //------------------------------------------------------------------------------
 /**
- * Information about the creator of an archive (as returned by the API).
- * @typedef {Object} PermaArchiveCreator
- * @property {number} id 
- * @property {string} first_name
- * @property {string} last_name
- * @property {string} short_name
- */
-
-/**
  * Information about a given archive (as returned by the API).
  * @typedef {Object} PermaArchive
  * @property {string} guid
@@ -72,7 +85,7 @@
  * @property {string} queue_time - Ex: 2022-01-12T16:11:19.516152Z
  * @property {string} capture_time - Ex: 2022-01-12T16:11:19.516152Z
  * @property {string} [notes]
- * @property {?PermaArchiveCreator} [created_by]
+ * @property {?PermaUser} [created_by]
  * @property {boolean} [is_private]
  * @property {?string} [private_reason]
  * @property {boolean} [user_deleted]
@@ -81,7 +94,7 @@
  */
 
 //------------------------------------------------------------------------------
-// Capture
+// Captures and Capture Jobs
 //------------------------------------------------------------------------------
 /**
  * Information about an individual capture (as returned by the API).  
@@ -95,7 +108,6 @@
  */
 
 /**
- * 
  * Information about an individual capture job (as returned by the API).
  * @typedef {Object} PermaCaptureJob
  * @property {string} guid
