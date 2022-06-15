@@ -97,9 +97,16 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
   async parseAPIResponse(response) {
     const data = await response.json();
 
-    // Throw error details if given
-    if (response.status !== 200 || data?.detail) {
-      throw new Error(`${data.detail} (HTTP ${response.status})`);
+    if (response.status !== 200) {
+      let message = "";
+
+      if (data.detail) {
+        message += `${data.detail} `;
+      }
+
+      message += `(HTTP ${response.status})`;
+
+      throw new Error(message);
     }
 
     return data;
