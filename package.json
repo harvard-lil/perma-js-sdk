@@ -1,0 +1,27 @@
+{
+  "name": "perma-js-sdk",
+  "version": "0.0.1",
+  "description": "A JavaScript library to interact with Perma.cc's REST API",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harvard-lil/perma-js-sdk.git"
+  },
+  "keywords": [
+    "web-archiving",
+    "libraries"
+  ],
+  "author": "Harvard Library Innovation Lab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/harvard-lil/perma-js-sdk/issues"
+  },
+  "homepage": "https://github.com/harvard-lil/perma-js-sdk#readme",
+  "dependencies": {
+    "jest": "^28.1.1",
+    "node-fetch": "^3.2.6"
+  }
+}
