@@ -93,3 +93,20 @@
  * @property {string} content_type - MIME type of the content (i.e: "text/html; charset=utf-8", "image/png")
  * @property {boolean} user_upload - Whether or not this was a direct upload instead of a capture.
  */
+
+/**
+ * 
+ * Information about an individual capture job (as returned by the API).
+ * @typedef {Object} PermaCaptureJob
+ * @property {string} guid
+ * @property {string} status - Can be "pending", "in_progress", "completed", "deleted", "failed", "invalid"
+ * @property {?string} message
+ * @property {number} attempt
+ * @property {number} step_count
+ * @property {?string} step_description
+ * @property {?string} capture_start_time - Ex: 2022-01-12T16:11:19.516152Z
+ * @property {?string} capture_end_time - Ex: 2022-01-12T16:11:19.516152Z
+ * @property {number} queue_position
+ * @property {string} title
+ * @property {boolean} user_deleted
+ */
