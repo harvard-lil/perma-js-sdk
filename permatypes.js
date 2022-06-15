@@ -66,6 +66,9 @@
  * @property {boolean} has_children
  * @property {?string} path - Hyphen-separated list of folder ids from root to this folder.
  * @property {?number} organization - Organization id.
+ * @property {boolean} [is_sponsored_root_folder]
+ * @property {?PermaUser} [sponsored_by]
+ * @property {boolean} read_only
  */
 
 //------------------------------------------------------------------------------

@@ -100,7 +100,7 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
     if (response.status !== 200) {
       let message = "";
 
-      if (data.detail) {
+      if (data.detail) { // The API returns error messages via "detail".
         message += `${data.detail} `;
       }
 
