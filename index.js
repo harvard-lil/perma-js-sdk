@@ -7,10 +7,26 @@
  */
 /// <reference path="permatypes.js" />
 
+// `node-fetch` fallback for Node <= 17 (or if behind a flag)
+if (typeof process !== "undefined" && typeof fetch === "undefined") {
+  globalThis.fetch = async (...args) => {
+    const module = await import('node-fetch');
+    return await module.default(...args);
+  };
+}
+
 /**
- * Wrapper around Perma.cc's Rest API.
+ * Wrapper for Perma.cc's Rest API (v1).
  * 
- * TODO: Description and usage notes.
+ * Usage:
+ * ```
+ * try {
+ *   const perma = new PermaAPI("my-api-key");
+ *   const user = await perma.user();
+ *   // ...
+ * }
+ * catch(err) { ... }
+ * ```
  */
  export class PermaAPI {
 
@@ -64,26 +80,49 @@
       throw new Error("This method requires an API key.");
     }
 
-    return {"Authorization": `ApiKey ${this.apiKey}`};
+    return {"Authorization": `ApiKey ${this.#apiKey}`};
   }
 
   /**
-   * Wrapper for `/v1/user/` (https://perma.cc/docs/developer#developer-users).
+   * Tries to parse an API response as JSON. 
+   * 
+   * If the status code isn't 200 and/or an error message was provided, will throw an exception with that information. 
+   * For example: `Error: Invalid token. (HTTP 401)`
+   * 
+   * @param {Response} response 
+   * @throws 
+   * @async
+   * @returns {?object} 
+   */
+  async parseAPIResponse(response) {
+    const data = await response.json();
+
+    // Throw error details if given
+    if (response.status !== 200 || data?.detail) {
+      throw new Error(`${data.detail} (HTTP ${response.status})`);
+    }
+
+    return data;
+  }
+
+  /**
+   * Get account details for the signed-in user. 
+   * Wraps `/v1/user/` (https://perma.cc/docs/developer#developer-users).
    * Requires an API key.
    * 
-   * @return {(PermaUser|PermaApiError)}
+   * @return {PermaUser}
    * @throws
    * @async
    */
   async user() {
-    authorizationHeader = this.getAuthorizationHeader();
+    const authorizationHeader = this.getAuthorizationHeader();
 
-    let response = await fetch(`${this.#baseUrl}/v1/user`, {
+    const response = await fetch(`${this.#baseUrl}/v1/user`, {
       method: 'GET',
       headers: { ...authorizationHeader },
     });
 
-
+    return await this.parseAPIResponse(response);
   }
 
 }
