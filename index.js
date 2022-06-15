@@ -8,7 +8,9 @@
 /// <reference path="permatypes.js" />
 
 /**
- * TODO
+ * Wrapper around Perma.cc's Rest API.
+ * 
+ * TODO: Description and usage notes.
  */
  export class PermaAPI {
 
@@ -76,18 +78,12 @@
   async user() {
     authorizationHeader = this.getAuthorizationHeader();
 
-    try {
-      let response = await fetch(`${this.#baseUrl}/v1/user`, {
-        method: 'GET',
-        headers: { ...authorizationHeader },
-      });
+    let response = await fetch(`${this.#baseUrl}/v1/user`, {
+      method: 'GET',
+      headers: { ...authorizationHeader },
+    });
 
-      // TO DO
-      
-    }
-    catch(err) {
 
-    }
   }
 
 }
