@@ -1,9 +1,9 @@
 /**
  * perma-js-sdk
- * @module permatypes
+ * @module types
  * @author The Harvard Library Innovation Lab
  * @license MIT
- * @description JSDoc type definitions for `perma-js-sdk`.
+ * @description JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back from the Rest API.
  */
 
 //------------------------------------------------------------------------------

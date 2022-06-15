@@ -5,7 +5,7 @@
  * @license MIT
  * @description A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs/developer).
  */
-/// <reference path="permatypes.js" />
+/// <reference path="types.js" />
 
 // `node-fetch` fallback for Node <= 17 (or if behind a flag)
 if (typeof process !== "undefined" && typeof fetch === "undefined") {
