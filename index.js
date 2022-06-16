@@ -106,6 +106,43 @@ export class PermaAPI {
     return data;
   }
 
+
+  /**
+   * Fetches a subset of all the available public archives.
+   * Wraps `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+   * @param {number} [limit=10]
+   * @param {number} [offset=0]
+   * @return {PermaPublicArchivesPage}
+   * @async
+   */
+  async publicArchives(limit=10, offset=0) {
+    const searchParams = new URLSearchParams({limit, offset});
+    const response = await fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`); 
+    return await this.parseAPIResponse(response);
+  }
+
+  /**
+   * Fetches details of a given public archive.
+   * Wraps `/v1/public/archives/{guid}` 
+   * @param {string} guid
+   * @return {PermaArchive}
+   * @async
+   */
+  async publicArchive(guid) {
+    try {
+      guid = String(guid);
+      if (guid.match(/[A-Z0-9]{4}\-[A-Z0-9]{4}/)[0] !== guid) {
+        throw new Error();
+      }
+    }
+    catch(err) {
+      throw new Error("`guid` must be a string representing an archive id (ex: ABCD-1234)");
+    }
+
+    const response = await fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
+    return await this.parseAPIResponse(response);
+  }
+
   /**
    * Fetches account details for the signed-in user. 
    * Wraps `/v1/user/` (https://perma.cc/docs/developer#developer-users).
@@ -154,14 +191,14 @@ export class PermaAPI {
    * @async
    */
   async organization(id) {
+    const authorizationHeader = this.getAuthorizationHeader();
+
     try {
       id = parseInt(id);
     }
     catch(err) {
       throw new Error("`id` needs to be interpretable as an integer.");
     }
-
-    const authorizationHeader = this.getAuthorizationHeader();
 
     const response = await fetch(`${this.#baseUrl}/v1/organization/${id}`, {
       method: 'GET',

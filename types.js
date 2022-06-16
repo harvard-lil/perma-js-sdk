@@ -48,12 +48,6 @@
  * @property {PermaOrganization[]} objects
  */
 
-/**
- * 
- * @typedef {Object} 
- */
-// `/v1/organization/{id}`
-
 //------------------------------------------------------------------------------
 // Users
 //------------------------------------------------------------------------------
@@ -108,6 +102,13 @@
  * @property {boolean} [user_deleted]
  * @property {string} [archive_timestamp] - Ex: 2022-01-12T16:11:19.516152Z
  * @property {PermaOrganization} [organization]
+ */
+
+/**
+ * Object returned by the `/v1/public/archives/` endpoint. Paginated.
+ * @typedef {Object} PermaPublicArchivesPage
+ * @property {PermaPaginationMeta} meta 
+ * @property {PermaArchive[]} objects
  */
 
 //------------------------------------------------------------------------------
