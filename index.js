@@ -68,9 +68,10 @@ export class PermaAPI {
 
   /**
    * Returns a ready-to-use Authorization header object. Throws if no API key was provided.
-   * @return {object} - Key / value pair be added to the headers object sent alongside requests.
+   * @return {object} - Key / value pair be added to the `headers` object sent alongside requests.
+   * @private
    */
-  getAuthorizationHeader() {
+  #getAuthorizationHeader() {
     if (!this.#apiKey) {
       throw new Error("This method requires an API key.");
     }
@@ -81,17 +82,18 @@ export class PermaAPI {
   /**
    * Tries to parse an API response as JSON. 
    * 
-   * If the status code isn't 200 and/or an error message was provided, will throw an exception with that information. 
+   * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information. 
    * For example: `Error: Invalid token. (HTTP 401)`
    * 
-   * @param {Response} response 
-   * @async
+   * @param {Response} response - Fetch API response
    * @returns {?object} 
+   * @async
+   * @private
    */
-  async parseAPIResponse(response) {
+  async #parseAPIResponse(response) {
     const data = await response.json();
 
-    if (response.status !== 200) {
+    if (Math.floor(response.status / 100) !== 2) {
       let message = "";
 
       if (data.detail) { // The API returns error messages via "detail".
@@ -106,29 +108,28 @@ export class PermaAPI {
     return data;
   }
 
-
   /**
    * Fetches a subset of all the available public archives.
-   * Wraps `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+   * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
    * @param {number} [limit=10]
    * @param {number} [offset=0]
    * @return {PermaPublicArchivesPage}
    * @async
    */
-  async publicArchives(limit=10, offset=0) {
+  async pullPublicArchivesPage(limit=10, offset=0) {
     const searchParams = new URLSearchParams({limit, offset});
     const response = await fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`); 
-    return await this.parseAPIResponse(response);
+    return await this.#parseAPIResponse(response);
   }
 
   /**
    * Fetches details of a given public archive.
-   * Wraps `/v1/public/archives/{guid}` 
+   * Wraps [GET] `/v1/public/archives/{guid}` 
    * @param {string} guid
    * @return {PermaArchive}
    * @async
    */
-  async publicArchive(guid) {
+  async pullPublicArchive(guid) {
     try {
       guid = String(guid);
       if (guid.match(/[A-Z0-9]{4}\-[A-Z0-9]{4}/)[0] !== guid) {
@@ -140,58 +141,58 @@ export class PermaAPI {
     }
 
     const response = await fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
-    return await this.parseAPIResponse(response);
+    return await this.#parseAPIResponse(response);
   }
 
   /**
    * Fetches account details for the signed-in user. 
-   * Wraps `/v1/user/` (https://perma.cc/docs/developer#developer-users).
+   * Wraps [GET] `/v1/user/` (https://perma.cc/docs/developer#developer-users).
    * Requires an API key.
    * 
    * @return {PermaUser}
    * @async
    */
-  async user() {
-    const authorizationHeader = this.getAuthorizationHeader();
+  async pullCurrentUser() {
+    const authorizationHeader = this.#getAuthorizationHeader();
 
     const response = await fetch(`${this.#baseUrl}/v1/user`, {
       method: 'GET',
       headers: { ...authorizationHeader },
     });
 
-    return await this.parseAPIResponse(response);
+    return await this.#parseAPIResponse(response);
   }
 
   /**
    * Fetches a list of all the organizations the signed-in user belongs to.
-   * Wraps `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
+   * Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
    * Requires an API key.
    * 
    * @return {PermaOrganizationsPage}
    * @async
    */
-  async organizations() {
-    const authorizationHeader = this.getAuthorizationHeader();
+  async pullOrganizationsList() {
+    const authorizationHeader = this.#getAuthorizationHeader();
 
     const response = await fetch(`${this.#baseUrl}/v1/organizations`, {
       method: 'GET',
       headers: { ...authorizationHeader },
     });
 
-    return await this.parseAPIResponse(response);
+    return await this.#parseAPIResponse(response);
   }
 
   /**
    * Fetches details an organization. 
-   * Wraps `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+   * Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
    * Requires an API key.
    * 
    * @param {number} id 
    * @return {PermaOrganization}
    * @async
    */
-  async organization(id) {
-    const authorizationHeader = this.getAuthorizationHeader();
+  async pullOrganization(id) {
+    const authorizationHeader = this.#getAuthorizationHeader();
 
     try {
       id = parseInt(id);
@@ -205,7 +206,39 @@ export class PermaAPI {
       headers: { ...authorizationHeader },
     });
 
-    return await this.parseAPIResponse(response);
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Creates an archive.
+   * Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
+   * Requires an API key.
+   * 
+   * @param {string} url
+   * @return {PermaArchive}
+   * @async
+   */
+  async createArchive(url) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    try {
+      url = new URL(url);
+      url = url.href;
+    }
+    catch(err) {
+      throw new Error("`url` needs to be a valid url.")
+    }
+
+    const response = await fetch(`${this.#baseUrl}/v1/archives`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader 
+      },
+      body: JSON.stringify({url})
+    });
+
+    return await this.#parseAPIResponse(response);
   }
 
 }

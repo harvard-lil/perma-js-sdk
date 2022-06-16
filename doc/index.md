@@ -9,13 +9,12 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
 * [index](#module_index)
     * [.PermaAPI](#module_index.PermaAPI)
         * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
-        * [.getAuthorizationHeader()](#module_index.PermaAPI+getAuthorizationHeader) ⇒ <code>object</code>
-        * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
-        * [.publicArchives([limit], [offset])](#module_index.PermaAPI+publicArchives) ⇒ <code>PermaPublicArchivesPage</code>
-        * [.publicArchive(guid)](#module_index.PermaAPI+publicArchive) ⇒ <code>PermaArchive</code>
-        * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
-        * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
-        * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
+        * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>PermaPublicArchivesPage</code>
+        * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>PermaArchive</code>
+        * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
+        * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
+        * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
+        * [.createArchive(url)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -43,13 +42,12 @@ catch(err) { ... }
 
 * [.PermaAPI](#module_index.PermaAPI)
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
-    * [.getAuthorizationHeader()](#module_index.PermaAPI+getAuthorizationHeader) ⇒ <code>object</code>
-    * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
-    * [.publicArchives([limit], [offset])](#module_index.PermaAPI+publicArchives) ⇒ <code>PermaPublicArchivesPage</code>
-    * [.publicArchive(guid)](#module_index.PermaAPI+publicArchive) ⇒ <code>PermaArchive</code>
-    * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
-    * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
-    * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
+    * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>PermaPublicArchivesPage</code>
+    * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>PermaArchive</code>
+    * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
+    * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
+    * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
+    * [.createArchive(url)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -62,32 +60,11 @@ Constructor
 | apiKey | <code>string</code> |  | If provided, gives access to features that are behind auth. |
 | forceBaseUrl | <code>string</code> | <code>null</code> | If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url. |
 
-<a name="module_index.PermaAPI+getAuthorizationHeader"></a>
+<a name="module_index.PermaAPI+pullPublicArchivesPage"></a>
 
-#### permaAPI.getAuthorizationHeader() ⇒ <code>object</code>
-Returns a ready-to-use Authorization header object. Throws if no API key was provided.
-
-**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
-**Returns**: <code>object</code> - - Key / value pair be added to the headers object sent alongside requests.  
-<a name="module_index.PermaAPI+parseAPIResponse"></a>
-
-#### permaAPI.parseAPIResponse(response) ⇒ <code>object</code>
-Tries to parse an API response as JSON. 
-
-If the status code isn't 200 and/or an error message was provided, will throw an exception with that information. 
-For example: `Error: Invalid token. (HTTP 401)`
-
-**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
-
-| Param | Type |
-| --- | --- |
-| response | <code>Response</code> | 
-
-<a name="module_index.PermaAPI+publicArchives"></a>
-
-#### permaAPI.publicArchives([limit], [offset]) ⇒ <code>PermaPublicArchivesPage</code>
+#### permaAPI.pullPublicArchivesPage([limit], [offset]) ⇒ <code>PermaPublicArchivesPage</code>
 Fetches a subset of all the available public archives.
-Wraps `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -96,11 +73,11 @@ Wraps `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-arch
 | [limit] | <code>number</code> | <code>10</code> | 
 | [offset] | <code>number</code> | <code>0</code> | 
 
-<a name="module_index.PermaAPI+publicArchive"></a>
+<a name="module_index.PermaAPI+pullPublicArchive"></a>
 
-#### permaAPI.publicArchive(guid) ⇒ <code>PermaArchive</code>
+#### permaAPI.pullPublicArchive(guid) ⇒ <code>PermaArchive</code>
 Fetches details of a given public archive.
-Wraps `/v1/public/archives/{guid}`
+Wraps [GET] `/v1/public/archives/{guid}`
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -108,27 +85,27 @@ Wraps `/v1/public/archives/{guid}`
 | --- | --- |
 | guid | <code>string</code> | 
 
-<a name="module_index.PermaAPI+user"></a>
+<a name="module_index.PermaAPI+pullCurrentUser"></a>
 
-#### permaAPI.user() ⇒ <code>PermaUser</code>
+#### permaAPI.pullCurrentUser() ⇒ <code>PermaUser</code>
 Fetches account details for the signed-in user. 
-Wraps `/v1/user/` (https://perma.cc/docs/developer#developer-users).
+Wraps [GET] `/v1/user/` (https://perma.cc/docs/developer#developer-users).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
-<a name="module_index.PermaAPI+organizations"></a>
+<a name="module_index.PermaAPI+pullOrganizationsList"></a>
 
-#### permaAPI.organizations() ⇒ <code>PermaOrganizationsPage</code>
+#### permaAPI.pullOrganizationsList() ⇒ <code>PermaOrganizationsPage</code>
 Fetches a list of all the organizations the signed-in user belongs to.
-Wraps `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
+Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
-<a name="module_index.PermaAPI+organization"></a>
+<a name="module_index.PermaAPI+pullOrganization"></a>
 
-#### permaAPI.organization(id) ⇒ <code>PermaOrganization</code>
+#### permaAPI.pullOrganization(id) ⇒ <code>PermaOrganization</code>
 Fetches details an organization. 
-Wraps `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -136,4 +113,17 @@ Requires an API key.
 | Param | Type |
 | --- | --- |
 | id | <code>number</code> | 
+
+<a name="module_index.PermaAPI+createArchive"></a>
+
+#### permaAPI.createArchive(url) ⇒ <code>PermaArchive</code>
+Creates an archive.
+Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| url | <code>string</code> | 
 

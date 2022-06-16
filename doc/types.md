@@ -65,7 +65,7 @@ Information about an organization (as returned by the API).
 <a name="module_types..PermaOrganizationsPage"></a>
 
 ### types~PermaOrganizationsPage : <code>Object</code>
-Object returned by the `/v1/organizations/` endpoint. Paginated.
+Object returned by the [GET] `/v1/organizations/` endpoint. Paginated.
 
 **Kind**: inner typedef of [<code>types</code>](#module_types)  
 **Properties**
@@ -143,7 +143,7 @@ Information about a given archive (as returned by the API).
 <a name="module_types..PermaPublicArchivesPage"></a>
 
 ### types~PermaPublicArchivesPage : <code>Object</code>
-Object returned by the `/v1/public/archives/` endpoint. Paginated.
+Object returned by the [GET] `/v1/public/archives/` endpoint. Paginated.
 
 **Kind**: inner typedef of [<code>types</code>](#module_types)  
 **Properties**

@@ -42,7 +42,7 @@
  */
 
 /**
- * Object returned by the `/v1/organizations/` endpoint. Paginated.
+ * Object returned by the [GET] `/v1/organizations/` endpoint. Paginated.
  * @typedef {Object} PermaOrganizationsPage
  * @property {PermaPaginationMeta} meta 
  * @property {PermaOrganization[]} objects
@@ -105,7 +105,7 @@
  */
 
 /**
- * Object returned by the `/v1/public/archives/` endpoint. Paginated.
+ * Object returned by the [GET] `/v1/public/archives/` endpoint. Paginated.
  * @typedef {Object} PermaPublicArchivesPage
  * @property {PermaPaginationMeta} meta 
  * @property {PermaArchive[]} objects
