@@ -30,6 +30,13 @@ catch(err) { ... }
 ```
 
 **Kind**: static class of [<code>index</code>](#module_index)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| #apiKey | <code>string</code> | API key to be used to access restricted features. |
+| #baseUrl | <code>string</code> | Base url of the Perma.cc API.  Can be only at constructor level. |
+
 
 * [.PermaAPI](#module_index.PermaAPI)
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)

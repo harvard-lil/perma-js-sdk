@@ -9,7 +9,6 @@
 
 /**
  * `node-fetch` fallback for Node <= 17 (or if behind a flag)
- * 
  */
 if (typeof process !== "undefined" && typeof fetch === "undefined") {
   fetch = async (...args) => {
@@ -30,20 +29,13 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
  * }
  * catch(err) { ... }
  * ```
+ * 
+ * @property {?string} #apiKey - API key to be used to access restricted features.
+ * @property {string} #baseUrl - Base url of the Perma.cc API.  Can be only at constructor level.
  */
 export class PermaAPI {
 
-  /**
-   * API key to be used to access restricted features.
-   * @type {?string}
-   */
   #apiKey = null;
-
-  /**
-   * Base url of the Perma.cc API. 
-   * Can be only at constructor level.
-   * @type {string}
-   */
   #baseUrl = "https://api.perma.cc"
 
   /**
