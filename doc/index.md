@@ -9,12 +9,14 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
 * [index](#module_index)
     * [.PermaAPI](#module_index.PermaAPI)
         * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
+        * [.validateArchiveGuid(guid)](#module_index.PermaAPI+validateArchiveGuid) ⇒ <code>string</code>
         * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>PermaPublicArchivesPage</code>
         * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>PermaArchive</code>
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
         * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
         * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
-        * [.createArchive(url)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+        * [.createArchive(url, title, folder)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+        * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>PermaArchive</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -42,12 +44,14 @@ catch(err) { ... }
 
 * [.PermaAPI](#module_index.PermaAPI)
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
+    * [.validateArchiveGuid(guid)](#module_index.PermaAPI+validateArchiveGuid) ⇒ <code>string</code>
     * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>PermaPublicArchivesPage</code>
     * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>PermaArchive</code>
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
     * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
     * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
-    * [.createArchive(url)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+    * [.createArchive(url, title, folder)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+    * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>PermaArchive</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -59,6 +63,18 @@ Constructor
 | --- | --- | --- | --- |
 | apiKey | <code>string</code> |  | If provided, gives access to features that are behind auth. |
 | forceBaseUrl | <code>string</code> | <code>null</code> | If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url. |
+
+<a name="module_index.PermaAPI+validateArchiveGuid"></a>
+
+#### permaAPI.validateArchiveGuid(guid) ⇒ <code>string</code>
+Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
+Throws an exception otherwise.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| guid | <code>string</code> | 
 
 <a name="module_index.PermaAPI+pullPublicArchivesPage"></a>
 
@@ -116,14 +132,28 @@ Requires an API key.
 
 <a name="module_index.PermaAPI+createArchive"></a>
 
-#### permaAPI.createArchive(url) ⇒ <code>PermaArchive</code>
+#### permaAPI.createArchive(url, title, folder) ⇒ <code>PermaArchive</code>
 Creates an archive.
 Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| url | <code>string</code> |  |  |
+| title | <code>string</code> | <code>null</code> |  |
+| folder | <code>number</code> | <code></code> | Folder id. |
+
+<a name="module_index.PermaAPI+pullArchive"></a>
+
+#### permaAPI.pullArchive(guid) ⇒ <code>PermaArchive</code>
+Fetches details of a given archive.
+Wraps [GET] `/v1/archives/{guid}`
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
 | Param | Type |
 | --- | --- |
-| url | <code>string</code> | 
+| guid | <code>string</code> | 
 

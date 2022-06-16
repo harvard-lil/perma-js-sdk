@@ -80,6 +80,22 @@ export class PermaAPI {
   }
 
   /**
+   * Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
+   * Throws an exception otherwise.
+   * @param {string} guid 
+   * @return {string}
+   */
+  validateArchiveGuid(guid) {
+    guid = String(guid);
+    
+    if (guid.match(/[A-Z0-9]{4}\-[A-Z0-9]{4}/)[0] !== guid) {
+      throw new Error("`guid` must be a string representing an archive id (ex: ABCD-1234)");
+    }
+
+    return guid;
+  }
+
+  /**
    * Tries to parse an API response as JSON. 
    * 
    * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information. 
@@ -130,16 +146,7 @@ export class PermaAPI {
    * @async
    */
   async pullPublicArchive(guid) {
-    try {
-      guid = String(guid);
-      if (guid.match(/[A-Z0-9]{4}\-[A-Z0-9]{4}/)[0] !== guid) {
-        throw new Error();
-      }
-    }
-    catch(err) {
-      throw new Error("`guid` must be a string representing an archive id (ex: ABCD-1234)");
-    }
-
+    guid = this.validateArchiveGuid(guid);
     const response = await fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
     return await this.#parseAPIResponse(response);
   }
@@ -252,6 +259,26 @@ export class PermaAPI {
         ...authorizationHeader 
       },
       body: JSON.stringify(body)
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Fetches details of a given archive.
+   * Wraps [GET] `/v1/archives/{guid}` 
+   * @param {string} guid
+   * @return {PermaArchive}
+   * @async
+   */
+   async pullArchive(guid) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+    
+    guid = this.validateArchiveGuid(guid);
+
+    const response = await fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+      method: 'GET',
+      headers: { ...authorizationHeader },
     });
 
     return await this.#parseAPIResponse(response);
