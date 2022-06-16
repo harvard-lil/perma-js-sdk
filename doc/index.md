@@ -15,8 +15,9 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
         * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
         * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
-        * [.createArchive(url, title, folder)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+        * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
         * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>PermaArchive</code>
+        * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>PermaArchive</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -50,8 +51,9 @@ catch(err) { ... }
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>PermaUser</code>
     * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>PermaOrganizationsPage</code>
     * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>PermaOrganization</code>
-    * [.createArchive(url, title, folder)](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
+    * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>PermaArchive</code>
     * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>PermaArchive</code>
+    * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>PermaArchive</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -132,18 +134,21 @@ Requires an API key.
 
 <a name="module_index.PermaAPI+createArchive"></a>
 
-#### permaAPI.createArchive(url, title, folder) ⇒ <code>PermaArchive</code>
+#### permaAPI.createArchive(url, [options]) ⇒ <code>PermaArchive</code>
 Creates an archive.
 Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| url | <code>string</code> |  |  |
-| title | <code>string</code> | <code>null</code> |  |
-| folder | <code>number</code> | <code></code> | Folder id. |
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> |  |
+| [options] | <code>Object</code> |  |
+| [options.title] | <code>string</code> |  |
+| [options.folder] | <code>number</code> | Folder id. |
+| [options.isPrivate] | <code>boolean</code> |  |
+| [options.notes] | <code>string</code> |  |
 
 <a name="module_index.PermaAPI+pullArchive"></a>
 
@@ -156,4 +161,20 @@ Wraps [GET] `/v1/archives/{guid}`
 | Param | Type |
 | --- | --- |
 | guid | <code>string</code> | 
+
+<a name="module_index.PermaAPI+editArchive"></a>
+
+#### permaAPI.editArchive(guid, [options]) ⇒ <code>PermaArchive</code>
+Edit archive details
+Wraps [PATCH] `/v1/archives/{guid}`
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guid | <code>string</code> |  |
+| [options] | <code>Object</code> |  |
+| [options.isPrivate] | <code>boolean</code> | If set, will toggle an archive between public and private mode. |
+| [options.title] | <code>string</code> | If set, will update the archive's title. |
+| [options.notes] | <code>string</code> | If set, will update the archives notes |
 

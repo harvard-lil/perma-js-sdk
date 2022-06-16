@@ -43,7 +43,7 @@ export class PermaAPI {
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
    */
-  constructor(apiKey = "", forceBaseUrl = null) {
+  constructor(apiKey="", forceBaseUrl=null) {
     // Check if an API key was provided.
     // If provided, format must match.
     if (apiKey) { 
@@ -220,37 +220,41 @@ export class PermaAPI {
    * Requires an API key.
    * 
    * @param {string} url
-   * @param {?string} title
-   * @param {number} folder - Folder id.
+   * @param {Object} [options]
+   * @param {?string} [options.title]
+   * @param {?number} [options.folder] - Folder id.
+   * @param {boolean} [options.isPrivate]
+   * @param {string} [options.notes] 
    * @return {PermaArchive}
    * @async
    */
-  async createArchive(url, title=null, folder=null) {
+  async createArchive(url, options = {title: null, folder: null, isPrivate: false, notes: ""}) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
     const body = {};
 
     try {
-      url = new URL(url);
-      url = url.href;
+      url = new URL(url).href;
       body.url = url;
     }
     catch(err) {
       throw new Error("`url` needs to be a valid url.")
     }
 
-    if (title !== null) {
-      title = String(title);
-      body.title = title;
+    if (options.title !== null) {
+      body.title = String(options.title);
     }
 
-    if (folder !== null) {
-      folder = parseInt(folder);
+    if (options.folder !== null) {
+      options.folder = parseInt(options.folder);
       if (isNaN(folder)) {
-        throw new Error("If provided, `folder` must be interpretable as an integer.");
+        throw new Error("If provided, `options.folder` must be interpretable as an integer.");
       }
-      body.folder = folder;
+      body.folder = options.folder;
     }
+
+    body.is_private = Boolean(options.isPrivate);
+    body.notes = String(options.notes);
 
     const response = await fetch(`${this.#baseUrl}/v1/archives`, {
       method: 'POST',
@@ -279,6 +283,48 @@ export class PermaAPI {
     const response = await fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
       method: 'GET',
       headers: { ...authorizationHeader },
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Edit archive details
+   * Wraps [PATCH] `/v1/archives/{guid}`
+   * 
+   * @param {string} guid 
+   * @param {Object} [options] 
+   * @param {?boolean} [options.isPrivate] - If set, will toggle an archive between public and private mode.
+   * @param {?string} [options.title] - If set, will update the archive's title.
+   * @param {?string} [options.notes] - If set, will update the archives notes
+   * @return {PermaArchive}
+   * @async
+   */
+  async editArchive(guid, options = {isPrivate: null, title: null, notes: null}) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    const body = {};
+    guid = this.validateArchiveGuid(guid);
+
+    if (options.title !== null) {
+      body.title = String(options.title);
+    }
+
+    if (options.notes !== null) {
+      body.notes = String(options.notes);
+    }
+
+    if (options.isPrivate !== null) {
+      body.is_private = Boolean(options.isPrivate);
+    }
+
+    const response = await fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader 
+      },
+      body: JSON.stringify(body)
     });
 
     return await this.#parseAPIResponse(response);
