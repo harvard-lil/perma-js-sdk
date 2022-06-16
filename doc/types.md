@@ -14,6 +14,7 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
     * [~PermaUser](#module_types..PermaUser) : <code>Object</code>
     * [~PermaFolder](#module_types..PermaFolder) : <code>Object</code>
     * [~PermaArchive](#module_types..PermaArchive) : <code>Object</code>
+    * [~PermaPublicArchivesPage](#module_types..PermaPublicArchivesPage) : <code>Object</code>
     * [~PermaCapture](#module_types..PermaCapture) : <code>Object</code>
     * [~PermaCaptureJob](#module_types..PermaCaptureJob) : <code>Object</code>
 
@@ -138,6 +139,19 @@ Information about a given archive (as returned by the API).
 | [user_deleted] | <code>boolean</code> |  |
 | [archive_timestamp] | <code>string</code> | Ex: 2022-01-12T16:11:19.516152Z |
 | [organization] | <code>PermaOrganization</code> |  |
+
+<a name="module_types..PermaPublicArchivesPage"></a>
+
+### types~PermaPublicArchivesPage : <code>Object</code>
+Object returned by the `/v1/public/archives/` endpoint. Paginated.
+
+**Kind**: inner typedef of [<code>types</code>](#module_types)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| meta | <code>PermaPaginationMeta</code> | 
+| objects | <code>Array.&lt;PermaArchive&gt;</code> | 
 
 <a name="module_types..PermaCapture"></a>
 

@@ -11,6 +11,8 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
         * [.getAuthorizationHeader()](#module_index.PermaAPI+getAuthorizationHeader) ⇒ <code>object</code>
         * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
+        * [.publicArchives([limit], [offset])](#module_index.PermaAPI+publicArchives) ⇒ <code>PermaPublicArchivesPage</code>
+        * [.publicArchive(guid)](#module_index.PermaAPI+publicArchive) ⇒ <code>PermaArchive</code>
         * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
         * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
         * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
@@ -43,6 +45,8 @@ catch(err) { ... }
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
     * [.getAuthorizationHeader()](#module_index.PermaAPI+getAuthorizationHeader) ⇒ <code>object</code>
     * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
+    * [.publicArchives([limit], [offset])](#module_index.PermaAPI+publicArchives) ⇒ <code>PermaPublicArchivesPage</code>
+    * [.publicArchive(guid)](#module_index.PermaAPI+publicArchive) ⇒ <code>PermaArchive</code>
     * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
     * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
     * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
@@ -78,6 +82,31 @@ For example: `Error: Invalid token. (HTTP 401)`
 | Param | Type |
 | --- | --- |
 | response | <code>Response</code> | 
+
+<a name="module_index.PermaAPI+publicArchives"></a>
+
+#### permaAPI.publicArchives([limit], [offset]) ⇒ <code>PermaPublicArchivesPage</code>
+Fetches a subset of all the available public archives.
+Wraps `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [limit] | <code>number</code> | <code>10</code> | 
+| [offset] | <code>number</code> | <code>0</code> | 
+
+<a name="module_index.PermaAPI+publicArchive"></a>
+
+#### permaAPI.publicArchive(guid) ⇒ <code>PermaArchive</code>
+Fetches details of a given public archive.
+Wraps `/v1/public/archives/{guid}`
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| guid | <code>string</code> | 
 
 <a name="module_index.PermaAPI+user"></a>
 

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest",
-    "build-doc": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
+    "docgen": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
   },
   "repository": {
     "type": "git",
