@@ -194,10 +194,8 @@ export class PermaAPI {
   async pullOrganization(id) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    try {
-      id = parseInt(id);
-    }
-    catch(err) {
+    id = parseInt(id);
+    if (isNaN(id)) {
       throw new Error("`id` needs to be interpretable as an integer.");
     }
 
@@ -215,18 +213,36 @@ export class PermaAPI {
    * Requires an API key.
    * 
    * @param {string} url
+   * @param {?string} title
+   * @param {number} folder - Folder id.
    * @return {PermaArchive}
    * @async
    */
-  async createArchive(url) {
+  async createArchive(url, title=null, folder=null) {
     const authorizationHeader = this.#getAuthorizationHeader();
+
+    const body = {};
 
     try {
       url = new URL(url);
       url = url.href;
+      body.url = url;
     }
     catch(err) {
       throw new Error("`url` needs to be a valid url.")
+    }
+
+    if (title !== null) {
+      title = String(title);
+      body.title = title;
+    }
+
+    if (folder !== null) {
+      folder = parseInt(folder);
+      if (isNaN(folder)) {
+        throw new Error("If provided, `folder` must be interpretable as an integer.");
+      }
+      body.folder = folder;
     }
 
     const response = await fetch(`${this.#baseUrl}/v1/archives`, {
@@ -235,7 +251,7 @@ export class PermaAPI {
         "Content-Type": "application/json",
         ...authorizationHeader 
       },
-      body: JSON.stringify({url})
+      body: JSON.stringify(body)
     });
 
     return await this.#parseAPIResponse(response);
