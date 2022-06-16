@@ -13,6 +13,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
         * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
         * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
+        * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -44,6 +45,7 @@ catch(err) { ... }
     * [.parseAPIResponse(response)](#module_index.PermaAPI+parseAPIResponse) ⇒ <code>object</code>
     * [.user()](#module_index.PermaAPI+user) ⇒ <code>PermaUser</code>
     * [.organizations()](#module_index.PermaAPI+organizations) ⇒ <code>PermaOrganizationsPage</code>
+    * [.organization(id)](#module_index.PermaAPI+organization) ⇒ <code>PermaOrganization</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -93,3 +95,16 @@ Wraps `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizati
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+<a name="module_index.PermaAPI+organization"></a>
+
+#### permaAPI.organization(id) ⇒ <code>PermaOrganization</code>
+Fetches details an organization. 
+Wraps `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| id | <code>number</code> | 
+

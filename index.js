@@ -144,4 +144,31 @@ export class PermaAPI {
     return await this.parseAPIResponse(response);
   }
 
+  /**
+   * Fetches details an organization. 
+   * Wraps `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+   * Requires an API key.
+   * 
+   * @param {number} id 
+   * @return {PermaOrganization}
+   * @async
+   */
+  async organization(id) {
+    try {
+      id = parseInt(id);
+    }
+    catch(err) {
+      throw new Error("`id` needs to be interpretable as an integer.");
+    }
+
+    const authorizationHeader = this.getAuthorizationHeader();
+
+    const response = await fetch(`${this.#baseUrl}/v1/organization/${id}`, {
+      method: 'GET',
+      headers: { ...authorizationHeader },
+    });
+
+    return await this.parseAPIResponse(response);
+  }
+
 }
