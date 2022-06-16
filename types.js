@@ -40,6 +40,13 @@
  * @property {PermaFolder} [shared_folder] - If set, describes the folder shared at organization-level.
  */
 
+/**
+ * Object returned by the `/v1/organizations/` endpoint. Paginated.
+ * @typedef {Object} PermaOrganizationsPage
+ * @property {PermaPaginationMeta} meta 
+ * @property {PermaOrganization[]} objects
+ */
+
 //------------------------------------------------------------------------------
 // Users
 //------------------------------------------------------------------------------

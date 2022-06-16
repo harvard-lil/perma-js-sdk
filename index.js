@@ -113,7 +113,7 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
   }
 
   /**
-   * Get account details for the signed-in user. 
+   * Fetches account details for the signed-in user. 
    * Wraps `/v1/user/` (https://perma.cc/docs/developer#developer-users).
    * Requires an API key.
    * 
@@ -125,6 +125,26 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
     const authorizationHeader = this.getAuthorizationHeader();
 
     const response = await fetch(`${this.#baseUrl}/v1/user`, {
+      method: 'GET',
+      headers: { ...authorizationHeader },
+    });
+
+    return await this.parseAPIResponse(response);
+  }
+
+  /**
+   * Fetches a list of all the organizations the signed-in user belongs to.
+   * Wraps `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
+   * Requires an API key.
+   * 
+   * @return {PermaOrganizationsPage}
+   * @throws
+   * @async
+   */
+  async organizations() {
+    const authorizationHeader = this.getAuthorizationHeader();
+
+    const response = await fetch(`${this.#baseUrl}/v1/organizations`, {
       method: 'GET',
       headers: { ...authorizationHeader },
     });
