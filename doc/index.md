@@ -81,8 +81,8 @@ Throws an exception otherwise.
 <a name="module_index.PermaAPI+pullPublicArchivesPage"></a>
 
 #### permaAPI.pullPublicArchivesPage([limit], [offset]) ⇒ <code>PermaPublicArchivesPage</code>
-Fetches a subset of all the available public archives.
-Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+Fetches a subset of all the available public archives. 
+Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives).
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -95,7 +95,7 @@ Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-publi
 
 #### permaAPI.pullPublicArchive(guid) ⇒ <code>PermaArchive</code>
 Fetches details of a given public archive.
-Wraps [GET] `/v1/public/archives/{guid}`
+Wraps [GET] `/v1/public/archives/{guid}` (https://perma.cc/docs/developer#get-one-archive).
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -115,7 +115,7 @@ Requires an API key.
 
 #### permaAPI.pullOrganizationsList() ⇒ <code>PermaOrganizationsPage</code>
 Fetches a list of all the organizations the signed-in user belongs to.
-Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
+Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations). 
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -123,7 +123,7 @@ Requires an API key.
 
 #### permaAPI.pullOrganization(id) ⇒ <code>PermaOrganization</code>
 Fetches details an organization. 
-Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization). 
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -136,7 +136,7 @@ Requires an API key.
 
 #### permaAPI.createArchive(url, [options]) ⇒ <code>PermaArchive</code>
 Creates an archive.
-Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
+Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive). 
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -154,7 +154,8 @@ Requires an API key.
 
 #### permaAPI.pullArchive(guid) ⇒ <code>PermaArchive</code>
 Fetches details of a given archive.
-Wraps [GET] `/v1/archives/{guid}`
+Wraps [GET] `/v1/archives/{guid}` (https://perma.cc/docs/developer#view-details-of-one-archive). 
+Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -166,7 +167,8 @@ Wraps [GET] `/v1/archives/{guid}`
 
 #### permaAPI.editArchive(guid, [options]) ⇒ <code>PermaArchive</code>
 Edit archive details
-Wraps [PATCH] `/v1/archives/{guid}`
+Wraps [PATCH] `/v1/archives/{guid}` (https://perma.cc/docs/developer#move-to-dark-archive). 
+Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 

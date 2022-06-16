@@ -99,7 +99,7 @@ export class PermaAPI {
    * Tries to parse an API response as JSON. 
    * 
    * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information. 
-   * For example: `Error: Invalid token. (HTTP 401)`
+   * For example: `Error: Invalid token. (HTTP 401)`.
    * 
    * @param {Response} response - Fetch API response
    * @returns {?object} 
@@ -125,8 +125,8 @@ export class PermaAPI {
   }
 
   /**
-   * Fetches a subset of all the available public archives.
-   * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives)
+   * Fetches a subset of all the available public archives. 
+   * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives). 
    * @param {number} [limit=10]
    * @param {number} [offset=0]
    * @return {PermaPublicArchivesPage}
@@ -140,7 +140,7 @@ export class PermaAPI {
 
   /**
    * Fetches details of a given public archive.
-   * Wraps [GET] `/v1/public/archives/{guid}` 
+   * Wraps [GET] `/v1/public/archives/{guid}` (https://perma.cc/docs/developer#get-one-archive). 
    * @param {string} guid
    * @return {PermaArchive}
    * @async
@@ -172,7 +172,7 @@ export class PermaAPI {
 
   /**
    * Fetches a list of all the organizations the signed-in user belongs to.
-   * Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
+   * Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations). 
    * Requires an API key.
    * 
    * @return {PermaOrganizationsPage}
@@ -191,7 +191,7 @@ export class PermaAPI {
 
   /**
    * Fetches details an organization. 
-   * Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization)
+   * Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization). 
    * Requires an API key.
    * 
    * @param {number} id 
@@ -216,7 +216,7 @@ export class PermaAPI {
 
   /**
    * Creates an archive.
-   * Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive)
+   * Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive). 
    * Requires an API key.
    * 
    * @param {string} url
@@ -270,7 +270,9 @@ export class PermaAPI {
 
   /**
    * Fetches details of a given archive.
-   * Wraps [GET] `/v1/archives/{guid}` 
+   * Wraps [GET] `/v1/archives/{guid}` (https://perma.cc/docs/developer#view-details-of-one-archive). 
+   * Requires an API key.
+   * 
    * @param {string} guid
    * @return {PermaArchive}
    * @async
@@ -290,7 +292,8 @@ export class PermaAPI {
 
   /**
    * Edit archive details
-   * Wraps [PATCH] `/v1/archives/{guid}`
+   * Wraps [PATCH] `/v1/archives/{guid}` (https://perma.cc/docs/developer#move-to-dark-archive). 
+   * Requires an API key. 
    * 
    * @param {string} guid 
    * @param {Object} [options] 
