@@ -30,8 +30,8 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
  * catch(err) { ... }
  * ```
  * 
- * @property {?string} #apiKey - API key to be used to access restricted features.
- * @property {string} #baseUrl - Base url of the Perma.cc API.  Can be only at constructor level.
+ * @property {?string} #apiKey - API key to be used to access restricted features (private).
+ * @property {string} #baseUrl - Base url of the Perma.cc API.  Can be only at constructor level (private).
  */
 export class PermaAPI {
 

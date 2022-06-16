@@ -34,8 +34,8 @@ catch(err) { ... }
 
 | Name | Type | Description |
 | --- | --- | --- |
-| #apiKey | <code>string</code> | API key to be used to access restricted features. |
-| #baseUrl | <code>string</code> | Base url of the Perma.cc API.  Can be only at constructor level. |
+| #apiKey | <code>string</code> | API key to be used to access restricted features (private). |
+| #baseUrl | <code>string</code> | Base url of the Perma.cc API.  Can be only at constructor level (private). |
 
 
 * [.PermaAPI](#module_index.PermaAPI)
