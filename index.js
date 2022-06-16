@@ -7,16 +7,19 @@
  */
 /// <reference path="types.js" />
 
-// `node-fetch` fallback for Node <= 17 (or if behind a flag)
+/**
+ * `node-fetch` fallback for Node <= 17 (or if behind a flag)
+ * 
+ */
 if (typeof process !== "undefined" && typeof fetch === "undefined") {
-  globalThis.fetch = async (...args) => {
+  fetch = async (...args) => {
     const module = await import('node-fetch');
     return await module.default(...args);
   };
 }
 
 /**
- * Wrapper for Perma.cc's Rest API (v1).
+ * Wrapper class for Perma.cc's Rest API (v1).
  * 
  * Usage:
  * ```
@@ -28,7 +31,7 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
  * catch(err) { ... }
  * ```
  */
- export class PermaAPI {
+export class PermaAPI {
 
   /**
    * API key to be used to access restricted features.

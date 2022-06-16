@@ -10,6 +10,7 @@
 // System
 //------------------------------------------------------------------------------
 /**
+ * Error objects as returned by the API.
  * @typedef {Object} PermaApiError
  * @property {string} detail
  */

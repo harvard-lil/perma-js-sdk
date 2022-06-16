@@ -20,6 +20,8 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
 <a name="module_types..PermaApiError"></a>
 
 ### types~PermaApiError : <code>Object</code>
+Error objects as returned by the API.
+
 **Kind**: inner typedef of [<code>types</code>](#module_types)  
 **Properties**
 

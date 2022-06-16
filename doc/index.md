@@ -17,7 +17,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
 <a name="module_index.PermaAPI"></a>
 
 ### index.PermaAPI
-Wrapper for Perma.cc's Rest API (v1).
+Wrapper class for Perma.cc's Rest API (v1).
 
 Usage:
 ```
