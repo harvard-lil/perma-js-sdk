@@ -90,7 +90,6 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
    * For example: `Error: Invalid token. (HTTP 401)`
    * 
    * @param {Response} response 
-   * @throws 
    * @async
    * @returns {?object} 
    */
@@ -118,7 +117,6 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
    * Requires an API key.
    * 
    * @return {PermaUser}
-   * @throws
    * @async
    */
   async user() {
@@ -138,7 +136,6 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
    * Requires an API key.
    * 
    * @return {PermaOrganizationsPage}
-   * @throws
    * @async
    */
   async organizations() {
