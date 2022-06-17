@@ -6,13 +6,14 @@
  * @description A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs/developer).
  */
 /// <reference path="types.js" />
+// @ts-check
 
 /**
  * `node-fetch` fallback for Node <= 17 (or if behind a flag)
  */
 if (typeof process !== "undefined" && typeof fetch === "undefined") {
   fetch = async (...args) => {
-    const module = await import('node-fetch');
+    const module = await import("node-fetch");
     return await module.default(...args);
   };
 }
@@ -30,11 +31,19 @@ if (typeof process !== "undefined" && typeof fetch === "undefined") {
  * catch(err) { ... }
  * ```
  * 
- * @property {?string} #apiKey - API key to be used to access restricted features (private).
- * @property {string} #baseUrl - Base url of the Perma.cc API.  Can be only at constructor level (private).
  */
 export class PermaAPI {
+
+  /**
+   * @type {?string} 
+   * @description API key to be used to access restricted features (private).
+   */
   #apiKey = null;
+
+  /**
+   * @type {string} 
+   * @description Base url of the Perma.cc API.  Can be only at constructor level (private).
+   */
   #baseUrl = "https://api.perma.cc";
 
   /**
@@ -56,11 +65,10 @@ export class PermaAPI {
     }
 
     // Check if base url needs to be replaced.
-    // If a replacement was provided, it needs to be a valid url.
+    // If a replacement was provided, it needs to be a valid url (will throw otherwise).
     if (forceBaseUrl) {
-      forceBaseUrl = String(forceBaseUrl);
-      forceBaseUrl = new URL(forceBaseUrl);
-      this.#baseUrl = forceBaseUrl.origin;
+      let newBaseUrl = new URL(forceBaseUrl);
+      this.#baseUrl = newBaseUrl.origin;
     }
   }
 
@@ -86,7 +94,7 @@ export class PermaAPI {
   validateArchiveGuid(guid) {
     guid = String(guid);
 
-    if (guid.match(/[A-Z0-9]{4}\-[A-Z0-9]{4}/)[0] !== guid) {
+    if (!guid.match(/^[A-Z0-9]{4}\-[A-Z0-9]{4}$/)) {
       throw new Error("`guid` must be a string representing an archive id (ex: ABCD-1234)");
     }
 
@@ -100,9 +108,9 @@ export class PermaAPI {
    * For example: `Error: Invalid token. (HTTP 401)`.
    *
    * @param {Response} response - Fetch API response
-   * @returns {?object}
-   * @async
+   * @returns {Promise<Object>}
    * @private
+   * @async
    */
   async #parseAPIResponse(response) {
     const data = await response.json();
@@ -116,7 +124,7 @@ export class PermaAPI {
       }
 
       message += `(HTTP ${response.status})`;
-      
+
       throw new Error(message);
     }
 
@@ -128,7 +136,7 @@ export class PermaAPI {
    * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives).
    * @param {number} [limit=10]
    * @param {number} [offset=0]
-   * @return {PermaPublicArchivesPage}
+   * @return {Promise<PermaPublicArchivesPage>}
    * @async
    */
   async pullPublicArchivesPage(limit = 10, offset = 0) {
@@ -141,7 +149,7 @@ export class PermaAPI {
    * Fetches details of a given public archive.
    * Wraps [GET] `/v1/public/archives/{guid}` (https://perma.cc/docs/developer#get-one-archive).
    * @param {string} guid
-   * @return {PermaArchive}
+   * @return {Promise<PermaArchive>}
    * @async
    */
   async pullPublicArchive(guid) {
@@ -155,7 +163,7 @@ export class PermaAPI {
    * Wraps [GET] `/v1/user/` (https://perma.cc/docs/developer#developer-users).
    * Requires an API key.
    *
-   * @return {PermaUser}
+   * @return {Promise<PermaUser>}
    * @async
    */
   async pullCurrentUser() {
@@ -174,7 +182,7 @@ export class PermaAPI {
    * Wraps [GET] `/v1/organizations/` (https://perma.cc/docs/developer#developer-organizations).
    * Requires an API key.
    *
-   * @return {PermaOrganizationsPage}
+   * @return {Promise<PermaOrganizationsPage>}
    * @async
    */
   async pullOrganizationsList() {
@@ -194,13 +202,13 @@ export class PermaAPI {
    * Requires an API key.
    *
    * @param {number} id
-   * @return {PermaOrganization}
+   * @return {Promise<PermaOrganization>}
    * @async
    */
   async pullOrganization(id) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    id = parseInt(id);
+    id = parseInt(String(id));
     if (isNaN(id)) {
       throw new Error("`id` needs to be interpretable as an integer.");
     }
@@ -224,7 +232,7 @@ export class PermaAPI {
    * @param {?number} [options.folder] - Folder id.
    * @param {boolean} [options.isPrivate]
    * @param {string} [options.notes]
-   * @return {PermaArchive}
+   * @return {Promise<PermaArchive>}
    * @async
    */
   async createArchive(url, options = { title: null, folder: null, isPrivate: false, notes: "" }) {
@@ -244,8 +252,8 @@ export class PermaAPI {
     }
 
     if (options.folder !== null) {
-      options.folder = parseInt(options.folder);
-      if (isNaN(folder)) {
+      options.folder = parseInt(String(options.folder));
+      if (isNaN(options.folder)) {
         throw new Error("If provided, `options.folder` must be interpretable as an integer.");
       }
       body.folder = options.folder;
@@ -272,7 +280,7 @@ export class PermaAPI {
    * Requires an API key.
    *
    * @param {string} guid
-   * @return {PermaArchive}
+   * @return {Promise<PermaArchive>}
    * @async
    */
   async pullArchive(guid) {
@@ -298,7 +306,7 @@ export class PermaAPI {
    * @param {?boolean} [options.isPrivate] - If set, will toggle an archive between public and private mode.
    * @param {?string} [options.title] - If set, will update the archive's title.
    * @param {?string} [options.notes] - If set, will update the archives notes
-   * @return {PermaArchive}
+   * @return {Promise<PermaArchive>}
    * @async
    */
   async editArchive(guid, options = { isPrivate: null, title: null, notes: null }) {
