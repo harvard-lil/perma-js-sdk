@@ -9,16 +9,6 @@
 // @ts-check
 
 /**
- * `node-fetch` fallback for Node <= 17 (or if behind a flag)
- */
-if (typeof process !== "undefined" && typeof fetch === "undefined") {
-  fetch = async (...args) => {
-    const module = await import("node-fetch");
-    return await module.default(...args);
-  };
-}
-
-/**
  * Wrapper class for Perma.cc's Rest API (v1).
  * 
  * Usage:
@@ -47,6 +37,11 @@ export class PermaAPI {
   #baseUrl = "https://api.perma.cc";
 
   /**
+   * @description Local proxy to the Fetch API. Used to load `node-module` as a fallback when needed (see constructor). 
+   */
+  #fetch = globalThis.fetch;
+
+  /**
    * Constructor
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
@@ -69,6 +64,14 @@ export class PermaAPI {
     if (forceBaseUrl) {
       let newBaseUrl = new URL(forceBaseUrl);
       this.#baseUrl = newBaseUrl.origin;
+    }
+
+    // Load `node-fetch` if we're running Node.js and `fetch()` is not available
+    if (!this.#fetch && "process" in globalThis) {
+      this.#fetch = async (...args) => {
+        const module = await import("node-fetch");
+        return await module.default(...args);
+      };
     }
   }
 
@@ -105,7 +108,7 @@ export class PermaAPI {
    * Tries to parse an API response as JSON.
    *
    * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information.
-   * For example: `Error: Invalid token. (HTTP 401)`.
+   * For example: `HTTP 401 Invalid token.`.
    *
    * @param {Response} response - Fetch API response
    * @returns {Promise<Object>}
@@ -115,20 +118,19 @@ export class PermaAPI {
   async #parseAPIResponse(response) {
     const data = await response.json();
 
-    if (Math.floor(response.status / 100) !== 2) {
-      let message = "";
-
-      if (data.detail) {
-        // The API returns error messages via "detail".
-        message += `${data.detail} `;
-      }
-
-      message += `(HTTP ${response.status})`;
-
-      throw new Error(message);
+    // Return data as is if HTTP 2XX
+    if (Math.floor(response.status / 100) === 2) {
+      return data;
     }
 
-    return data;
+    // Throw error with details given by the API (if any) otherwise
+    let message = `HTTP ${response.status}`;
+
+    if (data.detail) { // See `PermaApiError`
+      message += ` ${data.detail}`;
+    }
+
+    throw new Error(message);
   }
 
   /**
@@ -141,7 +143,7 @@ export class PermaAPI {
    */
   async pullPublicArchivesPage(limit = 10, offset = 0) {
     const searchParams = new URLSearchParams({ limit, offset });
-    const response = await fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
+    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
   }
 
@@ -154,7 +156,7 @@ export class PermaAPI {
    */
   async pullPublicArchive(guid) {
     guid = this.validateArchiveGuid(guid);
-    const response = await fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
+    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
     return await this.#parseAPIResponse(response);
   }
 
@@ -169,7 +171,7 @@ export class PermaAPI {
   async pullCurrentUser() {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    const response = await fetch(`${this.#baseUrl}/v1/user`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/user`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -188,7 +190,7 @@ export class PermaAPI {
   async pullOrganizationsList() {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    const response = await fetch(`${this.#baseUrl}/v1/organizations`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/organizations`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -213,7 +215,7 @@ export class PermaAPI {
       throw new Error("`id` needs to be interpretable as an integer.");
     }
 
-    const response = await fetch(`${this.#baseUrl}/v1/organization/${id}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${id}`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -262,7 +264,7 @@ export class PermaAPI {
     body.is_private = Boolean(options.isPrivate);
     body.notes = String(options.notes);
 
-    const response = await fetch(`${this.#baseUrl}/v1/archives`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -288,7 +290,7 @@ export class PermaAPI {
 
     guid = this.validateArchiveGuid(guid);
 
-    const response = await fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -327,7 +329,7 @@ export class PermaAPI {
       body.is_private = Boolean(options.isPrivate);
     }
 
-    const response = await fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
