@@ -27,6 +27,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
         * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -65,6 +66,7 @@ catch(err) { ... }
     * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
     * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+    * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -312,4 +314,18 @@ Requires an API key.
 | folderId | <code>number</code> |  |
 | [options] | <code>Object</code> |  |
 | [options.name] | <code>string</code> | If set, will update the folder's name. |
+
+<a name="module_index.PermaAPI+moveFolder"></a>
+
+#### permaAPI.moveFolder(folderId, parentFolderId) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+Moves a folder into another.
+Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| folderId | <code>number</code> | Folder to move. |
+| parentFolderId | <code>number</code> | Where to move that folder into. |
 

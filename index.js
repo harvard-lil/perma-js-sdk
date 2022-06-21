@@ -619,4 +619,35 @@ export class PermaAPI {
     return await this.#parseAPIResponse(response);
   }
 
+  /**
+   * Moves a folder into another.
+   * Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder). 
+   * Requires an API key.
+   * 
+   * @param {number} folderId - Folder to move. 
+   * @param {number} parentFolderId - Where to move that folder into.
+   * @returns {Promise<PermaFolder>}
+   * @async
+   */
+  async moveFolder(folderId, parentFolderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = parseInt(String(folderId));
+    parentFolderId = parseInt(String(parentFolderId));
+
+    if (isNaN(folderId) || isNaN(parentFolderId)) {
+      throw new Error("Both `folderId` and `parentFolderId` need to be interpretable as integers.");
+    }
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders/${folderId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader,
+      }
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
 }
