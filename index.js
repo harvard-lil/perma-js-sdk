@@ -299,7 +299,7 @@ export class PermaAPI {
   }
 
   /**
-   * Edit archive details
+   * Edit details for a given archive. 
    * Wraps [PATCH] `/v1/archives/{guid}` (https://perma.cc/docs/developer#move-to-dark-archive).
    * Requires an API key.
    *
@@ -340,4 +340,75 @@ export class PermaAPI {
 
     return await this.#parseAPIResponse(response);
   }
+
+  /**
+   * Moves an archive to a different folder. 
+   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{guid}` (https://perma.cc/docs/developer#move-archive). 
+   * Requires an API key.
+   * 
+   * @param {string} guid - Identifier of the archive to move.
+   * @param {number} folderId - Identifier of the folder to move the archive into. 
+   * @return {Promise<PermaArchive>}
+   * @async 
+   */
+  async moveArchive(guid, folderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    guid = this.validateArchiveGuid(guid);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${guid}`, {
+      method: "PATCH",
+      headers: { ...authorizationHeader },
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Deletes an archive. 
+   * Wraps [DELETE] `/v1/archives/{guid}` (https://perma.cc/docs/developer#delete-archive). 
+   * Required an API key.
+   * 
+   * @return {Promise<Boolean>}
+   * @async
+   */
+  async deleteArchive(guid) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    guid = this.validateArchiveGuid(guid);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+      method: "DELETE",
+      headers: { ...authorizationHeader },
+    });
+
+    // Special case: this route doesn't return a body when the operation succeeds.
+    if (response.status === 204) {
+      return true;
+    }
+
+    // Use `this.#parseAPIResponse` to process error message if provided.
+    await this.#parseAPIResponse(response);
+    return false; // Just in case #parseAPIResponse didn't throw.
+  }
+
+  /**
+   * Fetches a subset of all the archives the user has access to. 
+   * Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
+   * @param {number} [limit=10]
+   * @param {number} [offset=0]
+   * @return {Promise<PermaPublicArchivesPage>}
+   * @async
+   */
+   async pullArchivesPage(limit = 10, offset = 0) {
+    const searchParams = new URLSearchParams({ limit, offset });
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`);
+    return await this.#parseAPIResponse(response);
+  }
+
 }
