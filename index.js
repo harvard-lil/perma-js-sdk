@@ -138,7 +138,7 @@ export class PermaAPI {
    * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives).
    * @param {number} [limit=10]
    * @param {number} [offset=0]
-   * @return {Promise<PermaPublicArchivesPage>}
+   * @return {Promise<PermaArchivesPage>}
    * @async
    */
   async pullPublicArchivesPage(limit = 10, offset = 0) {
@@ -402,12 +402,56 @@ export class PermaAPI {
    * Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
    * @param {number} [limit=10]
    * @param {number} [offset=0]
-   * @return {Promise<PermaPublicArchivesPage>}
+   * @return {Promise<PermaArchivesPage>}
    * @async
    */
-   async pullArchivesPage(limit = 10, offset = 0) {
+  async pullArchivesPage(limit = 10, offset = 0) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+    
     const searchParams = new URLSearchParams({ limit, offset });
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
+      method: "GET",
+      headers: { ...authorizationHeader },
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Requests the creation of a batch of archives. 
+   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+   * Requires an API key.
+   * 
+   * @param {string[]} urls - Must contain valid urls.
+   * @param {number} folderId - Destination folder of the resulting archives.
+   * @return {Promise<PermaArchivesBatch>}
+   * @async
+   */
+  async createArchiveBatch(urls, folderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    for(let url of urls) {
+      new URL(url); // Will throw if not a valid URL
+    }
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader,
+      },
+      body: JSON.stringify({
+        urls: urls,
+        target_folder: folderId
+      }),
+    });
+
     return await this.#parseAPIResponse(response);
   }
 

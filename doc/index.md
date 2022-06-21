@@ -10,7 +10,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
     * [.PermaAPI](#module_index.PermaAPI)
         * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
         * [.validateArchiveGuid(guid)](#module_index.PermaAPI+validateArchiveGuid) ⇒ <code>string</code>
-        * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>Promise.&lt;PermaPublicArchivesPage&gt;</code>
+        * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
         * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
@@ -18,6 +18,10 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+        * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+        * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -39,7 +43,7 @@ catch(err) { ... }
 * [.PermaAPI](#module_index.PermaAPI)
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
     * [.validateArchiveGuid(guid)](#module_index.PermaAPI+validateArchiveGuid) ⇒ <code>string</code>
-    * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>Promise.&lt;PermaPublicArchivesPage&gt;</code>
+    * [.pullPublicArchivesPage([limit], [offset])](#module_index.PermaAPI+pullPublicArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
     * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
@@ -47,6 +51,10 @@ catch(err) { ... }
     * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+    * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+    * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+    * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+    * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -73,7 +81,7 @@ Throws an exception otherwise.
 
 <a name="module_index.PermaAPI+pullPublicArchivesPage"></a>
 
-#### permaAPI.pullPublicArchivesPage([limit], [offset]) ⇒ <code>Promise.&lt;PermaPublicArchivesPage&gt;</code>
+#### permaAPI.pullPublicArchivesPage([limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
 Fetches a subset of all the available public archives.
 Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives).
 
@@ -159,7 +167,7 @@ Requires an API key.
 <a name="module_index.PermaAPI+editArchive"></a>
 
 #### permaAPI.editArchive(guid, [options]) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-Edit archive details
+Edit details for a given archive. 
 Wraps [PATCH] `/v1/archives/{guid}` (https://perma.cc/docs/developer#move-to-dark-archive).
 Requires an API key.
 
@@ -172,4 +180,53 @@ Requires an API key.
 | [options.isPrivate] | <code>boolean</code> | If set, will toggle an archive between public and private mode. |
 | [options.title] | <code>string</code> | If set, will update the archive's title. |
 | [options.notes] | <code>string</code> | If set, will update the archives notes |
+
+<a name="module_index.PermaAPI+moveArchive"></a>
+
+#### permaAPI.moveArchive(guid, folderId) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+Moves an archive to a different folder. 
+Wraps [PATCH] `/v1/folders/{folderId}/archives/{guid}` (https://perma.cc/docs/developer#move-archive). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guid | <code>string</code> | Identifier of the archive to move. |
+| folderId | <code>number</code> | Identifier of the folder to move the archive into. |
+
+<a name="module_index.PermaAPI+deleteArchive"></a>
+
+#### permaAPI.deleteArchive() ⇒ <code>Promise.&lt;Boolean&gt;</code>
+Deletes an archive. 
+Wraps [DELETE] `/v1/archives/{guid}` (https://perma.cc/docs/developer#delete-archive). 
+Required an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+<a name="module_index.PermaAPI+pullArchivesPage"></a>
+
+#### permaAPI.pullArchivesPage([limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+Fetches a subset of all the archives the user has access to. 
+Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [limit] | <code>number</code> | <code>10</code> | 
+| [offset] | <code>number</code> | <code>0</code> | 
+
+<a name="module_index.PermaAPI+createArchiveBatch"></a>
+
+#### permaAPI.createArchiveBatch(urls, folderId) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+Requests the creation of a batch of archives. 
+Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| urls | <code>Array.&lt;string&gt;</code> | Must contain valid urls. |
+| folderId | <code>number</code> | Destination folder of the resulting archives. |
 

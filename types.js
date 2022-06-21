@@ -105,10 +105,21 @@
  */
 
 /**
- * Object returned by the [GET] `/v1/public/archives/` endpoint. Paginated.
- * @typedef {Object} PermaPublicArchivesPage
+ * Object returned by the [GET] `/v1[/public/]archives/` endpoint(s). Paginated.
+ * @typedef {Object} PermaArchivesPage
  * @property {PermaPaginationMeta} meta 
  * @property {PermaArchive[]} objects
+ */
+
+/**
+ * Object returned by the [POST] `/v1/archives/batches` endpoint.
+ * @typedef {Object} PermaArchivesBatch
+ * @property {number} id
+ * @property {string} started_on - Ex: 2022-01-12T16:11:19.516152Z
+ * @property {number} created_by - User id
+ * @property {PermaCaptureJob[]} capture_jobs
+ * @property {PermaFolder} target_folder
+ * @property {number} links_remaining
  */
 
 //------------------------------------------------------------------------------

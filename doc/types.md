@@ -14,7 +14,8 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
     * [~PermaUser](#module_types..PermaUser) : <code>Object</code>
     * [~PermaFolder](#module_types..PermaFolder) : <code>Object</code>
     * [~PermaArchive](#module_types..PermaArchive) : <code>Object</code>
-    * [~PermaPublicArchivesPage](#module_types..PermaPublicArchivesPage) : <code>Object</code>
+    * [~PermaArchivesPage](#module_types..PermaArchivesPage) : <code>Object</code>
+    * [~PermaArchivesBatch](#module_types..PermaArchivesBatch) : <code>Object</code>
     * [~PermaCapture](#module_types..PermaCapture) : <code>Object</code>
     * [~PermaCaptureJob](#module_types..PermaCaptureJob) : <code>Object</code>
 
@@ -140,10 +141,10 @@ Information about a given archive (as returned by the API).
 | [archive_timestamp] | <code>string</code> | Ex: 2022-01-12T16:11:19.516152Z |
 | [organization] | <code>PermaOrganization</code> |  |
 
-<a name="module_types..PermaPublicArchivesPage"></a>
+<a name="module_types..PermaArchivesPage"></a>
 
-### types~PermaPublicArchivesPage : <code>Object</code>
-Object returned by the [GET] `/v1/public/archives/` endpoint. Paginated.
+### types~PermaArchivesPage : <code>Object</code>
+Object returned by the [GET] `/v1[/public/]archives/` endpoint(s). Paginated.
 
 **Kind**: inner typedef of [<code>types</code>](#module_types)  
 **Properties**
@@ -152,6 +153,23 @@ Object returned by the [GET] `/v1/public/archives/` endpoint. Paginated.
 | --- | --- |
 | meta | <code>PermaPaginationMeta</code> | 
 | objects | <code>Array.&lt;PermaArchive&gt;</code> | 
+
+<a name="module_types..PermaArchivesBatch"></a>
+
+### types~PermaArchivesBatch : <code>Object</code>
+Object returned by the [POST] `/v1/archives/batches` endpoint.
+
+**Kind**: inner typedef of [<code>types</code>](#module_types)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> |  |
+| started_on | <code>string</code> | Ex: 2022-01-12T16:11:19.516152Z |
+| created_by | <code>number</code> | User id |
+| capture_jobs | <code>Array.&lt;PermaCaptureJob&gt;</code> |  |
+| target_folder | <code>PermaFolder</code> |  |
+| links_remaining | <code>number</code> |  |
 
 <a name="module_types..PermaCapture"></a>
 
