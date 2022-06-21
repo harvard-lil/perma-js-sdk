@@ -79,6 +79,13 @@
  * @property {boolean} read_only
  */
 
+/**
+ * Object returned by the [GET] `/v1/folder/{parentFolderId}/folders` endpoint(s). Paginated.
+ * @typedef {Object} PermaFoldersPage
+ * @property {PermaPaginationMeta} meta 
+ * @property {PermaFolder[]} objects
+ */
+
 //------------------------------------------------------------------------------
 // Archives
 //------------------------------------------------------------------------------

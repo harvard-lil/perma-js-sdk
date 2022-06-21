@@ -116,21 +116,19 @@ export class PermaAPI {
    * @async
    */
   async #parseAPIResponse(response) {
+    let data = {};
+    let message = "";
+
     // Checking that we received a Fetch API response
     if (!(`status` in response) || !(`json` in response)) {
       throw new Error(`#parseAPIResponse expects a Fetch API Response object.`);
     }
 
-    let data = {};
-    let message = "";
-
     // Try to parse data as JSON.
     try {
       data = await response.json();
     }
-    catch(err) {
-      // Some routes do not return any data.
-    }
+    catch(err) { /*Some routes do not return any data. */ }
 
     // Return parsed data "as is" if HTTP 2XX
     if (Math.floor(response.status / 100) === 2) {
@@ -471,7 +469,7 @@ export class PermaAPI {
    * Requires an API key.
    * 
    * @param {number} parentFolderId - Id of the parent folder (required).
-   * @param {string} name
+   * @param {string} name - Name to be given to the new folder. 
    * @return {Promise<PermaFolder>} 
    */
   async createFolder(parentFolderId, name) {
@@ -515,6 +513,38 @@ export class PermaAPI {
       method: "GET",
       headers: { ...authorizationHeader },
     });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Lists direct children of a given folder. 
+   * Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders). 
+   * Requires an API key.
+   * 
+   * @param {number} parentFolderId - Id of the parent folder (required).
+   * @param {number} [limit=100]
+   * @param {number} [offset=0]
+   * @return {Promise<PermaFoldersPage>}
+   * @async
+   */
+  async pullFolderChildren(parentFolderId, limit=100, offset=0) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    parentFolderId = parseInt(String(parentFolderId));
+    if (isNaN(parentFolderId)) {
+      throw new Error("`parentFolderId` needs to be interpretable as an integer.");
+    }
+
+    const searchParams = new URLSearchParams({ limit, offset });
+
+    const response = await this.#fetch(
+      `${this.#baseUrl}/v1/folders/${parentFolderId}/folders?${searchParams}`,
+      {
+        method: "GET",
+        headers: { ...authorizationHeader },
+      }
+    );
 
     return await this.#parseAPIResponse(response);
   }

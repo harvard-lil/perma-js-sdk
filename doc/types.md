@@ -13,6 +13,7 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
     * [~PermaOrganizationsPage](#module_types..PermaOrganizationsPage) : <code>Object</code>
     * [~PermaUser](#module_types..PermaUser) : <code>Object</code>
     * [~PermaFolder](#module_types..PermaFolder) : <code>Object</code>
+    * [~PermaFoldersPage](#module_types..PermaFoldersPage) : <code>Object</code>
     * [~PermaArchive](#module_types..PermaArchive) : <code>Object</code>
     * [~PermaArchivesPage](#module_types..PermaArchivesPage) : <code>Object</code>
     * [~PermaArchivesBatch](#module_types..PermaArchivesBatch) : <code>Object</code>
@@ -112,6 +113,19 @@ Information about a given folder (as returned by the API).
 | [is_sponsored_root_folder] | <code>boolean</code> |  |
 | [sponsored_by] | <code>PermaUser</code> |  |
 | read_only | <code>boolean</code> |  |
+
+<a name="module_types..PermaFoldersPage"></a>
+
+### types~PermaFoldersPage : <code>Object</code>
+Object returned by the [GET] `/v1/folder/{parentFolderId}/folders` endpoint(s). Paginated.
+
+**Kind**: inner typedef of [<code>types</code>](#module_types)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| meta | <code>PermaPaginationMeta</code> | 
+| objects | <code>Array.&lt;PermaFolder&gt;</code> | 
 
 <a name="module_types..PermaArchive"></a>
 

@@ -24,6 +24,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
         * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -59,6 +60,7 @@ catch(err) { ... }
     * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
     * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+    * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -247,7 +249,7 @@ Requires an API key.
 | Param | Type | Description |
 | --- | --- | --- |
 | parentFolderId | <code>number</code> | Id of the parent folder (required). |
-| name | <code>string</code> |  |
+| name | <code>string</code> | Name to be given to the new folder. |
 
 <a name="module_index.PermaAPI+pullFolderDetails"></a>
 
@@ -261,4 +263,19 @@ Requires an API key.
 | Param | Type |
 | --- | --- |
 | folderId | <code>number</code> | 
+
+<a name="module_index.PermaAPI+pullFolderChildren"></a>
+
+#### permaAPI.pullFolderChildren(parentFolderId, [limit], [offset]) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+Lists direct children of a given folder. 
+Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| parentFolderId | <code>number</code> |  | Id of the parent folder (required). |
+| [limit] | <code>number</code> | <code>100</code> |  |
+| [offset] | <code>number</code> | <code>0</code> |  |
 
