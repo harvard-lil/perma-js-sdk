@@ -12,7 +12,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
         * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
         * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
-        * [.validatePaginationLimits(limit, offset)](#module_index.PermaAPI+validatePaginationLimits) ⇒ <code>Object</code>
+        * [.validatePagination(limit, offset)](#module_index.PermaAPI+validatePagination) ⇒ <code>Object</code>
         * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
@@ -55,7 +55,7 @@ catch(err) { ... }
     * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
     * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
     * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
-    * [.validatePaginationLimits(limit, offset)](#module_index.PermaAPI+validatePaginationLimits) ⇒ <code>Object</code>
+    * [.validatePagination(limit, offset)](#module_index.PermaAPI+validatePagination) ⇒ <code>Object</code>
     * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
@@ -126,9 +126,9 @@ Note: Only checks format.
 | --- | --- |
 | organizationId | <code>number</code> | 
 
-<a name="module_index.PermaAPI+validatePaginationLimits"></a>
+<a name="module_index.PermaAPI+validatePagination"></a>
 
-#### permaAPI.validatePaginationLimits(limit, offset) ⇒ <code>Object</code>
+#### permaAPI.validatePagination(limit, offset) ⇒ <code>Object</code>
 Checks that a given pagination limit and offset pair is valid.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  

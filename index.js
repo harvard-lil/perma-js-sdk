@@ -150,7 +150,7 @@ export class PermaAPI {
    * @param {number} offset
    * @return {{limit: number, offset: number}} 
    */
-  validatePaginationLimits(limit, offset) {
+  validatePagination(limit, offset) {
     limit = parseInt(String(limit));
     offset = parseInt(String(offset));
 
@@ -215,9 +215,8 @@ export class PermaAPI {
    * @async
    */
   async pullPublicArchives(limit = 10, offset = 0) {
-    this.validatePaginationLimits(limit, offset); // Will throw if invalid
-    const searchParams = new URLSearchParams({ limit, offset });
-    
+    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
+
     const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
   }
@@ -244,11 +243,9 @@ export class PermaAPI {
    * @async
    */
   async pullCurrentUser() {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     const response = await this.#fetch(`${this.#baseUrl}/v1/user`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -263,11 +260,9 @@ export class PermaAPI {
    * @async
    */
   async pullOrganizationsList() {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     const response = await this.#fetch(`${this.#baseUrl}/v1/organizations`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -283,13 +278,11 @@ export class PermaAPI {
    * @async
    */
   async pullOrganization(organizationId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     organizationId = this.validateOrganizationId(organizationId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${organizationId}`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -310,8 +303,6 @@ export class PermaAPI {
    * @async
    */
   async createArchive(url, options = { title: null, folder: null, isPrivate: false, notes: "" }) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     const body = {};
 
     try {
@@ -338,7 +329,7 @@ export class PermaAPI {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...authorizationHeader,
+        ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify(body),
     });
@@ -357,8 +348,6 @@ export class PermaAPI {
    * @async
    */
    async createArchiveBatch(urls, folderId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     for(let url of urls) {
       new URL(url); // Will throw if not a valid URL
     }
@@ -369,7 +358,7 @@ export class PermaAPI {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...authorizationHeader,
+        ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify({
         urls: urls,
@@ -390,13 +379,11 @@ export class PermaAPI {
    * @async
    */
   async pullArchive(archiveId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     archiveId = this.validateArchiveId(archiveId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -416,10 +403,7 @@ export class PermaAPI {
    * @async
    */
   async editArchive(archiveId, options = { isPrivate: null, title: null, notes: null }) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     const body = {};
-    archiveId = this.validateArchiveId(archiveId);
 
     if (options.title !== null) {
       body.title = String(options.title);
@@ -433,11 +417,13 @@ export class PermaAPI {
       body.is_private = Boolean(options.isPrivate);
     }
 
+    archiveId = this.validateArchiveId(archiveId);
+
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        ...authorizationHeader,
+        ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify(body),
     });
@@ -456,14 +442,12 @@ export class PermaAPI {
    * @async 
    */
   async moveArchive(archiveId, folderId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     folderId = this.validateFolderId(folderId);
     archiveId = this.validateArchiveId(archiveId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
       method: "PATCH",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -478,13 +462,11 @@ export class PermaAPI {
    * @async
    */
   async deleteArchive(archiveId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     archiveId = this.validateArchiveId(archiveId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "DELETE",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     await this.#parseAPIResponse(response); // Will throw if deletion failed
@@ -502,14 +484,11 @@ export class PermaAPI {
    * @async
    */
   async pullArchives(limit = 10, offset = 0) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-    
-    this.validatePaginationLimits(limit, offset); // Will throw if invalid
-    const searchParams = new URLSearchParams({ limit, offset });
+    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -525,15 +504,13 @@ export class PermaAPI {
    * @return {Promise<PermaFolder>} 
    */
   async createFolder(parentFolderId, name) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     parentFolderId = this.validateFolderId(parentFolderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...authorizationHeader,
+        ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify({name: String(name)}),
     });
@@ -551,13 +528,11 @@ export class PermaAPI {
    * @async
    */
   async pullFolderDetails(folderId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
       method: "GET",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -575,9 +550,7 @@ export class PermaAPI {
    * @async
    */
   async pullFolderChildren(parentFolderId, limit=100, offset=0) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
-    this.validatePaginationLimits(limit, offset); // Will throw if invalid
+    this.validatePagination(limit, offset); // Will throw if invalid
     const searchParams = new URLSearchParams({limit, offset });
 
     parentFolderId = this.validateFolderId(parentFolderId);
@@ -586,7 +559,7 @@ export class PermaAPI {
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders?${searchParams}`,
       {
         method: "GET",
-        headers: { ...authorizationHeader },
+        headers: { ...this.#getAuthorizationHeader() },
       }
     );
 
@@ -605,10 +578,7 @@ export class PermaAPI {
    * @async 
    */
   async pullFolderArchives(folderId, limit=10, offset=0) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
-    this.validatePaginationLimits(limit, offset); // Will throw if invalid
-    const searchParams = new URLSearchParams({ limit, offset });
+    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
     folderId = this.validateFolderId(folderId);
 
@@ -616,7 +586,7 @@ export class PermaAPI {
       `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
       {
         method: "GET",
-        headers: { ...authorizationHeader },
+        headers: { ...this.#getAuthorizationHeader() },
       }
     );
 
@@ -635,20 +605,19 @@ export class PermaAPI {
    * @async
    */
   async editFolder(folderId, options = {name: null}) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-    folderId = this.validateFolderId(folderId);
-
     const body = {};
 
     if (options.name) {
       body.name = String(options.name);
     }
 
+    folderId = this.validateFolderId(folderId);
+
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        ...authorizationHeader,
+        ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify(body),
     });
@@ -667,8 +636,6 @@ export class PermaAPI {
    * @async
    */
   async moveFolder(folderId, parentFolderId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     folderId = this.validateFolderId(folderId);
     parentFolderId = this.validateFolderId(parentFolderId);
 
@@ -676,7 +643,7 @@ export class PermaAPI {
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders/${folderId}`,
       {
         method: "PUT",
-        headers: { ...authorizationHeader },
+        headers: { ...this.#getAuthorizationHeader() },
       }
     );
 
@@ -692,13 +659,11 @@ export class PermaAPI {
    * @return {Promise<boolean>}
    */
   async deleteFolder(folderId) {
-    const authorizationHeader = this.#getAuthorizationHeader();
-
     folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
       method: "DELETE",
-      headers: { ...authorizationHeader },
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     await this.#parseAPIResponse(response); // Will throw if deletion failed
