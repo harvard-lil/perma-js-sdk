@@ -91,17 +91,17 @@ export class PermaAPI {
   /**
    * Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
    * Throws an exception otherwise.
-   * @param {string} guid
+   * @param {string} archiveId
    * @return {string}
    */
-  validateArchiveGuid(guid) {
-    guid = String(guid);
+  validateArchiveId(archiveId) {
+    archiveId = String(archiveId);
 
-    if (!guid.match(/^[A-Z0-9]{4}\-[A-Z0-9]{4}$/)) {
-      throw new Error("`guid` must be a string representing an archive id (ex: ABCD-1234)");
+    if (!archiveId.match(/^[A-Z0-9]{4}\-[A-Z0-9]{4}$/)) {
+      throw new Error("`archiveId` must be a string representing an archive id (ex: ABCD-1234)");
     }
 
-    return guid;
+    return archiveId;
   }
 
   /**
@@ -161,14 +161,14 @@ export class PermaAPI {
 
   /**
    * Fetches details of a given public archive.
-   * Wraps [GET] `/v1/public/archives/{guid}` (https://perma.cc/docs/developer#get-one-archive).
-   * @param {string} guid
+   * Wraps [GET] `/v1/public/archives/{archiveId}` (https://perma.cc/docs/developer#get-one-archive).
+   * @param {string} archiveId
    * @return {Promise<PermaArchive>}
    * @async
    */
-  async pullPublicArchive(guid) {
-    guid = this.validateArchiveGuid(guid);
-    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives/${guid}`);
+  async pullPublicArchive(archiveId) {
+    archiveId = this.validateArchiveId(archiveId);
+    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives/${archiveId}`);
     return await this.#parseAPIResponse(response);
   }
 
@@ -257,7 +257,8 @@ export class PermaAPI {
     try {
       url = new URL(url).href;
       body.url = url;
-    } catch (err) {
+    } 
+    catch (err) {
       throw new Error("`url` needs to be a valid url.");
     }
 
@@ -327,19 +328,19 @@ export class PermaAPI {
 
   /**
    * Fetches details of a given archive.
-   * Wraps [GET] `/v1/archives/{guid}` (https://perma.cc/docs/developer#view-details-of-one-archive).
+   * Wraps [GET] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#view-details-of-one-archive).
    * Requires an API key.
    *
-   * @param {string} guid
+   * @param {string} archiveId
    * @return {Promise<PermaArchive>}
    * @async
    */
-  async pullArchive(guid) {
+  async pullArchive(archiveId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    guid = this.validateArchiveGuid(guid);
+    archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -349,10 +350,10 @@ export class PermaAPI {
 
   /**
    * Edit details for a given archive. 
-   * Wraps [PATCH] `/v1/archives/{guid}` (https://perma.cc/docs/developer#move-to-dark-archive).
+   * Wraps [PATCH] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#move-to-dark-archive).
    * Requires an API key.
    *
-   * @param {string} guid
+   * @param {string} archiveId
    * @param {Object} [options]
    * @param {?boolean} [options.isPrivate] - If set, will toggle an archive between public and private mode.
    * @param {?string} [options.title] - If set, will update the archive's title.
@@ -360,11 +361,11 @@ export class PermaAPI {
    * @return {Promise<PermaArchive>}
    * @async
    */
-  async editArchive(guid, options = { isPrivate: null, title: null, notes: null }) {
+  async editArchive(archiveId, options = { isPrivate: null, title: null, notes: null }) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
     const body = {};
-    guid = this.validateArchiveGuid(guid);
+    archiveId = this.validateArchiveId(archiveId);
 
     if (options.title !== null) {
       body.title = String(options.title);
@@ -378,7 +379,7 @@ export class PermaAPI {
       body.is_private = Boolean(options.isPrivate);
     }
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -392,15 +393,15 @@ export class PermaAPI {
 
   /**
    * Moves an archive to a different folder. 
-   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{guid}` (https://perma.cc/docs/developer#move-archive). 
+   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive). 
    * Requires an API key.
    * 
-   * @param {string} guid - Identifier of the archive to move.
+   * @param {string} archiveId - Identifier of the archive to move.
    * @param {number} folderId - Identifier of the folder to move the archive into. 
    * @return {Promise<PermaArchive>}
    * @async 
    */
-  async moveArchive(guid, folderId) {
+  async moveArchive(archiveId, folderId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
     folderId = parseInt(String(folderId));
@@ -408,9 +409,9 @@ export class PermaAPI {
       throw new Error("`folderId` needs to be interpretable as an integer.");
     }
 
-    guid = this.validateArchiveGuid(guid);
+    archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
       method: "PATCH",
       headers: { ...authorizationHeader },
     });
@@ -420,18 +421,18 @@ export class PermaAPI {
 
   /**
    * Deletes an archive. 
-   * Wraps [DELETE] `/v1/archives/{guid}` (https://perma.cc/docs/developer#delete-archive). 
+   * Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive). 
    * Required an API key.
    * 
    * @return {Promise<Boolean>}
    * @async
    */
-  async deleteArchive(guid) {
+  async deleteArchive(archiveId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    guid = this.validateArchiveGuid(guid);
+    archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${guid}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "DELETE",
       headers: { ...authorizationHeader },
     });
@@ -577,6 +578,43 @@ export class PermaAPI {
         headers: { ...authorizationHeader },
       }
     );
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Edit details for a given folder. 
+   * Wraps [PATCH] `/v1/folders/{folderId}/` (https://perma.cc/docs/developer#rename-folder).
+   * Requires an API key.
+   *
+   * @param {number} folderId
+   * @param {Object} [options]
+   * @param {?string} [options.name] - If set, will update the folder's name.
+   * @return {Promise<PermaFolder>}
+   * @async
+   */
+  async editFolder(folderId, options = {name: null}) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    const body = {};
+
+    if (options.name) {
+      body.name = String(options.name);
+    }
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader,
+      },
+      body: JSON.stringify(body),
+    });
 
     return await this.#parseAPIResponse(response);
   }
