@@ -153,7 +153,7 @@ export class PermaAPI {
    * @return {Promise<PermaArchivesPage>}
    * @async
    */
-  async pullPublicArchivesPage(limit = 10, offset = 0) {
+  async pullPublicArchives(limit = 10, offset = 0) {
     const searchParams = new URLSearchParams({ limit, offset });
     const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
@@ -450,7 +450,7 @@ export class PermaAPI {
    * @return {Promise<PermaArchivesPage>}
    * @async
    */
-  async pullArchivesPage(limit = 10, offset = 0) {
+  async pullArchives(limit = 10, offset = 0) {
     const authorizationHeader = this.#getAuthorizationHeader();
     
     const searchParams = new URLSearchParams({ limit, offset });
@@ -540,6 +540,38 @@ export class PermaAPI {
 
     const response = await this.#fetch(
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders?${searchParams}`,
+      {
+        method: "GET",
+        headers: { ...authorizationHeader },
+      }
+    );
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Pulls a list of archives from a specific folder. 
+   * Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives). 
+   * Requires an API key.
+   * 
+   * @param {number} folderId
+   * @param {number} [limit=10]
+   * @param {number} [offset=0]
+   * @return {Promise<PermaArchivesPage>}
+   * @async 
+   */
+  async pullFolderArchives(folderId, limit=10, offset=0) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    const searchParams = new URLSearchParams({ limit, offset });
+
+    const response = await this.#fetch(
+      `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
       {
         method: "GET",
         headers: { ...authorizationHeader },
