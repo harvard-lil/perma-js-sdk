@@ -214,22 +214,22 @@ export class PermaAPI {
 
   /**
    * Fetches details an organization.
-   * Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization).
+   * Wraps [GET] `/v1/organization/{organizationId}` (https://perma.cc/docs/developer#get-one-organization).
    * Requires an API key.
    *
-   * @param {number} id
+   * @param {number} organizationId
    * @return {Promise<PermaOrganization>}
    * @async
    */
-  async pullOrganization(id) {
+  async pullOrganization(organizationId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    id = parseInt(String(id));
-    if (isNaN(id)) {
-      throw new Error("`id` needs to be interpretable as an integer.");
+    organizationId = parseInt(String(organizationId));
+    if (isNaN(organizationId)) {
+      throw new Error("`organizationId` needs to be interpretable as an integer.");
     }
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${id}`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${organizationId}`, {
       method: "GET",
       headers: { ...authorizationHeader },
     });
@@ -467,28 +467,53 @@ export class PermaAPI {
 
   /**
    * Creates a folder.
-   * Wraps [POST] `/v1/folders/{parentId}/folders/` (https://perma.cc/docs/developer#create-folder). 
+   * Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
    * Requires an API key.
    * 
-   * @param {number} parentId - Id of the parent folder.
+   * @param {number} parentFolderId - Id of the parent folder (required).
    * @param {string} name
    * @return {Promise<PermaFolder>} 
    */
-  async createFolder(parentId, name) {
+  async createFolder(parentFolderId, name) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    parentId = parseInt(String(parentId));
-    if (isNaN(parentId)) {
-      throw new Error("`parentId` needs to be interpretable as an integer.");
+    parentFolderId = parseInt(String(parentFolderId));
+    if (isNaN(parentFolderId)) {
+      throw new Error("`parentFolderId` needs to be interpretable as an integer.");
     }
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentId}/folders`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...authorizationHeader,
       },
       body: JSON.stringify({name: String(name)}),
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Retrieves the details of a given folder. 
+   * Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details). 
+   * Requires an API key.
+   * 
+   * @param {number} folderId 
+   * @return {Promise<PermaFolder>}
+   * @async
+   */
+  async pullFolderDetails(folderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
+      method: "GET",
+      headers: { ...authorizationHeader },
     });
 
     return await this.#parseAPIResponse(response);

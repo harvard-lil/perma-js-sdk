@@ -14,7 +14,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
         * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
-        * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
+        * [.pullOrganization(organizationId)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
         * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
         * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
@@ -22,7 +22,8 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-        * [.createFolder(parentId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -48,7 +49,7 @@ catch(err) { ... }
     * [.pullPublicArchive(guid)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
     * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
-    * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
+    * [.pullOrganization(organizationId)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
     * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
     * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
@@ -56,7 +57,8 @@ catch(err) { ... }
     * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
     * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-    * [.createFolder(parentId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+    * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+    * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -124,16 +126,16 @@ Requires an API key.
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 <a name="module_index.PermaAPI+pullOrganization"></a>
 
-#### permaAPI.pullOrganization(id) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
+#### permaAPI.pullOrganization(organizationId) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
 Fetches details an organization.
-Wraps [GET] `/v1/organization/{id}` (https://perma.cc/docs/developer#get-one-organization).
+Wraps [GET] `/v1/organization/{organizationId}` (https://perma.cc/docs/developer#get-one-organization).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
 | Param | Type |
 | --- | --- |
-| id | <code>number</code> | 
+| organizationId | <code>number</code> | 
 
 <a name="module_index.PermaAPI+createArchive"></a>
 
@@ -235,15 +237,28 @@ Requires an API key.
 
 <a name="module_index.PermaAPI+createFolder"></a>
 
-#### permaAPI.createFolder(parentId, name) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+#### permaAPI.createFolder(parentFolderId, name) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 Creates a folder.
-Wraps [POST] `/v1/folders/{parentId}/folders/` (https://perma.cc/docs/developer#create-folder). 
+Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| parentId | <code>number</code> | Id of the parent folder. |
+| parentFolderId | <code>number</code> | Id of the parent folder (required). |
 | name | <code>string</code> |  |
+
+<a name="module_index.PermaAPI+pullFolderDetails"></a>
+
+#### permaAPI.pullFolderDetails(folderId) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+Retrieves the details of a given folder. 
+Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| folderId | <code>number</code> | 
 
