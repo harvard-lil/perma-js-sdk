@@ -73,6 +73,11 @@ export class PermaAPI {
         return await module.default(...args);
       };
     }
+
+    // Use a version of `fetch()` bound to `window` if we're in a browser context
+    if ("fetch" in globalThis && "window" in globalThis) {
+      this.#fetch = globalThis.fetch.bind(window);
+    }
   }
 
   /**
@@ -235,14 +240,14 @@ export class PermaAPI {
   }
 
   /**
-   * Fetches account details for the signed-in user.
+   * Fetches account details for the current user.
    * Wraps [GET] `/v1/user/` (https://perma.cc/docs/developer#developer-users).
    * Requires an API key.
    *
    * @return {Promise<PermaUser>}
    * @async
    */
-  async pullCurrentUser() {
+  async pullUser() {
     const response = await this.#fetch(`${this.#baseUrl}/v1/user`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
