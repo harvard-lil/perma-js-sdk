@@ -19,6 +19,7 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
     * [~PermaArchivesBatch](#module_types..PermaArchivesBatch) : <code>Object</code>
     * [~PermaCapture](#module_types..PermaCapture) : <code>Object</code>
     * [~PermaCaptureJob](#module_types..PermaCaptureJob) : <code>Object</code>
+    * [~PermaCaptureJobsPage](#module_types..PermaCaptureJobsPage) : <code>Object</code>
 
 <a name="module_types..PermaApiError"></a>
 
@@ -224,4 +225,17 @@ Information about an individual capture job (as returned by the API).
 | queue_position | <code>number</code> |  |
 | title | <code>string</code> |  |
 | user_deleted | <code>boolean</code> |  |
+
+<a name="module_types..PermaCaptureJobsPage"></a>
+
+### types~PermaCaptureJobsPage : <code>Object</code>
+Object returned by the [GET] `/v1/capture_job` endpoint(s). Paginated.
+
+**Kind**: inner typedef of [<code>types</code>](#module_types)  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| meta | <code>PermaPaginationMeta</code> | 
+| objects | <code>Array.&lt;PermaCaptureJob&gt;</code> | 
 

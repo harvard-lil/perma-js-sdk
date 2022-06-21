@@ -89,6 +89,47 @@ export class PermaAPI {
   }
 
   /**
+   * Tries to parse an API response as JSON.
+   *
+   * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information.
+   * For example: `HTTP 401 Invalid token.`.
+   *
+   * @param {Response} response - Fetch API response
+   * @returns {Promise<Object>}
+   * @private
+   * @async
+   */
+   async #parseAPIResponse(response) {
+    let data = {};
+    let message = "";
+
+    // Checking that we received a Fetch API response
+    if (!(`status` in response) || !(`json` in response)) {
+      throw new Error(`#parseAPIResponse expects a Fetch API Response object.`);
+    }
+
+    // Try to parse data as JSON.
+    try {
+      data = await response.json();
+    }
+    catch(err) { /*Some routes do not return any data. */ }
+
+    // Return parsed data "as is" if HTTP 2XX
+    if (Math.floor(response.status / 100) === 2) {
+      return data;
+    }
+
+    // Throw error with details given by the API (if any) otherwise
+    message = `HTTP ${response.status}`;
+
+    if (data.detail) { // See `PermaApiError`
+      message += ` ${data.detail}`;
+    }
+
+    throw new Error(message);
+  }
+
+  /**
    * Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
    * Throws an exception otherwise. 
    * Note: Only checks format. 
@@ -166,47 +207,6 @@ export class PermaAPI {
   }
 
   /**
-   * Tries to parse an API response as JSON.
-   *
-   * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information.
-   * For example: `HTTP 401 Invalid token.`.
-   *
-   * @param {Response} response - Fetch API response
-   * @returns {Promise<Object>}
-   * @private
-   * @async
-   */
-  async #parseAPIResponse(response) {
-    let data = {};
-    let message = "";
-
-    // Checking that we received a Fetch API response
-    if (!(`status` in response) || !(`json` in response)) {
-      throw new Error(`#parseAPIResponse expects a Fetch API Response object.`);
-    }
-
-    // Try to parse data as JSON.
-    try {
-      data = await response.json();
-    }
-    catch(err) { /*Some routes do not return any data. */ }
-
-    // Return parsed data "as is" if HTTP 2XX
-    if (Math.floor(response.status / 100) === 2) {
-      return data;
-    }
-
-    // Throw error with details given by the API (if any) otherwise
-    message = `HTTP ${response.status}`;
-
-    if (data.detail) { // See `PermaApiError`
-      message += ` ${data.detail}`;
-    }
-
-    throw new Error(message);
-  }
-
-  /**
    * Fetches a subset of all the available public archives.
    * Wraps [GET] `/v1/public/archives` (https://perma.cc/docs/developer#get-all-public-archives).
    * @param {number} [limit=10]
@@ -259,7 +259,7 @@ export class PermaAPI {
    * @return {Promise<PermaOrganizationsPage>}
    * @async
    */
-  async pullOrganizationsList() {
+  async pullOrganizations() {
     const response = await this.#fetch(`${this.#baseUrl}/v1/organizations`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
@@ -332,38 +332,6 @@ export class PermaAPI {
         ...this.#getAuthorizationHeader(),
       },
       body: JSON.stringify(body),
-    });
-
-    return await this.#parseAPIResponse(response);
-  }
-
-  /**
-   * Requests the creation of a batch of archives. 
-   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
-   * Requires an API key.
-   * 
-   * @param {string[]} urls - Must contain valid urls.
-   * @param {number} folderId - Destination folder of the resulting archives.
-   * @return {Promise<PermaArchivesBatch>}
-   * @async
-   */
-   async createArchiveBatch(urls, folderId) {
-    for(let url of urls) {
-      new URL(url); // Will throw if not a valid URL
-    }
-
-    folderId = this.validateFolderId(folderId);
-
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...this.#getAuthorizationHeader(),
-      },
-      body: JSON.stringify({
-        urls: urls,
-        target_folder: folderId
-      }),
     });
 
     return await this.#parseAPIResponse(response);
@@ -519,7 +487,7 @@ export class PermaAPI {
    * @return {Promise<PermaFolder>}
    * @async
    */
-  async pullFolderDetails(folderId) {
+  async pullFolder(folderId) {
     folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
@@ -684,6 +652,96 @@ export class PermaAPI {
     );
 
     return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Retrieves the full list of ongoing capture jobs for the current user. 
+   * Wraps [GET] `/v1/capture_jobs/` (https://perma.cc/docs/developer#get-user-capture-jobs). 
+   * Requires an API key.
+   * 
+   * @param {number} [limit=100]
+   * @param {number} [offset=0]
+   * @returns {Promise<PermaCaptureJobsPage>}
+   */
+  async pullOngoingCaptureJobs(limit=100, offset=0) {
+    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/capture_jobs?${searchParams}`, {
+      method: "GET",
+      headers: { ...this.#getAuthorizationHeader() },
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Pulls the latest capture job details for a given archive id. 
+   * Wraps [GET] `/v1/capture_jobs/{archiveId}` (https://perma.cc/docs/developer#get-archive-status). 
+   * Requires an API key.
+   * 
+   * @param {string} archiveId
+   * @returns {Promise<PermaCaptureJob>}
+   */
+  async pullArchiveCaptureJob(archiveId) {
+    archiveId = this.validateArchiveId(archiveId);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/capture_jobs/${archiveId}`, {
+      method: "GET",
+      headers: { ...this.#getAuthorizationHeader() },
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Creates multiple archives at once (batch).
+   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+   * Requires an API key.
+   * 
+   * @param {string[]} urls - Must contain valid urls.
+   * @param {number} folderId - Destination folder of the resulting archives.
+   * @return {Promise<PermaArchivesBatch>}
+   * @async
+   */
+   async createArchivesBatch(urls, folderId) {
+    for(let url of urls) {
+      new URL(url); // Will throw if not a valid URL
+    }
+
+    folderId = this.validateFolderId(folderId);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...this.#getAuthorizationHeader(),
+      },
+      body: JSON.stringify({
+        urls: urls,
+        target_folder: folderId
+      }),
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Pulls the status of a given archives batch.    
+   * Wraps [GET] `/v1/archives/batches/{batchId}` (https://perma.cc/docs/developer#get-batch-status). 
+   * Requires an API key.
+   * 
+   * @param {number} batchId 
+   * @return {Promise<PermaArchivesBatch>}
+   */
+   async pullArchivesBatch(batchId) {
+    batchId = parseInt(String(batchId));
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches/${batchId}`, {
+      method: "GET",
+      headers: { ...this.#getAuthorizationHeader() },
+    });
+
+    return await this.#parseAPIResponse(response);    
   }
 
 }

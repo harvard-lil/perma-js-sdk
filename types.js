@@ -159,3 +159,10 @@
  * @property {string} title
  * @property {boolean} user_deleted
  */
+
+/**
+ * Object returned by the [GET] `/v1/capture_job` endpoint(s). Paginated.
+ * @typedef {Object} PermaCaptureJobsPage
+ * @property {PermaPaginationMeta} meta 
+ * @property {PermaCaptureJob[]} objects
+ */
