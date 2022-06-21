@@ -116,15 +116,29 @@ export class PermaAPI {
    * @async
    */
   async #parseAPIResponse(response) {
-    const data = await response.json();
+    // Checking that we received a Fetch API response
+    if (!(`status` in response) || !(`json` in response)) {
+      throw new Error(`#parseAPIResponse expects a Fetch API Response object.`);
+    }
 
-    // Return data as is if HTTP 2XX
+    let data = {};
+    let message = "";
+
+    // Try to parse data as JSON.
+    try {
+      data = await response.json();
+    }
+    catch(err) {
+      // Some routes do not return any data.
+    }
+
+    // Return parsed data "as is" if HTTP 2XX
     if (Math.floor(response.status / 100) === 2) {
       return data;
     }
 
     // Throw error with details given by the API (if any) otherwise
-    let message = `HTTP ${response.status}`;
+    message = `HTTP ${response.status}`;
 
     if (data.detail) { // See `PermaApiError`
       message += ` ${data.detail}`;
@@ -387,14 +401,8 @@ export class PermaAPI {
       headers: { ...authorizationHeader },
     });
 
-    // Special case: this route doesn't return a body when the operation succeeds.
-    if (response.status === 204) {
-      return true;
-    }
-
-    // Use `this.#parseAPIResponse` to process error message if provided.
-    await this.#parseAPIResponse(response);
-    return false; // Just in case #parseAPIResponse didn't throw.
+    await this.#parseAPIResponse(response); // Will throw if deletion failed
+    return true;
   }
 
   /**

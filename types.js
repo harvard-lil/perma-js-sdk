@@ -119,7 +119,8 @@
  * @property {number} created_by - User id
  * @property {PermaCaptureJob[]} capture_jobs
  * @property {PermaFolder} target_folder
- * @property {number} links_remaining
+ * @property {(number|string)} links_remaining - How many more archives can the user create.
+ * @property {string} [links_remaining_period] - Example: "once".
  */
 
 //------------------------------------------------------------------------------

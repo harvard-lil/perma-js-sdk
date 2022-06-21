@@ -169,7 +169,8 @@ Object returned by the [POST] `/v1/archives/batches` endpoint.
 | created_by | <code>number</code> | User id |
 | capture_jobs | <code>Array.&lt;PermaCaptureJob&gt;</code> |  |
 | target_folder | <code>PermaFolder</code> |  |
-| links_remaining | <code>number</code> |  |
+| links_remaining | <code>number</code> \| <code>string</code> | How many more archives can the user create. |
+| [links_remaining_period] | <code>string</code> | Example: "once". |
 
 <a name="module_types..PermaCapture"></a>
 
