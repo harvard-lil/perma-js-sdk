@@ -10,6 +10,9 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
     * [.PermaAPI](#module_index.PermaAPI)
         * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
         * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
+        * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
+        * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
+        * [.validatePaginationLimits(limit, offset)](#module_index.PermaAPI+validatePaginationLimits) ⇒ <code>Object</code>
         * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
@@ -20,7 +23,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullArchive(archiveId)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-        * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+        * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
         * [.pullArchives([limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
         * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
@@ -28,6 +31,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
         * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
         * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.deleteFolder(folderId)](#module_index.PermaAPI+deleteFolder) ⇒ <code>Promise.&lt;boolean&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -49,6 +53,9 @@ catch(err) { ... }
 * [.PermaAPI](#module_index.PermaAPI)
     * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
     * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
+    * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
+    * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
+    * [.validatePaginationLimits(limit, offset)](#module_index.PermaAPI+validatePaginationLimits) ⇒ <code>Object</code>
     * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.pullCurrentUser()](#module_index.PermaAPI+pullCurrentUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
@@ -59,7 +66,7 @@ catch(err) { ... }
     * [.pullArchive(archiveId)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-    * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+    * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
     * [.pullArchives([limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
     * [.pullFolderDetails(folderId)](#module_index.PermaAPI+pullFolderDetails) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
@@ -67,6 +74,7 @@ catch(err) { ... }
     * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
     * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+    * [.deleteFolder(folderId)](#module_index.PermaAPI+deleteFolder) ⇒ <code>Promise.&lt;boolean&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -83,13 +91,52 @@ Constructor
 
 #### permaAPI.validateArchiveId(archiveId) ⇒ <code>string</code>
 Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
-Throws an exception otherwise.
+Throws an exception otherwise. 
+Note: Only checks format.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
 | Param | Type |
 | --- | --- |
 | archiveId | <code>string</code> | 
+
+<a name="module_index.PermaAPI+validateFolderId"></a>
+
+#### permaAPI.validateFolderId(folderId) ⇒ <code>number</code>
+Checks that a given variable can be a folder id.
+Throws an exception otherwise. 
+Note: Only checks format.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| folderId | <code>number</code> | 
+
+<a name="module_index.PermaAPI+validateOrganizationId"></a>
+
+#### permaAPI.validateOrganizationId(organizationId) ⇒ <code>number</code>
+Checks that a given variable can be a folder id.
+Throws an exception otherwise. 
+Note: Only checks format.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| organizationId | <code>number</code> | 
+
+<a name="module_index.PermaAPI+validatePaginationLimits"></a>
+
+#### permaAPI.validatePaginationLimits(limit, offset) ⇒ <code>Object</code>
+Checks that a given pagination limit and offset pair is valid.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| limit | <code>number</code> | 
+| offset | <code>number</code> | 
 
 <a name="module_index.PermaAPI+pullPublicArchives"></a>
 
@@ -223,7 +270,7 @@ Requires an API key.
 
 <a name="module_index.PermaAPI+deleteArchive"></a>
 
-#### permaAPI.deleteArchive() ⇒ <code>Promise.&lt;Boolean&gt;</code>
+#### permaAPI.deleteArchive() ⇒ <code>Promise.&lt;boolean&gt;</code>
 Deletes an archive. 
 Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive). 
 Required an API key.
@@ -328,4 +375,17 @@ Requires an API key.
 | --- | --- | --- |
 | folderId | <code>number</code> | Folder to move. |
 | parentFolderId | <code>number</code> | Where to move that folder into. |
+
+<a name="module_index.PermaAPI+deleteFolder"></a>
+
+#### permaAPI.deleteFolder(folderId) ⇒ <code>Promise.&lt;boolean&gt;</code>
+Deletes a folder. 
+Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type |
+| --- | --- |
+| folderId | <code>number</code> | 
 

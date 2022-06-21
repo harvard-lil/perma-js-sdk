@@ -90,7 +90,9 @@ export class PermaAPI {
 
   /**
    * Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
-   * Throws an exception otherwise.
+   * Throws an exception otherwise. 
+   * Note: Only checks format. 
+   * 
    * @param {string} archiveId
    * @return {string}
    */
@@ -102,6 +104,65 @@ export class PermaAPI {
     }
 
     return archiveId;
+  }
+
+  /**
+   * Checks that a given variable can be a folder id.
+   * Throws an exception otherwise. 
+   * Note: Only checks format. 
+   * 
+   * @param {number} folderId
+   * @return {number}
+   */
+  validateFolderId(folderId) {
+    folderId = parseInt(String(folderId));
+
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` must be interpretable as an integer.");
+    }
+
+    return folderId;
+  }
+
+  /**
+   * Checks that a given variable can be a folder id.
+   * Throws an exception otherwise. 
+   * Note: Only checks format. 
+   * 
+   * @param {number} organizationId
+   * @return {number}
+   */
+  validateOrganizationId(organizationId) {
+    organizationId = parseInt(String(organizationId));
+
+    if (isNaN(organizationId)) {
+      throw new Error("`organizationId` must be interpretable as an integer.");
+    }
+
+    return organizationId;
+  }
+
+
+  /**
+   * Checks that a given pagination limit and offset pair is valid.
+   * 
+   * @param {number} limit
+   * @param {number} offset
+   * @return {{limit: number, offset: number}} 
+   */
+  validatePaginationLimits(limit, offset) {
+    limit = parseInt(String(limit));
+    offset = parseInt(String(offset));
+
+    if (isNaN(limit) || isNaN(offset)) {
+      throw new Error("`limit` and `offset` must be interpretable as integers.");
+    }
+
+    if (limit < 1 || offset < 0) {
+      throw new Error(`\`limit\` (${limit}) and / or \`offset\` (${offset}) out of bounds.`);
+    }
+
+    return {limit, offset};
   }
 
   /**
@@ -154,7 +215,9 @@ export class PermaAPI {
    * @async
    */
   async pullPublicArchives(limit = 10, offset = 0) {
+    this.validatePaginationLimits(limit, offset); // Will throw if invalid
     const searchParams = new URLSearchParams({ limit, offset });
+    
     const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
   }
@@ -222,10 +285,7 @@ export class PermaAPI {
   async pullOrganization(organizationId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    organizationId = parseInt(String(organizationId));
-    if (isNaN(organizationId)) {
-      throw new Error("`organizationId` needs to be interpretable as an integer.");
-    }
+    organizationId = this.validateOrganizationId(organizationId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${organizationId}`, {
       method: "GET",
@@ -267,10 +327,7 @@ export class PermaAPI {
     }
 
     if (options.folder !== null) {
-      options.folder = parseInt(String(options.folder));
-      if (isNaN(options.folder)) {
-        throw new Error("If provided, `options.folder` must be interpretable as an integer.");
-      }
+      options.folder = this.validateFolderId(options.folder);
       body.folder = options.folder;
     }
 
@@ -306,10 +363,7 @@ export class PermaAPI {
       new URL(url); // Will throw if not a valid URL
     }
 
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
+    folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
       method: "POST",
@@ -404,11 +458,7 @@ export class PermaAPI {
   async moveArchive(archiveId, folderId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
-
+    folderId = this.validateFolderId(folderId);
     archiveId = this.validateArchiveId(archiveId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
@@ -424,7 +474,7 @@ export class PermaAPI {
    * Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive). 
    * Required an API key.
    * 
-   * @return {Promise<Boolean>}
+   * @return {Promise<boolean>}
    * @async
    */
   async deleteArchive(archiveId) {
@@ -454,6 +504,7 @@ export class PermaAPI {
   async pullArchives(limit = 10, offset = 0) {
     const authorizationHeader = this.#getAuthorizationHeader();
     
+    this.validatePaginationLimits(limit, offset); // Will throw if invalid
     const searchParams = new URLSearchParams({ limit, offset });
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
@@ -476,10 +527,7 @@ export class PermaAPI {
   async createFolder(parentFolderId, name) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    parentFolderId = parseInt(String(parentFolderId));
-    if (isNaN(parentFolderId)) {
-      throw new Error("`parentFolderId` needs to be interpretable as an integer.");
-    }
+    parentFolderId = this.validateFolderId(parentFolderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
       method: "POST",
@@ -505,10 +553,7 @@ export class PermaAPI {
   async pullFolderDetails(folderId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
+    folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
       method: "GET",
@@ -532,12 +577,10 @@ export class PermaAPI {
   async pullFolderChildren(parentFolderId, limit=100, offset=0) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    parentFolderId = parseInt(String(parentFolderId));
-    if (isNaN(parentFolderId)) {
-      throw new Error("`parentFolderId` needs to be interpretable as an integer.");
-    }
+    this.validatePaginationLimits(limit, offset); // Will throw if invalid
+    const searchParams = new URLSearchParams({limit, offset });
 
-    const searchParams = new URLSearchParams({ limit, offset });
+    parentFolderId = this.validateFolderId(parentFolderId);
 
     const response = await this.#fetch(
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders?${searchParams}`,
@@ -564,12 +607,10 @@ export class PermaAPI {
   async pullFolderArchives(folderId, limit=10, offset=0) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
-
+    this.validatePaginationLimits(limit, offset); // Will throw if invalid
     const searchParams = new URLSearchParams({ limit, offset });
+
+    folderId = this.validateFolderId(folderId);
 
     const response = await this.#fetch(
       `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
@@ -595,11 +636,7 @@ export class PermaAPI {
    */
   async editFolder(folderId, options = {name: null}) {
     const authorizationHeader = this.#getAuthorizationHeader();
-
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
+    folderId = this.validateFolderId(folderId);
 
     const body = {};
 
@@ -632,22 +669,40 @@ export class PermaAPI {
   async moveFolder(folderId, parentFolderId) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    folderId = parseInt(String(folderId));
-    parentFolderId = parseInt(String(parentFolderId));
+    folderId = this.validateFolderId(folderId);
+    parentFolderId = this.validateFolderId(parentFolderId);
 
-    if (isNaN(folderId) || isNaN(parentFolderId)) {
-      throw new Error("Both `folderId` and `parentFolderId` need to be interpretable as integers.");
-    }
-
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders/${folderId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...authorizationHeader,
+    const response = await this.#fetch(
+      `${this.#baseUrl}/v1/folders/${parentFolderId}/folders/${folderId}`,
+      {
+        method: "PUT",
+        headers: { ...authorizationHeader },
       }
-    });
+    );
 
     return await this.#parseAPIResponse(response);
+  }
+
+  /**
+   * Deletes a folder. 
+   * Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder). 
+   * Requires an API key.
+   * 
+   * @param {number} folderId
+   * @return {Promise<boolean>}
+   */
+  async deleteFolder(folderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    folderId = this.validateFolderId(folderId);
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
+      method: "DELETE",
+      headers: { ...authorizationHeader },
+    });
+
+    await this.#parseAPIResponse(response); // Will throw if deletion failed
+    return true;
   }
 
 }
