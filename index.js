@@ -495,24 +495,16 @@ export class PermaAPI {
   }
 
   /**
-   * Creates a folder.
-   * Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
-   * Requires an API key.
+   * Pulls a list of the user's top-level folders. 
+   * Wraps [GET] `/v1/folders` (https://perma.cc/docs/developer#view-top-level-folders).
+   * Requires an API key. 
    * 
-   * @param {number} parentFolderId - Id of the parent folder (required).
-   * @param {string} name - Name to be given to the new folder. 
-   * @return {Promise<PermaFolder>} 
+   * @return {Promise<PermaFoldersPage>}
    */
-  async createFolder(parentFolderId, name) {
-    parentFolderId = this.validateFolderId(parentFolderId);
-
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...this.#getAuthorizationHeader(),
-      },
-      body: JSON.stringify({name: String(name)}),
+   async pullTopLevelFolders() {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders`, {
+      method: "GET",
+      headers: { ...this.#getAuthorizationHeader() },
     });
 
     return await this.#parseAPIResponse(response);
@@ -567,28 +559,25 @@ export class PermaAPI {
   }
 
   /**
-   * Pulls a list of archives from a specific folder. 
-   * Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives). 
+   * Creates a folder.
+   * Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
    * Requires an API key.
    * 
-   * @param {number} folderId
-   * @param {number} [limit=10]
-   * @param {number} [offset=0]
-   * @return {Promise<PermaArchivesPage>}
-   * @async 
+   * @param {number} parentFolderId - Id of the parent folder (required).
+   * @param {string} name - Name to be given to the new folder. 
+   * @return {Promise<PermaFolder>} 
    */
-  async pullFolderArchives(folderId, limit=10, offset=0) {
-    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
+   async createFolder(parentFolderId, name) {
+    parentFolderId = this.validateFolderId(parentFolderId);
 
-    folderId = this.validateFolderId(folderId);
-
-    const response = await this.#fetch(
-      `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
-      {
-        method: "GET",
-        headers: { ...this.#getAuthorizationHeader() },
-      }
-    );
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...this.#getAuthorizationHeader(),
+      },
+      body: JSON.stringify({name: String(name)}),
+    });
 
     return await this.#parseAPIResponse(response);
   }
@@ -668,6 +657,33 @@ export class PermaAPI {
 
     await this.#parseAPIResponse(response); // Will throw if deletion failed
     return true;
+  }
+
+  /**
+   * Pulls a list of archives from a specific folder. 
+   * Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives). 
+   * Requires an API key.
+   * 
+   * @param {number} folderId
+   * @param {number} [limit=10]
+   * @param {number} [offset=0]
+   * @return {Promise<PermaArchivesPage>}
+   * @async 
+   */
+   async pullFolderArchives(folderId, limit=10, offset=0) {
+    const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
+
+    folderId = this.validateFolderId(folderId);
+
+    const response = await this.#fetch(
+      `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
+      {
+        method: "GET",
+        headers: { ...this.#getAuthorizationHeader() },
+      }
+    );
+
+    return await this.#parseAPIResponse(response);
   }
 
 }
