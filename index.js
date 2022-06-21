@@ -291,6 +291,43 @@ export class PermaAPI {
   }
 
   /**
+   * Requests the creation of a batch of archives. 
+   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+   * Requires an API key.
+   * 
+   * @param {string[]} urls - Must contain valid urls.
+   * @param {number} folderId - Destination folder of the resulting archives.
+   * @return {Promise<PermaArchivesBatch>}
+   * @async
+   */
+   async createArchiveBatch(urls, folderId) {
+    const authorizationHeader = this.#getAuthorizationHeader();
+
+    for(let url of urls) {
+      new URL(url); // Will throw if not a valid URL
+    }
+
+    folderId = parseInt(String(folderId));
+    if (isNaN(folderId)) {
+      throw new Error("`folderId` needs to be interpretable as an integer.");
+    }
+
+    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authorizationHeader,
+      },
+      body: JSON.stringify({
+        urls: urls,
+        target_folder: folderId
+      }),
+    });
+
+    return await this.#parseAPIResponse(response);
+  }
+
+  /**
    * Fetches details of a given archive.
    * Wraps [GET] `/v1/archives/{guid}` (https://perma.cc/docs/developer#view-details-of-one-archive).
    * Requires an API key.
@@ -408,6 +445,8 @@ export class PermaAPI {
   /**
    * Fetches a subset of all the archives the user has access to. 
    * Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
+   * Requires an API key.
+   * 
    * @param {number} [limit=10]
    * @param {number} [offset=0]
    * @return {Promise<PermaArchivesPage>}
@@ -427,37 +466,29 @@ export class PermaAPI {
   }
 
   /**
-   * Requests the creation of a batch of archives. 
-   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+   * Creates a folder.
+   * Wraps [POST] `/v1/folders/{parentId}/folders/` (https://perma.cc/docs/developer#create-folder). 
    * Requires an API key.
    * 
-   * @param {string[]} urls - Must contain valid urls.
-   * @param {number} folderId - Destination folder of the resulting archives.
-   * @return {Promise<PermaArchivesBatch>}
-   * @async
+   * @param {number} parentId - Id of the parent folder.
+   * @param {string} name
+   * @return {Promise<PermaFolder>} 
    */
-  async createArchiveBatch(urls, folderId) {
+  async createFolder(parentId, name) {
     const authorizationHeader = this.#getAuthorizationHeader();
 
-    for(let url of urls) {
-      new URL(url); // Will throw if not a valid URL
+    parentId = parseInt(String(parentId));
+    if (isNaN(parentId)) {
+      throw new Error("`parentId` needs to be interpretable as an integer.");
     }
 
-    folderId = parseInt(String(folderId));
-    if (isNaN(folderId)) {
-      throw new Error("`folderId` needs to be interpretable as an integer.");
-    }
-
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
+    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentId}/folders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...authorizationHeader,
       },
-      body: JSON.stringify({
-        urls: urls,
-        target_folder: folderId
-      }),
+      body: JSON.stringify({name: String(name)}),
     });
 
     return await this.#parseAPIResponse(response);

@@ -16,12 +16,13 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
         * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
         * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
         * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
         * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
         * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
         * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-        * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+        * [.createFolder(parentId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -49,12 +50,13 @@ catch(err) { ... }
     * [.pullOrganizationsList()](#module_index.PermaAPI+pullOrganizationsList) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
     * [.pullOrganization(id)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
     * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+    * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
     * [.pullArchive(guid)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.editArchive(guid, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.moveArchive(guid, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;Boolean&gt;</code>
     * [.pullArchivesPage([limit], [offset])](#module_index.PermaAPI+pullArchivesPage) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-    * [.createArchiveBatch(urls, folderId)](#module_index.PermaAPI+createArchiveBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+    * [.createFolder(parentId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 
 <a name="new_module_index.PermaAPI_new"></a>
 
@@ -151,6 +153,20 @@ Requires an API key.
 | [options.isPrivate] | <code>boolean</code> |  |
 | [options.notes] | <code>string</code> |  |
 
+<a name="module_index.PermaAPI+createArchiveBatch"></a>
+
+#### permaAPI.createArchiveBatch(urls, folderId) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+Requests the creation of a batch of archives. 
+Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+Requires an API key.
+
+**Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| urls | <code>Array.&lt;string&gt;</code> | Must contain valid urls. |
+| folderId | <code>number</code> | Destination folder of the resulting archives. |
+
 <a name="module_index.PermaAPI+pullArchive"></a>
 
 #### permaAPI.pullArchive(guid) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
@@ -208,6 +224,7 @@ Required an API key.
 #### permaAPI.pullArchivesPage([limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
 Fetches a subset of all the archives the user has access to. 
 Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
+Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -216,17 +233,17 @@ Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of
 | [limit] | <code>number</code> | <code>10</code> | 
 | [offset] | <code>number</code> | <code>0</code> | 
 
-<a name="module_index.PermaAPI+createArchiveBatch"></a>
+<a name="module_index.PermaAPI+createFolder"></a>
 
-#### permaAPI.createArchiveBatch(urls, folderId) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
-Requests the creation of a batch of archives. 
-Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+#### permaAPI.createFolder(parentId, name) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+Creates a folder.
+Wraps [POST] `/v1/folders/{parentId}/folders/` (https://perma.cc/docs/developer#create-folder). 
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| urls | <code>Array.&lt;string&gt;</code> | Must contain valid urls. |
-| folderId | <code>number</code> | Destination folder of the resulting archives. |
+| parentId | <code>number</code> | Id of the parent folder. |
+| name | <code>string</code> |  |
 
