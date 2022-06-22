@@ -52,7 +52,7 @@ export class PermaAPI {
     if (apiKey) {
       apiKey = String(apiKey);
 
-      if (!apiKey.match(/^[0-9a-z]{40}$/)) {
+      if (!apiKey.match(/^[0-9a-zA-Z]{40}$/)) {
         throw new Error("`apiKey` must be a string of 40 lowercase alphanumeric characters.");
       }
 
