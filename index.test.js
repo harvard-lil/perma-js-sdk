@@ -60,4 +60,8 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     }
   });
 
+  test("Constructor should not throw if given a valid url as `forceBaseUrl`.", () => {
+    expect(() => new PermaAPI(null, "https://api.perma.test:8000/"));
+  });
+
 });

@@ -66,7 +66,10 @@ export class PermaAPI {
       this.#baseUrl = newBaseUrl.origin;
     }
 
-    // Load `node-fetch` if we're running Node.js and `fetch()` is not available
+    //
+    // `node-fetch` fallback: 
+    // Loads `node-fetch` if we're running Node.js and `fetch()` is not available
+    // 
     if (!this.#fetch && "process" in globalThis) {
       this.#fetch = async (...args) => {
         const module = await import("node-fetch");
@@ -74,7 +77,7 @@ export class PermaAPI {
       };
     }
 
-    // Use a version of `fetch()` bound to `window` if we're in a browser context
+    // Use a version of `fetch()` bound to `window` if we're in a browser context.
     if ("fetch" in globalThis && "window" in globalThis) {
       this.#fetch = globalThis.fetch.bind(window);
     }
