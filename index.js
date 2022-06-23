@@ -9,6 +9,27 @@
 // @ts-check
 
 /**
+ * Module-level `fetch()` fallback.
+ * - Will return globalThis.fetch if running a version of node with native support for `fetch()`.
+ * - Will return a window-bound version of `fetch()` if running in a browser context.
+ * - Will return a function dynamically loading `node-fetch` if we're running a version of Node that doesn't support `fetch()`.
+ */
+const fetch = (() => {
+  if (!("fetch" in globalThis) && "process" in globalThis) {
+    return async (...args) => {
+      const module = await import("node-fetch");
+      return await module.default(...args);
+    };
+  }
+
+  if ("fetch" in globalThis && "window" in globalThis) {
+    return globalThis.fetch.bind(window);
+  }
+
+  return globalThis.fetch;
+})();
+
+/**
  * Wrapper class for Perma.cc's Rest API (v1).
  * 
  * Usage:
@@ -66,21 +87,6 @@ export class PermaAPI {
       this.#baseUrl = newBaseUrl.origin;
     }
 
-    //
-    // `node-fetch` fallback: 
-    // Loads `node-fetch` if we're running Node.js and `fetch()` is not available
-    // 
-    if (!this.#fetch && "process" in globalThis) {
-      this.#fetch = async (...args) => {
-        const module = await import("node-fetch");
-        return await module.default(...args);
-      };
-    }
-
-    // Use a version of `fetch()` bound to `window` if we're in a browser context.
-    if ("fetch" in globalThis && "window" in globalThis) {
-      this.#fetch = globalThis.fetch.bind(window);
-    }
   }
 
   /**
@@ -93,7 +99,7 @@ export class PermaAPI {
       throw new Error("This method requires an API key.");
     }
 
-    return { Authorization: `ApiKey ${this.#apiKey}` };
+    return { "Authorization": `ApiKey ${this.#apiKey}` };
   }
 
   /**
@@ -225,7 +231,7 @@ export class PermaAPI {
   async pullPublicArchives(limit = 10, offset = 0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
+    const response = await fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
   }
 
@@ -238,7 +244,7 @@ export class PermaAPI {
    */
   async pullPublicArchive(archiveId) {
     archiveId = this.validateArchiveId(archiveId);
-    const response = await this.#fetch(`${this.#baseUrl}/v1/public/archives/${archiveId}`);
+    const response = await fetch(`${this.#baseUrl}/v1/public/archives/${archiveId}`);
     return await this.#parseAPIResponse(response);
   }
 
@@ -251,7 +257,7 @@ export class PermaAPI {
    * @async
    */
   async pullUser() {
-    const response = await this.#fetch(`${this.#baseUrl}/v1/user`, {
+    const response = await fetch(`${this.#baseUrl}/v1/user`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -268,7 +274,7 @@ export class PermaAPI {
    * @async
    */
   async pullOrganizations() {
-    const response = await this.#fetch(`${this.#baseUrl}/v1/organizations`, {
+    const response = await fetch(`${this.#baseUrl}/v1/organizations`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -288,7 +294,7 @@ export class PermaAPI {
   async pullOrganization(organizationId) {
     organizationId = this.validateOrganizationId(organizationId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/organization/${organizationId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/organization/${organizationId}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -333,7 +339,7 @@ export class PermaAPI {
     body.is_private = Boolean(options.isPrivate);
     body.notes = String(options.notes);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -357,7 +363,7 @@ export class PermaAPI {
   async pullArchive(archiveId) {
     archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -395,7 +401,7 @@ export class PermaAPI {
 
     archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -421,7 +427,7 @@ export class PermaAPI {
     folderId = this.validateFolderId(folderId);
     archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
       method: "PATCH",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -440,7 +446,7 @@ export class PermaAPI {
   async deleteArchive(archiveId) {
     archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "DELETE",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -462,7 +468,7 @@ export class PermaAPI {
   async pullArchives(limit = 10, offset = 0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -478,7 +484,7 @@ export class PermaAPI {
    * @return {Promise<PermaFoldersPage>}
    */
    async pullTopLevelFolders() {
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -498,7 +504,7 @@ export class PermaAPI {
   async pullFolder(folderId) {
     folderId = this.validateFolderId(folderId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}/`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -523,7 +529,7 @@ export class PermaAPI {
 
     parentFolderId = this.validateFolderId(parentFolderId);
 
-    const response = await this.#fetch(
+    const response = await fetch(
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders?${searchParams}`,
       {
         method: "GET",
@@ -546,7 +552,7 @@ export class PermaAPI {
    async createFolder(parentFolderId, name) {
     parentFolderId = this.validateFolderId(parentFolderId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -578,7 +584,7 @@ export class PermaAPI {
 
     folderId = this.validateFolderId(folderId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -604,7 +610,7 @@ export class PermaAPI {
     folderId = this.validateFolderId(folderId);
     parentFolderId = this.validateFolderId(parentFolderId);
 
-    const response = await this.#fetch(
+    const response = await fetch(
       `${this.#baseUrl}/v1/folders/${parentFolderId}/folders/${folderId}`,
       {
         method: "PUT",
@@ -626,7 +632,7 @@ export class PermaAPI {
   async deleteFolder(folderId) {
     folderId = this.validateFolderId(folderId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}`, {
       method: "DELETE",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -651,7 +657,7 @@ export class PermaAPI {
 
     folderId = this.validateFolderId(folderId);
 
-    const response = await this.#fetch(
+    const response = await fetch(
       `${this.#baseUrl}/v1/folders/${folderId}/archives?${searchParams}`,
       {
         method: "GET",
@@ -674,7 +680,7 @@ export class PermaAPI {
   async pullOngoingCaptureJobs(limit=100, offset=0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/capture_jobs?${searchParams}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/capture_jobs?${searchParams}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -693,7 +699,7 @@ export class PermaAPI {
   async pullArchiveCaptureJob(archiveId) {
     archiveId = this.validateArchiveId(archiveId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/capture_jobs/${archiveId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/capture_jobs/${archiveId}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -718,7 +724,7 @@ export class PermaAPI {
 
     folderId = this.validateFolderId(folderId);
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives/batches`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -744,7 +750,7 @@ export class PermaAPI {
    async pullArchivesBatch(batchId) {
     batchId = parseInt(String(batchId));
 
-    const response = await this.#fetch(`${this.#baseUrl}/v1/archives/batches/${batchId}`, {
+    const response = await fetch(`${this.#baseUrl}/v1/archives/batches/${batchId}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });

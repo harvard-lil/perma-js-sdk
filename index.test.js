@@ -41,11 +41,11 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     }
   });
 
-  test("Constructor should not throw if given an `apiKey` in a valid format.", () => {
+  test("Constructor should not throw if `apiKey` is provided and its format is valid.", () => {
     expect(() => new PermaAPI(DUMMY_API_KEY))
   });
 
-  test("Constructor should throw if given an `forceBaseUrl` that is not a valid url.", () => {
+  test("Constructor should throw if `forceBaseUrl` is provided and its format is invalid.", () => {
     const invalidUrls = [
       [],
       {},
@@ -60,7 +60,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     }
   });
 
-  test("Constructor should not throw if given a valid url as `forceBaseUrl`.", () => {
+  test("Constructor should not throw if `forceBaseUrl` is provided and its format is valid.", () => {
     expect(() => new PermaAPI(null, "https://api.perma.test:8000/"));
   });
 
