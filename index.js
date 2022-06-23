@@ -225,7 +225,6 @@ export class PermaAPI {
    */
   async pullPublicArchives(limit = 10, offset = 0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
-
     const response = await fetch(`${this.#baseUrl}/v1/public/archives?${searchParams}`);
     return await this.#parseAPIResponse(response);
   }

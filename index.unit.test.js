@@ -1,9 +1,9 @@
 /**
  * perma-js-sdk
- * @module index.test
+ * @module index.unit.test
  * @author The Harvard Library Innovation Lab
  * @license MIT
- * @description Unit and integration tests suite for `index`.
+ * @description Unit tests suite for `index`.
  */
 /// <reference path="types.js" />
 
