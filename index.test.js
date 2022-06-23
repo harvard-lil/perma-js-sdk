@@ -74,7 +74,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     expect(() => new PermaAPI()).not.toThrow();
   });
 
-  test("Can be instantiated with all args.", () => {
+  test("Can be instantiated with all (valid) args.", () => {
     expect(() => new PermaAPI(DUMMY_API_KEY, DUMMY_FORCE_BASE_URL)).not.toThrow();
   });
 
