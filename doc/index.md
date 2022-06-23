@@ -452,8 +452,8 @@ Requires an API key.
 
 ### index~fetch
 Module-level `fetch()` fallback.
-- Will return globalThis.fetch if running a version of node with native support for `fetch()`.
+- Will be a reference to `globalThis.fetch` if running a version of Node.js with native support for `fetch()`.
 - Will return a window-bound version of `fetch()` if running in a browser context.
-- Will return a function dynamically loading `node-fetch` if we're running a version of Node that doesn't support `fetch()`.
+- Will return a function dynamically loading `node-fetch` if we're running a version of Node.js that doesn't support `fetch()`.
 
 **Kind**: inner constant of [<code>index</code>](#module_index)  

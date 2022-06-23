@@ -15,6 +15,12 @@ import { PermaAPI } from "./index.js";
  */
 const DUMMY_API_KEY = "abcedfghijklmnopqrstuvwxyz12345678901234";
 
+/**
+ * To be used as a mock for `forceBaseUrl`
+ * @constant
+ */
+const DUMMY_FORCE_BASE_URL = "https://api.perma.test:8000/";
+
 //------------------------------------------------------------------------------
 // `PermaAPI.constructor()`
 //------------------------------------------------------------------------------
@@ -61,7 +67,15 @@ describe("Unit tests for PermaAPI.constructor()", () => {
   });
 
   test("Constructor should not throw if `forceBaseUrl` is provided and its format is valid.", () => {
-    expect(() => new PermaAPI(null, "https://api.perma.test:8000/"));
+    expect(() => new PermaAPI(null, DUMMY_FORCE_BASE_URL));
+  });
+
+  test("Can be instantiated with no args.", () => {
+    expect(() => new PermaAPI()).not.toThrow();
+  });
+
+  test("Can be instantiated with all args.", () => {
+    expect(() => new PermaAPI(DUMMY_API_KEY, DUMMY_FORCE_BASE_URL)).not.toThrow();
   });
 
 });
