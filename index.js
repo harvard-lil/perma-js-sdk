@@ -58,11 +58,6 @@ export class PermaAPI {
   #baseUrl = "https://api.perma.cc";
 
   /**
-   * @description Local proxy to the Fetch API. Used to load `node-module` as a fallback when needed (see constructor). 
-   */
-  #fetch = globalThis.fetch;
-
-  /**
    * Constructor
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
