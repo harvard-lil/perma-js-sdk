@@ -21,6 +21,11 @@ const DUMMY_API_KEY = "abcedfghijklmnopqrstuvwxyz12345678901234";
  */
 const DUMMY_FORCE_BASE_URL = "https://api.perma.test:8000/";
 
+/**
+ * To be used as a mock archive id
+ */
+const DUMMY_ARCHIVE_ID = "ABCD-1234";
+
 //------------------------------------------------------------------------------
 // `PermaAPI.constructor()`
 //------------------------------------------------------------------------------
@@ -30,7 +35,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     expect(() => new PermaAPI()).not.toThrow();
   });
 
-  test("Constructor should throw if `apiKey` is provided but in an invalid format.", () => {
+  test("Throws if `apiKey` is provided but in an invalid format.", () => {
     const invalidApiKeys = [
       [],
       {},
@@ -47,11 +52,11 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     }
   });
 
-  test("Constructor should not throw if `apiKey` is provided and its format is valid.", () => {
+  test("Does not throw if `apiKey` is provided and its format is valid.", () => {
     expect(() => new PermaAPI(DUMMY_API_KEY))
   });
 
-  test("Constructor should throw if `forceBaseUrl` is provided and its format is invalid.", () => {
+  test("Throws if `forceBaseUrl` is provided and its format is invalid.", () => {
     const invalidUrls = [
       [],
       {},
@@ -66,7 +71,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
     }
   });
 
-  test("Constructor should not throw if `forceBaseUrl` is provided and its format is valid.", () => {
+  test("Does not throw if `forceBaseUrl` is provided and its format is valid.", () => {
     expect(() => new PermaAPI(null, DUMMY_FORCE_BASE_URL));
   });
 
@@ -76,6 +81,114 @@ describe("Unit tests for PermaAPI.constructor()", () => {
 
   test("Can be instantiated with all (valid) args.", () => {
     expect(() => new PermaAPI(DUMMY_API_KEY, DUMMY_FORCE_BASE_URL)).not.toThrow();
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.validateArchiveId()`
+//------------------------------------------------------------------------------
+describe("Unit tests for PermaAPI.validateArchiveId()", () => {
+
+  test("Throws when given an archive id in an invalid format.", () => {
+    const invalidArchiveIds = [
+      [],
+      {},
+      () => {},
+      null,
+      "FOO",
+      "FOOBAR",
+      12,
+      2.5,
+      DUMMY_ARCHIVE_ID + `F`
+    ];
+
+    const api = new PermaAPI();
+
+    for (let archiveId of invalidArchiveIds) {
+      expect(() => api.validateArchiveId(archiveId)).toThrow();
+    }
+
+  });
+
+  test("Does not throw when given an archive id in a valid format.", () => {
+    expect(() => new PermaAPI().validateArchiveId(DUMMY_ARCHIVE_ID)).not.toThrow();
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.validateFolderId()`
+//------------------------------------------------------------------------------
+describe("Unit tests for PermaAPI.validateFolderId()", () => {
+
+  test("Throws when given a folder id in an invalid format.", () => {
+    const invalidFolderIds = [
+      [],
+      {},
+      () => {},
+      "FOO",
+      null
+    ];
+
+    const api = new PermaAPI();
+
+    for (let folderId of invalidFolderIds) {
+      expect(() => api.validateFolderId(folderId)).toThrow();
+    }
+
+  });
+
+  test("Does not throw when given a folder id in a valid format.", () => {
+    const validFolderIds = [
+      12,
+      "12",
+      "12.5" // ParseInt-able
+    ];
+
+    const api = new PermaAPI();
+
+    for (let folderId of validFolderIds) {
+      expect(() => api.validateFolderId(folderId)).not.toThrow();
+    }
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.validateOrganizationId()`
+//------------------------------------------------------------------------------
+describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
+
+  test("Throws when given a organization id in an invalid format.", () => {
+    const invalidOrganizationIds = [
+      [],
+      {},
+      () => {},
+      "FOO",
+      null
+    ];
+
+    const api = new PermaAPI();
+
+    for (let organizationId of invalidOrganizationIds) {
+      expect(() => api.validateOrganizationId(organizationId)).toThrow();
+    }
+
+  });
+
+  test("Does not throw when given an organization id in a valid format.", () => {
+    const validOrganizationIds = [
+      12,
+      "12",
+      "12.5" // ParseInt-able
+    ];
+
+    const api = new PermaAPI();
+
+    for (let organizationId of validOrganizationIds) {
+      expect(() => api.validateOrganizationId(organizationId)).not.toThrow();
+    }
   });
 
 });
