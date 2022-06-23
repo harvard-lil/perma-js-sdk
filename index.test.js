@@ -108,7 +108,6 @@ describe("Unit tests for PermaAPI.validateArchiveId()", () => {
     for (let archiveId of invalidArchiveIds) {
       expect(() => api.validateArchiveId(archiveId)).toThrow();
     }
-
   });
 
   test("Does not throw when given an archive id in a valid format.", () => {
@@ -128,7 +127,8 @@ describe("Unit tests for PermaAPI.validateFolderId()", () => {
       {},
       () => {},
       "FOO",
-      null
+      null,
+      true
     ];
 
     const api = new PermaAPI();
@@ -136,7 +136,6 @@ describe("Unit tests for PermaAPI.validateFolderId()", () => {
     for (let folderId of invalidFolderIds) {
       expect(() => api.validateFolderId(folderId)).toThrow();
     }
-
   });
 
   test("Does not throw when given a folder id in a valid format.", () => {
@@ -166,7 +165,8 @@ describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
       {},
       () => {},
       "FOO",
-      null
+      null,
+      true
     ];
 
     const api = new PermaAPI();
@@ -174,7 +174,6 @@ describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
     for (let organizationId of invalidOrganizationIds) {
       expect(() => api.validateOrganizationId(organizationId)).toThrow();
     }
-
   });
 
   test("Does not throw when given an organization id in a valid format.", () => {
@@ -188,6 +187,45 @@ describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
 
     for (let organizationId of validOrganizationIds) {
       expect(() => api.validateOrganizationId(organizationId)).not.toThrow();
+    }
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.validatePagination()`
+//------------------------------------------------------------------------------
+describe("Unit tests for PermaAPI.validatePagination()", () => {
+
+  test("Throws when given invalid `limit` and `offset` values or range.", () => {
+    const invalidPairs = [
+      [10, null],
+      [10, {}],
+      [10, []],
+      [10, () => {}],
+      [10, "FOO"],
+      [10, -1]
+    ];
+
+    const api = new PermaAPI();
+
+    for (let pair of invalidPairs) {
+      expect(() => api.validatePagination(pair[0], pair[1])).toThrow();
+      expect(() => api.validatePagination(pair[1], pair[0])).toThrow();
+    }
+  });
+
+  test("Does not throw when given a valid `limit` and `offset` pair.", () => {
+    const validPairs = [
+      [10, 0],
+      [1, 10],
+      [1000, 0]
+    ];
+
+    const api = new PermaAPI();
+
+    for (let pair of validPairs) {
+      expect(() => api.validatePagination(...pair)).not.toThrow();
     }
   });
 
