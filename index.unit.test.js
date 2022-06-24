@@ -26,10 +26,7 @@ const DUMMY_FORCE_BASE_URL = "https://api.perma.test:8000/";
  */
 const DUMMY_ARCHIVE_ID = "ABCD-1234";
 
-//------------------------------------------------------------------------------
-// `PermaAPI.constructor()`
-//------------------------------------------------------------------------------
-describe("Unit tests for PermaAPI.constructor()", () => {
+describe("PermaAPI.constructor()", () => {
 
   test("Can be instantiated with no args.", () => {
     expect(() => new PermaAPI()).not.toThrow();
@@ -78,10 +75,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.validateArchiveId()`
-//------------------------------------------------------------------------------
-describe("Unit tests for PermaAPI.validateArchiveId()", () => {
+describe("PermaAPI.validateArchiveId()", () => {
 
   test("Throws when given an archive id in an invalid format.", () => {
     const invalidArchiveIds = [
@@ -109,10 +103,7 @@ describe("Unit tests for PermaAPI.validateArchiveId()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.validateFolderId()`
-//------------------------------------------------------------------------------
-describe("Unit tests for PermaAPI.validateFolderId()", () => {
+describe("PermaAPI.validateFolderId()", () => {
 
   test("Throws when given a folder id in an invalid format.", () => {
     const invalidFolderIds = [[], {}, () => {}, "FOO", null, true];
@@ -140,10 +131,7 @@ describe("Unit tests for PermaAPI.validateFolderId()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.validateOrganizationId()`
-//------------------------------------------------------------------------------
-describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
+describe("PermaAPI.validateOrganizationId()", () => {
 
   test("Throws when given a organization id in an invalid format.", () => {
     const invalidOrganizationIds = [[], {}, () => {}, "FOO", null, true];
@@ -171,10 +159,7 @@ describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.validatePagination()`
-//------------------------------------------------------------------------------
-describe("Unit tests for PermaAPI.validatePagination()", () => {
+describe("PermaAPI.validatePagination()", () => {
 
   test("Throws when given invalid `limit` and `offset` values or range.", () => {
     const invalidPairs = [

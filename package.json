@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --testTimeout=60000 --setupFiles dotenv/config",
-    "docgen": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --testTimeout=60000",
+    "test-local": "export NODE_TLS_REJECT_UNAUTHORIZED='0'; NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --testTimeout=60000 --setupFiles dotenv/config",
+    "js-doc-gen": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
   },
   "repository": {
     "type": "git",

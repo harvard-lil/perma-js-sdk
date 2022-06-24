@@ -304,13 +304,13 @@ export class PermaAPI {
    * @param {string} url
    * @param {Object} [options]
    * @param {?string} [options.title]
-   * @param {?number} [options.folder] - Folder id.
+   * @param {?number} [options.parentFolderId]
    * @param {boolean} [options.isPrivate]
    * @param {string} [options.notes]
    * @return {Promise<PermaArchive>}
    * @async
    */
-  async createArchive(url, options = { title: null, folder: null, isPrivate: false, notes: "" }) {
+  async createArchive(url, options = { title: null, parentFolderId: null, isPrivate: false, notes: "" }) {
     const body = {};
 
     try {
@@ -321,17 +321,22 @@ export class PermaAPI {
       throw new Error("`url` needs to be a valid url.");
     }
 
-    if (options.title !== null) {
+    if ("title" in options && options.title !== null) {
       body.title = String(options.title);
     }
 
-    if (options.folder !== null) {
-      options.folder = this.validateFolderId(options.folder);
-      body.folder = options.folder;
+    if ("parentFolderId" in options && options.parentFolderId !== null) {
+      options.parentFolderId = this.validateFolderId(options.parentFolderId);
+      body.folder = options.parentFolderId;
     }
 
-    body.is_private = Boolean(options.isPrivate);
-    body.notes = String(options.notes);
+    if ("isPrivate" in options) {
+      body.is_private = Boolean(options.isPrivate);
+    }
+
+    if ("notes" in options) {
+      body.notes = String(options.notes);
+    }
 
     const response = await fetch(`${this.#baseUrl}/v1/archives`, {
       method: "POST",

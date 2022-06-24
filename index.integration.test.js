@@ -16,20 +16,31 @@ import { PermaAPI } from "./index.js";
 /**
  * Module-level instance of `PermaAPI` with valid api key.
  * Refreshed before each test (see `beforeEach()`).
+ * 
+ * @type {?PermaAPI}
  */
 let apiWithAuth = null;
 
 /**
  * Module-level instance of `PermaAPI` with no api key.
  * Refreshed before each test (see `beforeEach()`).
+ * 
+ * @type {?PermaAPI}
  */
 let apiNoAuth = null;
 
 /**
  * Module-level instance of `PermaAPI` with invalid api key.
  * Refreshed before each test (see `beforeEach()`).
+ * 
+ * @type {?PermaAPI}
  */
 let apiBadAuth = null;
+
+/**
+ * Default URL to archive
+ */
+const URL_TO_ARCHIVE = `http://info.cern.ch/hypertext/WWW/TheProject.html`;
 
 /**
  * Pull the first PermaFolder object available from `pullTopLevelFolders`.
@@ -38,18 +49,15 @@ let apiBadAuth = null;
  * @async
  * @returns {PermaFolder}
  */
-const firstFolder = async() => {
-  if (_firstFolder) {
-    return _firstFolder;
+const getFirstFolder = async() => {
+  if (_getFirstFolder) {
+    return _getFirstFolder;
   }
-  _firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0];
-  return _firstFolder;
+  _getFirstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0];
+  return _getFirstFolder;
 }
-let _firstFolder = null; // Module-level memoization for `firstFolder`
+let _getFirstFolder = null; // Module-level memoization for `getFirstFolder`
 
-//------------------------------------------------------------------------------
-// Setup / teardown
-//------------------------------------------------------------------------------
 beforeEach(() => {
   const apiKey = process.env.TESTS_API_KEY; // Throws if not set
   const forceBaseUrl = process.env.TESTS_FORCE_BASE_URL; // Throws if not set
@@ -60,10 +68,7 @@ beforeEach(() => {
   apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl);
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullUser()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullUser()", () => {
+describe("PermaAPI.pullUser()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullUser()).rejects.toThrow();
@@ -78,10 +83,7 @@ describe("Integration tests for PermaAPI.pullUser()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullOrganizations()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullOrganizations()", () => {
+describe("PermaAPI.pullOrganizations()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullOrganizations()).rejects.toThrow();
@@ -98,11 +100,8 @@ describe("Integration tests for PermaAPI.pullOrganizations()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullOrganization()`
-//------------------------------------------------------------------------------
 // Ideally: Add a test pulling actual organization details.
-describe("Integration tests for PermaAPI.pullOrganization()", () => {
+describe("PermaAPI.pullOrganization()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullOrganization(1)).rejects.toThrow();
@@ -119,10 +118,7 @@ describe("Integration tests for PermaAPI.pullOrganization()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullPublicArchives()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullPublicArchives()", () => {
+describe("PermaAPI.pullPublicArchives()", () => {
 
   test("Returns paginated results and takes into account pagination limits, regardless of auth status.", async() => {
     for (let api of [apiNoAuth, apiBadAuth, apiWithAuth]) {
@@ -136,10 +132,7 @@ describe("Integration tests for PermaAPI.pullPublicArchives()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullTopLevelFolders()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullTopLevelFolders()", () => {
+describe("PermaAPI.pullTopLevelFolders()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullTopLevelFolders()).rejects.toThrow();
@@ -156,19 +149,16 @@ describe("Integration tests for PermaAPI.pullTopLevelFolders()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullFolder()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullFolder()", () => {
+describe("PermaAPI.pullFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const folderId = (await firstFolder()).id;
+    const folderId = (await getFirstFolder()).id;
     expect(async() => await apiNoAuth.pullFolder(folderId)).rejects.toThrow();
     expect(async() => await apiBadAuth.pullFolder(folderId)).rejects.toThrow();
   });
 
   test("Returns folder details.", async() => {
-    const folderId = (await firstFolder()).id;
+    const folderId = (await getFirstFolder()).id;
     const result = await apiWithAuth.pullFolder(folderId);
     expect(result).toHaveProperty("id");
     expect(result).toHaveProperty("name");
@@ -177,23 +167,20 @@ describe("Integration tests for PermaAPI.pullFolder()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.pullFolderChildren()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.pullFolderChildren()", () => {
+describe("PermaAPI.pullFolderChildren()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const folderId = (await firstFolder()).id;
+    const folderId = (await getFirstFolder()).id;
     expect(async() => await apiNoAuth.pullFolderChildren(folderId)).rejects.toThrow();
     expect(async() => await apiBadAuth.pullFolderChildren(folderId)).rejects.toThrow();
   });
 
-  test("Throws if invalid folder id provided", () => {
+  test("Throws if invalid folder id provided.", () => {
     expect(async() => await apiWithAuth.pullFolderChildren("FOO")).rejects.toThrow();
   });
 
   test("Returns paginated results and takes into account pagination limits.", async() => {
-    const folderId = (await firstFolder()).id;
+    const folderId = (await getFirstFolder()).id;
     const results = await apiWithAuth.pullFolderChildren(folderId, 10, 0);
     expect(results).toHaveProperty("meta");
     expect(results).toHaveProperty("objects");
@@ -203,25 +190,22 @@ describe("Integration tests for PermaAPI.pullFolderChildren()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.createFolder()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.createFolder()", () => {
+describe("PermaAPI.createFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const name = "Integration Test folder";
 
     expect(async() => await apiNoAuth.createFolder(parentFolderId, name)).rejects.toThrow();
     expect(async() => await apiBadAuth.createFolder(parentFolderId, name)).rejects.toThrow();
   });
 
-  test("Throws if invalid folder id provided", () => {
+  test("Throws if invalid folder id provided.", () => {
     expect(async() => await apiWithAuth.createFolder("FOO", "FOO")).rejects.toThrow();
   });
 
   test("Returns new folder details.", async() => {
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const name = "Integration Test folder";
 
     const newFolder = await apiWithAuth.createFolder(parentFolderId, name);
@@ -236,13 +220,10 @@ describe("Integration tests for PermaAPI.createFolder()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.moveFolder()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.moveFolder()", () => {
+describe("PermaAPI.moveFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
 
     expect(async() => await apiNoAuth.moveFolder(newFolder.id, parentFolderId)).rejects.toThrow();
@@ -251,15 +232,15 @@ describe("Integration tests for PermaAPI.moveFolder()", () => {
     await apiWithAuth.deleteFolder(newFolder.id);
   });
 
-  test("Throws if invalid folder id provided", () => {
+  test("Throws if invalid folder id provided.", () => {
     expect(async() => await apiWithAuth.moveFolder("FOO", "BAR")).rejects.toThrow();
   });
 
   test("Returns moved folder details.", async() => {
     // Setup:
-    // - Two new folders under `firstFolder`
+    // - Two new folders under `getFirstFolder`
     // - Try to move one of the two one level under
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const newFolder1 = await apiWithAuth.createFolder(parentFolderId, "Test 1");
     const newFolder2 = await apiWithAuth.createFolder(parentFolderId, "Test 2");
 
@@ -275,13 +256,10 @@ describe("Integration tests for PermaAPI.moveFolder()", () => {
 
 });
 
-//------------------------------------------------------------------------------
-// `PermaAPI.deleteFolder()`
-//------------------------------------------------------------------------------
-describe("Integration tests for PermaAPI.deleteFolder()", () => {
+describe("PermaAPI.deleteFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
 
     expect(async() => await apiNoAuth.deleteFolder(newFolder.id)).rejects.toThrow();
@@ -290,17 +268,101 @@ describe("Integration tests for PermaAPI.deleteFolder()", () => {
     await apiWithAuth.deleteFolder(newFolder.id);
   });
 
-  test("Throws if invalid folder id provided", () => {
+  test("Throws if invalid folder id provided.", () => {
     expect(async() => await apiWithAuth.deleteFolder("FOO")).rejects.toThrow();
   });
 
   test("Folder gets deleted.", async() => {
-    const parentFolderId = (await firstFolder()).id;
+    const parentFolderId = (await getFirstFolder()).id;
     const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
 
     const result = await apiWithAuth.deleteFolder(newFolder.id);
     expect(result).toBe(true);
     expect(async() => await apiWithAuth.pullFolder(newFolder.id)).rejects.toThrow();
+  });
+
+});
+
+describe("PermaAPI.editFolder()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const parentFolderId = (await getFirstFolder()).id;
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
+    const options = {name: "New folder name"};
+
+    expect(async() => await apiNoAuth.editFolder(newFolder.id, options)).rejects.toThrow();
+    expect(async() => await apiBadAuth.editFolder(newFolder.id, options)).rejects.toThrow();
+
+    await apiWithAuth.deleteFolder(newFolder.id);
+  });
+
+  test("Throws if invalid folder id provided.", () => {
+    const options = {name: "Bar"};
+    expect(async() => await apiWithAuth.editFolder("FOO", options)).rejects.toThrow();
+  });
+
+  test("Folder details are edited and returned.", async() => {
+    const parentFolderId = (await getFirstFolder()).id;
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
+    const options = {name: "New folder name"};
+
+    const editedFolder = await apiWithAuth.editFolder(newFolder.id, options);
+    expect(editedFolder).toHaveProperty("id");
+    expect(editedFolder).toHaveProperty("name");
+    expect(editedFolder).toHaveProperty("parent");
+    expect(editedFolder.name).toBe(options.name);
+
+    await apiWithAuth.deleteFolder(newFolder.id);
+  });
+
+});
+
+describe("PermaAPI.createArchive()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.createArchive(URL_TO_ARCHIVE)).rejects.toThrow();
+    expect(async() => await apiBadAuth.createArchive(URL_TO_ARCHIVE)).rejects.toThrow();
+  });
+
+  test("Throws if invalid url provided.", async() => {
+    const badUrl = URL_TO_ARCHIVE.substring(1);
+    expect(async() => await apiWithAuth.createArchive(badUrl)).rejects.toThrow();
+  });
+
+  test("Throws if invalid folder id provided.", async() => {
+    const options = {parentFolderId: "FOO"};
+    expect(async() => await apiWithAuth.createArchive(URL_TO_ARCHIVE, options)).rejects.toThrow();
+  });
+
+  test("Creates a new archive, no options.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+    expect(archive).toHaveProperty("guid");
+    expect(archive).toHaveProperty("url");
+    expect(archive.url).toBe(URL_TO_ARCHIVE);
+
+    await apiWithAuth.deleteArchive(archive.guid);
+  });
+
+  test("Creates a new archive, all options.", async() => {
+    const options = {
+      title: "Title override", 
+      parentFolderId: (await getFirstFolder()).id, 
+      isPrivate: true, 
+      notes: "This is a test note" 
+    };
+
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE, options);
+    expect(archive).toHaveProperty("guid");
+    expect(archive).toHaveProperty("url");
+    expect(archive).toHaveProperty("title");
+    expect(archive).toHaveProperty("is_private");
+    expect(archive).toHaveProperty("notes");
+    expect(archive.url).toBe(URL_TO_ARCHIVE);
+    expect(archive.title).toBe(options.title);
+    expect(archive.is_private).toBe(options.isPrivate);
+    expect(archive.notes).toBe(options.notes);
+
+    await apiWithAuth.deleteArchive(archive.guid);
   });
 
 });
