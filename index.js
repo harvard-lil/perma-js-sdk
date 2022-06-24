@@ -386,15 +386,15 @@ export class PermaAPI {
   async editArchive(archiveId, options = { isPrivate: null, title: null, notes: null }) {
     const body = {};
 
-    if (options.title !== null) {
+    if ("title" in options && options.title !== null) {
       body.title = String(options.title);
     }
 
-    if (options.notes !== null) {
+    if ("notes" in options && options.notes !== null) {
       body.notes = String(options.notes);
     }
 
-    if (options.isPrivate !== null) {
+    if ("isPrivate" in options && options.isPrivate !== null) {
       body.is_private = Boolean(options.isPrivate);
     }
 
