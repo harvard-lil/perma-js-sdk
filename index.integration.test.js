@@ -258,12 +258,14 @@ describe("PermaAPI.deleteFolder()", () => {
     expect(async() => await apiWithAuth.deleteFolder("FOO")).rejects.toThrow();
   });
 
-  test("Folder gets deleted.", async() => {
+  test("Deletes a folder and returns a boolean.", async() => {
     const parentFolder = await getFirstFolder();
     const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
 
     const result = await apiWithAuth.deleteFolder(newFolder.id);
     expect(result).toBe(true);
+
+    // Double check that archive was deleted
     expect(async() => await apiWithAuth.pullFolder(newFolder.id)).rejects.toThrow();
   });
 
@@ -504,6 +506,36 @@ describe("Perma.moveArchive()", () => {
 
 });
 
+describe("Perma.deleteArchive()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+
+    expect(async() => await apiNoAuth.deleteArchive(archive.guid)).rejects.toThrow();
+    expect(async() => await apiBadAuth.deleteArchive(archive.guid)).rejects.toThrow();
+
+    await apiWithAuth.deleteArchive(archive.guid);
+  });
+
+  test("Throws if no / invalid archive id provided..", async() => {
+    const invalidArchiveIds = [null, "FOO", [], {}, 12];
+
+    for (let archiveId of invalidArchiveIds) {
+      expect(async() => await apiWithAuth.deleteArchive(archiveId)).rejects.toThrow();
+    }
+  });
+
+  test("Deletes an archive and returns a boolean.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE); 
+
+    const result = await apiWithAuth.deleteArchive(archive.guid);
+    expect(result).toBe(true);
+
+    // Double-check that it was deleted
+    expect(async() => await apiWithAuth.pullArchive(archive.guid)).rejects.toThrow();
+  });
+
+});
 
 describe("PermaAPI.pullPublicArchives()", () => {
 
