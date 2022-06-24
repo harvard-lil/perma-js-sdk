@@ -5,7 +5,10 @@
  * @license MIT
  * @description Integration tests suite for `index`. Requires access to the Perma API. 
  * 
- * Important: Should be run sequentially (`jest --runInBand`).
+ * Important: 
+ * - We strongly suggest using an API key to an account used _solely_ for integration tests purposes.
+ * - Should be run sequentially (`jest --runInBand`).
+ * - This test series cannot make assumptions regarding the type of account it's pull info from, which is a limiting factor.
  */
 /// <reference path="types.js" />
 
@@ -28,6 +31,22 @@ let apiNoAuth = null;
  * Refreshed before each test (see `beforeEach()`).
  */
 let apiBadAuth = null;
+
+/**
+ * Pull the first PermaFolder object available from `pullTopLevelFolders`.
+ * Memoized.
+ * 
+ * @async
+ * @returns {PermaFolder}
+ */
+const firstFolder = async() => {
+  if (_firstFolder) {
+    return _firstFolder;
+  }
+  _firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0];
+  return _firstFolder;
+}
+let _firstFolder = null; // Module-level memoization for `firstFolder`
 
 //------------------------------------------------------------------------------
 // Setup / teardown
@@ -70,7 +89,7 @@ describe("Integration tests for PermaAPI.pullOrganizations()", () => {
     expect(async() => await apiBadAuth.pullOrganizations()).rejects.toThrow();
   });
 
-  test("Returns paginated results and take into account pagination limits.", async() => {
+  test("Returns paginated results and takes into account pagination limits.", async() => {
     const results = await apiWithAuth.pullPublicArchives(10, 0);
     expect(results).toHaveProperty("meta");
     expect(results).toHaveProperty("objects");
@@ -106,7 +125,7 @@ describe("Integration tests for PermaAPI.pullOrganization()", () => {
 //------------------------------------------------------------------------------
 describe("Integration tests for PermaAPI.pullPublicArchives()", () => {
 
-  test("Returns paginated results and take into account pagination limits, regardless of auth status.", async() => {
+  test("Returns paginated results and takes into account pagination limits, regardless of auth status.", async() => {
     for (let api of [apiNoAuth, apiBadAuth, apiWithAuth]) {
       const results = await api.pullPublicArchives(10, 0);
       expect(results).toHaveProperty("meta");
@@ -128,7 +147,7 @@ describe("Integration tests for PermaAPI.pullTopLevelFolders()", () => {
     expect(async() => await apiBadAuth.pullTopLevelFolders()).rejects.toThrow();
   });
 
-  test("Returns paginated results and take into account pagination limits.", async() => {
+  test("Returns paginated results and takes into account pagination limits.", async() => {
     const results = await apiWithAuth.pullTopLevelFolders(10, 0);
     expect(results).toHaveProperty("meta");
     expect(results).toHaveProperty("objects");
@@ -144,17 +163,68 @@ describe("Integration tests for PermaAPI.pullTopLevelFolders()", () => {
 describe("Integration tests for PermaAPI.pullFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
-    const firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0].id;
-    expect(async() => await apiNoAuth.pullFolder(firstFolder)).rejects.toThrow();
-    expect(async() => await apiBadAuth.pullFolder(firstFolder)).rejects.toThrow();
+    const folderId = (await firstFolder()).id;
+    expect(async() => await apiNoAuth.pullFolder(folderId)).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullFolder(folderId)).rejects.toThrow();
   });
 
   test("Returns folder details.", async() => {
-    const firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0].id;
-    const result = await apiWithAuth.pullFolder(firstFolder);
+    const folderId = (await firstFolder()).id;
+    const result = await apiWithAuth.pullFolder(folderId);
     expect(result).toHaveProperty("id");
     expect(result).toHaveProperty("name");
     expect(result).toHaveProperty("has_children")
   });
 
 });
+
+//------------------------------------------------------------------------------
+// `PermaAPI.pullFolderChildren()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.pullFolderChildren()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const folderId = (await firstFolder()).id;
+    expect(async() => await apiNoAuth.pullFolderChildren(folderId)).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullFolderChildren(folderId)).rejects.toThrow();
+  });
+
+  test("Returns paginated results and takes into account pagination limits.", async() => {
+    const folderId = (await firstFolder()).id;
+    const results = await apiWithAuth.pullFolderChildren(folderId, 10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.createFolder()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.createFolder()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const parentFolderId = (await firstFolder()).id;
+    const name = "Integration Test folder";
+
+    expect(async() => await apiNoAuth.createFolder(parentFolderId, name)).rejects.toThrow();
+    expect(async() => await apiBadAuth.createFolder(parentFolderId, name)).rejects.toThrow();
+  });
+
+  test("Returns new folder details.", async() => {
+    const parentFolderId = (await firstFolder()).id;
+    const name = "Integration Test folder";
+
+    const result = await apiWithAuth.createFolder(parentFolderId, name);
+    expect(result).toHaveProperty("id");
+    expect(result).toHaveProperty("name");
+    expect(result).toHaveProperty("has_children")
+
+    // Delete temporary folder
+    apiWithAuth.deleteFolder(result.id);
+  });
+
+});
+
