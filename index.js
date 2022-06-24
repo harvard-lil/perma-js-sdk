@@ -414,7 +414,7 @@ export class PermaAPI {
 
   /**
    * Moves an archive to a different folder.
-   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
+   * Wraps [PUT] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
    * Requires an API key.
    *
    * @param {string} archiveId - Identifier of the archive to move.
@@ -427,7 +427,7 @@ export class PermaAPI {
     archiveId = this.validateArchiveId(archiveId);
 
     const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: { ...this.#getAuthorizationHeader() },
     });
 

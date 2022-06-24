@@ -25,7 +25,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
             * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
             * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
             * [.pullArchives([limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-            * [.pullTopLevelFolders()](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+            * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
             * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
             * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
             * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
@@ -74,7 +74,7 @@ catch(err) { ... }
     * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.deleteArchive()](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
     * [.pullArchives([limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-    * [.pullTopLevelFolders()](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+    * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
     * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
     * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
     * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
@@ -102,7 +102,7 @@ Constructor
 
 #### permaAPI.validateArchiveId(archiveId) ⇒ <code>string</code>
 Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
-Throws an exception otherwise. 
+Throws an exception otherwise.
 Note: Only checks format.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -115,7 +115,7 @@ Note: Only checks format.
 
 #### permaAPI.validateFolderId(folderId) ⇒ <code>number</code>
 Checks that a given variable can be a folder id.
-Throws an exception otherwise. 
+Throws an exception otherwise.
 Note: Only checks format.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -128,7 +128,7 @@ Note: Only checks format.
 
 #### permaAPI.validateOrganizationId(organizationId) ⇒ <code>number</code>
 Checks that a given variable can be a folder id.
-Throws an exception otherwise. 
+Throws an exception otherwise.
 Note: Only checks format.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -212,14 +212,14 @@ Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| url | <code>string</code> |  |
-| [options] | <code>Object</code> |  |
-| [options.title] | <code>string</code> |  |
-| [options.folder] | <code>number</code> | Folder id. |
-| [options.isPrivate] | <code>boolean</code> |  |
-| [options.notes] | <code>string</code> |  |
+| Param | Type |
+| --- | --- |
+| url | <code>string</code> | 
+| [options] | <code>Object</code> | 
+| [options.title] | <code>string</code> | 
+| [options.parentFolderId] | <code>number</code> | 
+| [options.isPrivate] | <code>boolean</code> | 
+| [options.notes] | <code>string</code> | 
 
 <a name="module_index.PermaAPI+pullArchive"></a>
 
@@ -237,7 +237,7 @@ Requires an API key.
 <a name="module_index.PermaAPI+editArchive"></a>
 
 #### permaAPI.editArchive(archiveId, [options]) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-Edit details for a given archive. 
+Edit details for a given archive.
 Wraps [PATCH] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#move-to-dark-archive).
 Requires an API key.
 
@@ -254,8 +254,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+moveArchive"></a>
 
 #### permaAPI.moveArchive(archiveId, folderId) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-Moves an archive to a different folder. 
-Wraps [PATCH] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive). 
+Moves an archive to a different folder.
+Wraps [PUT] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -268,15 +268,15 @@ Requires an API key.
 <a name="module_index.PermaAPI+deleteArchive"></a>
 
 #### permaAPI.deleteArchive() ⇒ <code>Promise.&lt;boolean&gt;</code>
-Deletes an archive. 
-Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive). 
+Deletes an archive.
+Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive).
 Required an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 <a name="module_index.PermaAPI+pullArchives"></a>
 
 #### permaAPI.pullArchives([limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-Fetches a subset of all the archives the user has access to. 
+Fetches a subset of all the archives the user has access to.
 Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
 Requires an API key.
 
@@ -289,17 +289,23 @@ Requires an API key.
 
 <a name="module_index.PermaAPI+pullTopLevelFolders"></a>
 
-#### permaAPI.pullTopLevelFolders() ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
-Pulls a list of the user's top-level folders. 
+#### permaAPI.pullTopLevelFolders([limit], [offset]) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+Pulls a list of the user's top-level folders.
 Wraps [GET] `/v1/folders` (https://perma.cc/docs/developer#view-top-level-folders).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| [limit] | <code>number</code> | <code>100</code> | 
+| [offset] | <code>number</code> | <code>0</code> | 
+
 <a name="module_index.PermaAPI+pullFolder"></a>
 
 #### permaAPI.pullFolder(folderId) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-Retrieves the details of a given folder. 
-Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details). 
+Retrieves the details of a given folder.
+Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -311,8 +317,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+pullFolderChildren"></a>
 
 #### permaAPI.pullFolderChildren(parentFolderId, [limit], [offset]) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
-Lists direct children of a given folder. 
-Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders). 
+Lists direct children of a given folder.
+Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -327,7 +333,7 @@ Requires an API key.
 
 #### permaAPI.createFolder(parentFolderId, name) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 Creates a folder.
-Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
+Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -340,7 +346,7 @@ Requires an API key.
 <a name="module_index.PermaAPI+editFolder"></a>
 
 #### permaAPI.editFolder(folderId, [options]) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-Edit details for a given folder. 
+Edit details for a given folder.
 Wraps [PATCH] `/v1/folders/{folderId}/` (https://perma.cc/docs/developer#rename-folder).
 Requires an API key.
 
@@ -356,7 +362,7 @@ Requires an API key.
 
 #### permaAPI.moveFolder(folderId, parentFolderId) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
 Moves a folder into another.
-Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder). 
+Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -369,8 +375,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+deleteFolder"></a>
 
 #### permaAPI.deleteFolder(folderId) ⇒ <code>Promise.&lt;boolean&gt;</code>
-Deletes a folder. 
-Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder). 
+Deletes a folder.
+Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -382,8 +388,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+pullFolderArchives"></a>
 
 #### permaAPI.pullFolderArchives(folderId, [limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-Pulls a list of archives from a specific folder. 
-Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives). 
+Pulls a list of archives from a specific folder.
+Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -397,8 +403,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+pullOngoingCaptureJobs"></a>
 
 #### permaAPI.pullOngoingCaptureJobs([limit], [offset]) ⇒ <code>Promise.&lt;PermaCaptureJobsPage&gt;</code>
-Retrieves the full list of ongoing capture jobs for the current user. 
-Wraps [GET] `/v1/capture_jobs/` (https://perma.cc/docs/developer#get-user-capture-jobs). 
+Retrieves the full list of ongoing capture jobs for the current user.
+Wraps [GET] `/v1/capture_jobs/` (https://perma.cc/docs/developer#get-user-capture-jobs).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -411,8 +417,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+pullArchiveCaptureJob"></a>
 
 #### permaAPI.pullArchiveCaptureJob(archiveId) ⇒ <code>Promise.&lt;PermaCaptureJob&gt;</code>
-Pulls the latest capture job details for a given archive id. 
-Wraps [GET] `/v1/capture_jobs/{archiveId}` (https://perma.cc/docs/developer#get-archive-status). 
+Pulls the latest capture job details for a given archive id.
+Wraps [GET] `/v1/capture_jobs/{archiveId}` (https://perma.cc/docs/developer#get-archive-status).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -425,7 +431,7 @@ Requires an API key.
 
 #### permaAPI.createArchivesBatch(urls, folderId) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
 Creates multiple archives at once (batch).
-Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
@@ -438,8 +444,8 @@ Requires an API key.
 <a name="module_index.PermaAPI+pullArchivesBatch"></a>
 
 #### permaAPI.pullArchivesBatch(batchId) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
-Pulls the status of a given archives batch.    
-Wraps [GET] `/v1/archives/batches/{batchId}` (https://perma.cc/docs/developer#get-batch-status). 
+Pulls the status of a given archives batch.
+Wraps [GET] `/v1/archives/batches/{batchId}` (https://perma.cc/docs/developer#get-batch-status).
 Requires an API key.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  

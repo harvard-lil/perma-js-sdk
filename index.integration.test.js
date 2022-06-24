@@ -118,20 +118,6 @@ describe("PermaAPI.pullOrganization()", () => {
 
 });
 
-describe("PermaAPI.pullPublicArchives()", () => {
-
-  test("Returns paginated results and takes into account pagination limits, regardless of auth status.", async() => {
-    for (let api of [apiNoAuth, apiBadAuth, apiWithAuth]) {
-      const results = await api.pullPublicArchives(10, 0);
-      expect(results).toHaveProperty("meta");
-      expect(results).toHaveProperty("objects");
-      expect(results.meta.limit).toBe(10);
-      expect(results.objects.length).toBeLessThanOrEqual(10);
-    }
-  });
-
-});
-
 describe("PermaAPI.pullTopLevelFolders()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
@@ -334,7 +320,7 @@ describe("PermaAPI.createArchive()", () => {
     expect(async() => await apiWithAuth.createArchive(URL_TO_ARCHIVE, options)).rejects.toThrow();
   });
 
-  test("Creates a new archive, no options.", async() => {
+  test("Creates a new archive and returns details (no options).", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
     expect(archive).toHaveProperty("guid");
     expect(archive).toHaveProperty("url");
@@ -343,7 +329,7 @@ describe("PermaAPI.createArchive()", () => {
     await apiWithAuth.deleteArchive(archive.guid);
   });
 
-  test("Creates a new archive, all options.", async() => {
+  test("Creates a new archive and returns details (all options).", async() => {
     const options = {
       title: "Title override", 
       parentFolderId: (await getFirstFolder()).id, 
@@ -431,7 +417,7 @@ describe("Perma.editArchive()", () => {
     }
   });
 
-  test("Edits an archive archive, all options.", async() => {
+  test("Edits an archive archive and returns details (all options).", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
 
     const options = {
@@ -471,6 +457,64 @@ describe("Perma.moveArchive()", () => {
 
     await apiWithAuth.deleteArchive(archive.guid);
     await apiWithAuth.deleteFolder(destinationFolder.id);
+  });
+
+  test("Throws if invalid folder id provided.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+    expect(async() => await apiWithAuth.moveArchive(archive.guid, "FOO")).rejects.toThrow();
+    await apiWithAuth.deleteArchive(archive.guid);
+  });
+
+  test("Throws if no / invalid archive id provided..", async() => {
+    const folderId = await getFirstFolder();
+    const invalidArchiveIds = [null, "FOO", [], {}, 12];
+
+    for (let archiveId of invalidArchiveIds) {
+      expect(async() => await apiWithAuth.moveArchive(archiveId, folderId)).rejects.toThrow();
+    }
+  });
+
+  test("Moves archive from folder A to B and returns archive details.", async() => {
+    const parentFolder = await getFirstFolder();
+    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, "Test Folder");
+
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE, {
+      parentFolderId: parentFolder.id,
+    }); 
+
+    const movedArchive = await apiWithAuth.moveArchive(archive.guid, targetFolder.id);
+    expect(movedArchive).toHaveProperty("guid");
+    expect(movedArchive).toHaveProperty("url");
+    expect(movedArchive.url).toBe(URL_TO_ARCHIVE);
+
+    // Check that the archive was moved to `targetFolder`
+    const folderArchives = await apiWithAuth.pullFolderArchives(targetFolder.id);
+    let archiveIsInTargetFolder = false;
+
+    for (let folderArchive of folderArchives.objects) {
+      if (folderArchive.guid === movedArchive.guid) {
+        archiveIsInTargetFolder = true;
+        break;
+      }
+    }
+    expect(archiveIsInTargetFolder).toBe(true);
+
+    await apiWithAuth.deleteArchive(archive.guid);
+  });
+
+});
+
+
+describe("PermaAPI.pullPublicArchives()", () => {
+
+  test("Returns paginated results and takes into account pagination limits, regardless of auth status.", async() => {
+    for (let api of [apiNoAuth, apiBadAuth, apiWithAuth]) {
+      const results = await api.pullPublicArchives(10, 0);
+      expect(results).toHaveProperty("meta");
+      expect(results).toHaveProperty("objects");
+      expect(results.meta.limit).toBe(10);
+      expect(results.objects.length).toBeLessThanOrEqual(10);
+    }
   });
 
 });
