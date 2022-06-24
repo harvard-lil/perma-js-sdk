@@ -57,14 +57,7 @@ describe("Unit tests for PermaAPI.constructor()", () => {
   });
 
   test("Throws if `forceBaseUrl` is provided and its format is invalid.", () => {
-    const invalidUrls = [
-      [],
-      {},
-      () => {},
-      2,
-      2.4,
-      "api.perma.cc"
-    ];
+    const invalidUrls = [[], {}, () => {}, 2, 2.4, "api.perma.cc"];
 
     for (let forceBaseUrl of invalidUrls) {
       expect(() => new PermaAPI(null, forceBaseUrl)).toThrow();
@@ -122,14 +115,7 @@ describe("Unit tests for PermaAPI.validateArchiveId()", () => {
 describe("Unit tests for PermaAPI.validateFolderId()", () => {
 
   test("Throws when given a folder id in an invalid format.", () => {
-    const invalidFolderIds = [
-      [],
-      {},
-      () => {},
-      "FOO",
-      null,
-      true
-    ];
+    const invalidFolderIds = [[], {}, () => {}, "FOO", null, true];
 
     const api = new PermaAPI();
 
@@ -142,7 +128,7 @@ describe("Unit tests for PermaAPI.validateFolderId()", () => {
     const validFolderIds = [
       12,
       "12",
-      "12.5" // ParseInt-able
+      "12.5", // ParseInt-able
     ];
 
     const api = new PermaAPI();
@@ -160,14 +146,7 @@ describe("Unit tests for PermaAPI.validateFolderId()", () => {
 describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
 
   test("Throws when given a organization id in an invalid format.", () => {
-    const invalidOrganizationIds = [
-      [],
-      {},
-      () => {},
-      "FOO",
-      null,
-      true
-    ];
+    const invalidOrganizationIds = [[], {}, () => {}, "FOO", null, true];
 
     const api = new PermaAPI();
 
@@ -180,7 +159,7 @@ describe("Unit tests for PermaAPI.validateOrganizationId()", () => {
     const validOrganizationIds = [
       12,
       "12",
-      "12.5" // ParseInt-able
+      "12.5", // ParseInt-able
     ];
 
     const api = new PermaAPI();
@@ -219,7 +198,7 @@ describe("Unit tests for PermaAPI.validatePagination()", () => {
     const validPairs = [
       [10, 0],
       [1, 10],
-      [1000, 0]
+      [1000, 0],
     ];
 
     const api = new PermaAPI();

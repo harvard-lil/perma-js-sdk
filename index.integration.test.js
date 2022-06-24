@@ -7,7 +7,6 @@
  * 
  * Important: 
  * - We strongly suggest using an API key to an account used _solely_ for integration tests purposes.
- * - Should be run sequentially (`jest --runInBand`).
  * - This test series cannot make assumptions regarding the type of account it's pull info from, which is a limiting factor.
  */
 /// <reference path="types.js" />
@@ -72,9 +71,9 @@ describe("Integration tests for PermaAPI.pullUser()", () => {
   });
 
   test("Returns user details.", async() => {
-    const result = await apiWithAuth.pullUser();
-    expect(result).toHaveProperty("id");
-    expect(result).toHaveProperty("first_name");
+    const user = await apiWithAuth.pullUser();
+    expect(user).toHaveProperty("id");
+    expect(user).toHaveProperty("first_name");
   });
 
 });
@@ -189,6 +188,10 @@ describe("Integration tests for PermaAPI.pullFolderChildren()", () => {
     expect(async() => await apiBadAuth.pullFolderChildren(folderId)).rejects.toThrow();
   });
 
+  test("Throws if invalid folder id provided", () => {
+    expect(async() => await apiWithAuth.pullFolderChildren("FOO")).rejects.toThrow();
+  });
+
   test("Returns paginated results and takes into account pagination limits.", async() => {
     const folderId = (await firstFolder()).id;
     const results = await apiWithAuth.pullFolderChildren(folderId, 10, 0);
@@ -213,18 +216,91 @@ describe("Integration tests for PermaAPI.createFolder()", () => {
     expect(async() => await apiBadAuth.createFolder(parentFolderId, name)).rejects.toThrow();
   });
 
+  test("Throws if invalid folder id provided", () => {
+    expect(async() => await apiWithAuth.createFolder("FOO", "FOO")).rejects.toThrow();
+  });
+
   test("Returns new folder details.", async() => {
     const parentFolderId = (await firstFolder()).id;
     const name = "Integration Test folder";
 
-    const result = await apiWithAuth.createFolder(parentFolderId, name);
-    expect(result).toHaveProperty("id");
-    expect(result).toHaveProperty("name");
-    expect(result).toHaveProperty("has_children")
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, name);
+    expect(newFolder).toHaveProperty("id");
+    expect(newFolder).toHaveProperty("name");
+    expect(newFolder).toHaveProperty("has_children");
+    expect(newFolder).toHaveProperty("parent");
+    expect(newFolder.parent).toBe(parentFolderId);
 
-    // Delete temporary folder
-    apiWithAuth.deleteFolder(result.id);
+    await apiWithAuth.deleteFolder(newFolder.id);
   });
 
 });
 
+//------------------------------------------------------------------------------
+// `PermaAPI.moveFolder()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.moveFolder()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const parentFolderId = (await firstFolder()).id;
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
+
+    expect(async() => await apiNoAuth.moveFolder(newFolder.id, parentFolderId)).rejects.toThrow();
+    expect(async() => await apiBadAuth.moveFolder(newFolder.id, parentFolderId)).rejects.toThrow();
+
+    await apiWithAuth.deleteFolder(newFolder.id);
+  });
+
+  test("Throws if invalid folder id provided", () => {
+    expect(async() => await apiWithAuth.moveFolder("FOO", "BAR")).rejects.toThrow();
+  });
+
+  test("Returns moved folder details.", async() => {
+    // Setup:
+    // - Two new folders under `firstFolder`
+    // - Try to move one of the two one level under
+    const parentFolderId = (await firstFolder()).id;
+    const newFolder1 = await apiWithAuth.createFolder(parentFolderId, "Test 1");
+    const newFolder2 = await apiWithAuth.createFolder(parentFolderId, "Test 2");
+
+    const movedFolder = await apiWithAuth.moveFolder(newFolder1.id, newFolder2.id);
+    expect(movedFolder).toHaveProperty("id");
+    expect(movedFolder).toHaveProperty("name");
+    expect(movedFolder).toHaveProperty("parent");
+    expect(movedFolder.parent).toBe(newFolder2.id);
+
+    await apiWithAuth.deleteFolder(newFolder1.id);
+    await apiWithAuth.deleteFolder(newFolder2.id);
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.deleteFolder()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.deleteFolder()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const parentFolderId = (await firstFolder()).id;
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
+
+    expect(async() => await apiNoAuth.deleteFolder(newFolder.id)).rejects.toThrow();
+    expect(async() => await apiBadAuth.deleteFolder(newFolder.id)).rejects.toThrow();
+
+    await apiWithAuth.deleteFolder(newFolder.id);
+  });
+
+  test("Throws if invalid folder id provided", () => {
+    expect(async() => await apiWithAuth.deleteFolder("FOO")).rejects.toThrow();
+  });
+
+  test("Folder gets deleted.", async() => {
+    const parentFolderId = (await firstFolder()).id;
+    const newFolder = await apiWithAuth.createFolder(parentFolderId, "This is a new folder");
+
+    const result = await apiWithAuth.deleteFolder(newFolder.id);
+    expect(result).toBe(true);
+    expect(async() => await apiWithAuth.pullFolder(newFolder.id)).rejects.toThrow();
+  });
+
+});
