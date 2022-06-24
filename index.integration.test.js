@@ -267,6 +267,8 @@ describe("PermaAPI.deleteFolder()", () => {
 
     // Double check that archive was deleted
     expect(async() => await apiWithAuth.pullFolder(newFolder.id)).rejects.toThrow();
+
+    await apiWithAuth.deleteFolder(newFolder.id);
   });
 
 });
@@ -367,7 +369,24 @@ describe("PermaAPI.createArchive()", () => {
 
 });
 
-describe("Perma.pullArchive()", () => {
+describe("PermaAPI.pullArchives()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.pullArchives()).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullArchives()).rejects.toThrow();
+  });
+
+  test("Returns paginated results and takes into account pagination limits.", async() => {
+    const results = await apiWithAuth.pullArchives(10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+describe("PermaAPI.pullArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
@@ -502,6 +521,7 @@ describe("Perma.moveArchive()", () => {
     expect(archiveIsInTargetFolder).toBe(true);
 
     await apiWithAuth.deleteArchive(archive.guid);
+    await apiWithAuth.deleteFolder(targetFolder.id);
   });
 
 });
@@ -547,6 +567,101 @@ describe("PermaAPI.pullPublicArchives()", () => {
       expect(results.meta.limit).toBe(10);
       expect(results.objects.length).toBeLessThanOrEqual(10);
     }
+  });
+
+});
+
+describe("PermaAPI.pullPublicArchive()", () => {
+
+  test("Throws if no / invalid archive id provided..", async() => {
+    const invalidArchiveIds = [null, "FOO", [], {}, 12];
+
+    for (let archiveId of invalidArchiveIds) {
+      expect(async() => await apiWithAuth.pullPublicArchive(archiveId)).rejects.toThrow();
+    }
+  });
+
+  test("Returns public archive details, regardless of auth status.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+
+    for (let api of [apiBadAuth, apiNoAuth, apiWithAuth]) {
+      const result = await api.pullPublicArchive(archive.guid);
+      expect(result).toHaveProperty("guid");
+      expect(result).toHaveProperty("url");
+      expect(result.url).toBe(URL_TO_ARCHIVE);
+      expect(result.guid).toBe(archive.guid);
+    }
+
+    await apiWithAuth.deleteArchive(archive.guid);
+  });
+
+});
+
+describe("PermaAPI.pullFolderArchives()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const folder = await getFirstFolder();
+    expect(async() => await apiNoAuth.pullFolderArchives(folder.id)).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullFolderArchives(folder.id)).rejects.toThrow();
+  });
+
+  test("Throws if invalid folder id provided.", async() => {
+    expect(async() => await apiWithAuth.pullFolderArchives("FOO")).rejects.toThrow();
+  });
+
+  test("Returns paginated results and takes into account pagination limits.", async() => {
+    const results = await apiWithAuth.pullFolderArchives(10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+describe("PermaAPI.pullOngoingCaptureJobs()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.pullOngoingCaptureJobs()).rejects.toThrow();
+  });  
+
+  test("Returns paginated results and takes into account pagination limits.", async() => {
+    const results = await apiWithAuth.pullOngoingCaptureJobs(10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+describe("PermaAPI.pullArchiveCaptureJob()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+
+    expect(async() => await apiNoAuth.pullArchiveCaptureJob()).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullArchiveCaptureJob()).rejects.toThrow();
+
+    await apiWithAuth.deleteArchive(archive.guid);
+  });  
+
+  test("Throws if no / invalid archive id provided.", async() => {
+    const invalidArchiveIds = [null, "FOO", [], {}, 12];
+
+    for (let archiveId of invalidArchiveIds) {
+      expect(async() => await apiWithAuth.pullArchiveCaptureJob(archiveId)).rejects.toThrow();
+    }
+  });
+
+  test("Returns latest capture job detail.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+
+    const captureJob = await apiWithAuth.pullArchiveCaptureJob(archive.guid);
+    expect(captureJob).toHaveProperty("guid");
+    expect(captureJob).toHaveProperty("status");
+
+    await apiWithAuth.deleteArchive(archive.guid); 
   });
 
 });
