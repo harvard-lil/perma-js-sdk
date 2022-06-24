@@ -61,6 +61,47 @@ describe("Integration tests for PermaAPI.pullUser()", () => {
 });
 
 //------------------------------------------------------------------------------
+// `PermaAPI.pullOrganizations()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.pullOrganizations()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.pullOrganizations()).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullOrganizations()).rejects.toThrow();
+  });
+
+  test("Returns paginated results and take into account pagination limits.", async() => {
+    const results = await apiWithAuth.pullPublicArchives(10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.pullOrganization()`
+//------------------------------------------------------------------------------
+// Ideally: Add a test pulling actual organization details.
+describe("Integration tests for PermaAPI.pullOrganization()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.pullOrganization(1)).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullOrganization(1)).rejects.toThrow();
+  });
+
+  test("Throws when trying to pull details from an organization that the user doesn't have access to / doesn't exist.", async() => {
+    expect(async() => await apiWithAuth.pullOrganization(1)).rejects.toThrow();
+  });
+
+  test("Throws when given an organization id in an invalid format.", async() => {
+    expect(async() => await apiWithAuth.pullOrganization("FOO")).rejects.toThrow();
+  });
+
+});
+
+//------------------------------------------------------------------------------
 // `PermaAPI.pullPublicArchives()`
 //------------------------------------------------------------------------------
 describe("Integration tests for PermaAPI.pullPublicArchives()", () => {
