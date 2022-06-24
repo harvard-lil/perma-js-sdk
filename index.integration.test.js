@@ -117,3 +117,44 @@ describe("Integration tests for PermaAPI.pullPublicArchives()", () => {
   });
 
 });
+
+//------------------------------------------------------------------------------
+// `PermaAPI.pullTopLevelFolders()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.pullTopLevelFolders()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async() => await apiNoAuth.pullTopLevelFolders()).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullTopLevelFolders()).rejects.toThrow();
+  });
+
+  test("Returns paginated results and take into account pagination limits.", async() => {
+    const results = await apiWithAuth.pullTopLevelFolders(10, 0);
+    expect(results).toHaveProperty("meta");
+    expect(results).toHaveProperty("objects");
+    expect(results.meta.limit).toBe(10);
+    expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+});
+
+//------------------------------------------------------------------------------
+// `PermaAPI.pullFolder()`
+//------------------------------------------------------------------------------
+describe("Integration tests for PermaAPI.pullFolder()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0].id;
+    expect(async() => await apiNoAuth.pullFolder(firstFolder)).rejects.toThrow();
+    expect(async() => await apiBadAuth.pullFolder(firstFolder)).rejects.toThrow();
+  });
+
+  test("Returns folder details.", async() => {
+    const firstFolder = (await apiWithAuth.pullTopLevelFolders()).objects[0].id;
+    const result = await apiWithAuth.pullFolder(firstFolder);
+    expect(result).toHaveProperty("id");
+    expect(result).toHaveProperty("name");
+    expect(result).toHaveProperty("has_children")
+  });
+
+});

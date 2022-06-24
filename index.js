@@ -44,15 +44,14 @@ const fetch = (() => {
  * 
  */
 export class PermaAPI {
-
   /**
-   * @type {?string} 
+   * @type {?string}
    * @description API key to be used to access restricted features (private).
    */
   #apiKey = null;
 
   /**
-   * @type {string} 
+   * @type {string}
    * @description Base url of the Perma.cc API.  Can be only at constructor level (private).
    */
   #baseUrl = "https://api.perma.cc";
@@ -81,7 +80,6 @@ export class PermaAPI {
       let newBaseUrl = new URL(forceBaseUrl);
       this.#baseUrl = newBaseUrl.origin;
     }
-
   }
 
   /**
@@ -94,7 +92,7 @@ export class PermaAPI {
       throw new Error("This method requires an API key.");
     }
 
-    return { "Authorization": `ApiKey ${this.#apiKey}` };
+    return { Authorization: `ApiKey ${this.#apiKey}` };
   }
 
   /**
@@ -108,7 +106,7 @@ export class PermaAPI {
    * @private
    * @async
    */
-   async #parseAPIResponse(response) {
+  async #parseAPIResponse(response) {
     let data = {};
     let message = "";
 
@@ -120,8 +118,10 @@ export class PermaAPI {
     // Try to parse data as JSON.
     try {
       data = await response.json();
+    } 
+    catch (err) {
+      /*Some routes do not return any data. */
     }
-    catch(err) { /*Some routes do not return any data. */ }
 
     // Return parsed data "as is" if HTTP 2XX
     if (Math.floor(response.status / 100) === 2) {
@@ -131,7 +131,8 @@ export class PermaAPI {
     // Throw error with details given by the API (if any) otherwise
     message = `HTTP ${response.status}`;
 
-    if (data.detail) { // See `PermaApiError`
+    if (data.detail) {
+      // See `PermaApiError`
       message += ` ${data.detail}`;
     }
 
@@ -140,9 +141,9 @@ export class PermaAPI {
 
   /**
    * Checks that a given string is an archive GUID (2x 4 alphanumeric chars separated by an hyphen).
-   * Throws an exception otherwise. 
-   * Note: Only checks format. 
-   * 
+   * Throws an exception otherwise.
+   * Note: Only checks format.
+   *
    * @param {string} archiveId
    * @return {string}
    */
@@ -158,9 +159,9 @@ export class PermaAPI {
 
   /**
    * Checks that a given variable can be a folder id.
-   * Throws an exception otherwise. 
-   * Note: Only checks format. 
-   * 
+   * Throws an exception otherwise.
+   * Note: Only checks format.
+   *
    * @param {number} folderId
    * @return {number}
    */
@@ -176,9 +177,9 @@ export class PermaAPI {
 
   /**
    * Checks that a given variable can be a folder id.
-   * Throws an exception otherwise. 
-   * Note: Only checks format. 
-   * 
+   * Throws an exception otherwise.
+   * Note: Only checks format.
+   *
    * @param {number} organizationId
    * @return {number}
    */
@@ -192,13 +193,12 @@ export class PermaAPI {
     return organizationId;
   }
 
-
   /**
    * Checks that a given pagination limit and offset pair is valid.
-   * 
+   *
    * @param {number} limit
    * @param {number} offset
-   * @return {{limit: number, offset: number}} 
+   * @return {{limit: number, offset: number}}
    */
   validatePagination(limit, offset) {
     limit = parseInt(String(limit));
@@ -212,7 +212,7 @@ export class PermaAPI {
       throw new Error(`\`limit\` (${limit}) and / or \`offset\` (${offset}) out of bounds.`);
     }
 
-    return {limit, offset};
+    return { limit, offset };
   }
 
   /**
@@ -366,7 +366,7 @@ export class PermaAPI {
   }
 
   /**
-   * Edit details for a given archive. 
+   * Edit details for a given archive.
    * Wraps [PATCH] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#move-to-dark-archive).
    * Requires an API key.
    *
@@ -408,14 +408,14 @@ export class PermaAPI {
   }
 
   /**
-   * Moves an archive to a different folder. 
-   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive). 
+   * Moves an archive to a different folder.
+   * Wraps [PATCH] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
    * Requires an API key.
-   * 
+   *
    * @param {string} archiveId - Identifier of the archive to move.
-   * @param {number} folderId - Identifier of the folder to move the archive into. 
+   * @param {number} folderId - Identifier of the folder to move the archive into.
    * @return {Promise<PermaArchive>}
-   * @async 
+   * @async
    */
   async moveArchive(archiveId, folderId) {
     folderId = this.validateFolderId(folderId);
@@ -430,10 +430,10 @@ export class PermaAPI {
   }
 
   /**
-   * Deletes an archive. 
-   * Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive). 
+   * Deletes an archive.
+   * Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive).
    * Required an API key.
-   * 
+   *
    * @return {Promise<boolean>}
    * @async
    */
@@ -450,10 +450,10 @@ export class PermaAPI {
   }
 
   /**
-   * Fetches a subset of all the archives the user has access to. 
+   * Fetches a subset of all the archives the user has access to.
    * Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
    * Requires an API key.
-   * 
+   *
    * @param {number} [limit=10]
    * @param {number} [offset=0]
    * @return {Promise<PermaArchivesPage>}
@@ -471,14 +471,19 @@ export class PermaAPI {
   }
 
   /**
-   * Pulls a list of the user's top-level folders. 
+   * Pulls a list of the user's top-level folders.
    * Wraps [GET] `/v1/folders` (https://perma.cc/docs/developer#view-top-level-folders).
-   * Requires an API key. 
-   * 
+   * Requires an API key.
+   *
+   * @param {number} [limit=100]
+   * @param {number} [offset=0]
    * @return {Promise<PermaFoldersPage>}
    */
-   async pullTopLevelFolders() {
-    const response = await fetch(`${this.#baseUrl}/v1/folders`, {
+  async pullTopLevelFolders(limit = 100, offset = 0) {
+    this.validatePagination(limit, offset); // Will throw if invalid
+    const searchParams = new URLSearchParams({ limit, offset });
+
+    const response = await fetch(`${this.#baseUrl}/v1/folders?${searchParams}`, {
       method: "GET",
       headers: { ...this.#getAuthorizationHeader() },
     });
@@ -487,11 +492,11 @@ export class PermaAPI {
   }
 
   /**
-   * Retrieves the details of a given folder. 
-   * Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details). 
+   * Retrieves the details of a given folder.
+   * Wraps [GET] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#view-folder-details).
    * Requires an API key.
-   * 
-   * @param {number} folderId 
+   *
+   * @param {number} folderId
    * @return {Promise<PermaFolder>}
    * @async
    */
@@ -507,19 +512,19 @@ export class PermaAPI {
   }
 
   /**
-   * Lists direct children of a given folder. 
-   * Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders). 
+   * Lists direct children of a given folder.
+   * Wraps [GET] `/v1/folders/{parentFolderId}/folders` (https://perma.cc/docs/developer#view-folder-subfolders).
    * Requires an API key.
-   * 
+   *
    * @param {number} parentFolderId - Id of the parent folder (required).
    * @param {number} [limit=100]
    * @param {number} [offset=0]
    * @return {Promise<PermaFoldersPage>}
    * @async
    */
-  async pullFolderChildren(parentFolderId, limit=100, offset=0) {
+  async pullFolderChildren(parentFolderId, limit = 100, offset = 0) {
     this.validatePagination(limit, offset); // Will throw if invalid
-    const searchParams = new URLSearchParams({limit, offset });
+    const searchParams = new URLSearchParams({ limit, offset });
 
     parentFolderId = this.validateFolderId(parentFolderId);
 
@@ -536,14 +541,14 @@ export class PermaAPI {
 
   /**
    * Creates a folder.
-   * Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder). 
+   * Wraps [POST] `/v1/folders/{parentFolderId}/folders/` (https://perma.cc/docs/developer#create-folder).
    * Requires an API key.
-   * 
+   *
    * @param {number} parentFolderId - Id of the parent folder (required).
-   * @param {string} name - Name to be given to the new folder. 
-   * @return {Promise<PermaFolder>} 
+   * @param {string} name - Name to be given to the new folder.
+   * @return {Promise<PermaFolder>}
    */
-   async createFolder(parentFolderId, name) {
+  async createFolder(parentFolderId, name) {
     parentFolderId = this.validateFolderId(parentFolderId);
 
     const response = await fetch(`${this.#baseUrl}/v1/folders/${parentFolderId}/folders`, {
@@ -552,14 +557,14 @@ export class PermaAPI {
         "Content-Type": "application/json",
         ...this.#getAuthorizationHeader(),
       },
-      body: JSON.stringify({name: String(name)}),
+      body: JSON.stringify({ name: String(name) }),
     });
 
     return await this.#parseAPIResponse(response);
   }
 
   /**
-   * Edit details for a given folder. 
+   * Edit details for a given folder.
    * Wraps [PATCH] `/v1/folders/{folderId}/` (https://perma.cc/docs/developer#rename-folder).
    * Requires an API key.
    *
@@ -569,7 +574,7 @@ export class PermaAPI {
    * @return {Promise<PermaFolder>}
    * @async
    */
-  async editFolder(folderId, options = {name: null}) {
+  async editFolder(folderId, options = { name: null }) {
     const body = {};
 
     if (options.name) {
@@ -592,10 +597,10 @@ export class PermaAPI {
 
   /**
    * Moves a folder into another.
-   * Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder). 
+   * Wraps [PUT] `/v1/folders/{parentFolderId}/folders/{folderId}/` (https://perma.cc/docs/developer#move-folder).
    * Requires an API key.
-   * 
-   * @param {number} folderId - Folder to move. 
+   *
+   * @param {number} folderId - Folder to move.
    * @param {number} parentFolderId - Where to move that folder into.
    * @returns {Promise<PermaFolder>}
    * @async
@@ -616,10 +621,10 @@ export class PermaAPI {
   }
 
   /**
-   * Deletes a folder. 
-   * Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder). 
+   * Deletes a folder.
+   * Wraps [DELETE] `/v1/folders/{folderId}` (https://perma.cc/docs/developer#delete-folder).
    * Requires an API key.
-   * 
+   *
    * @param {number} folderId
    * @return {Promise<boolean>}
    */
@@ -636,17 +641,17 @@ export class PermaAPI {
   }
 
   /**
-   * Pulls a list of archives from a specific folder. 
-   * Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives). 
+   * Pulls a list of archives from a specific folder.
+   * Wraps [GET] `/v1/folders/{folderId}/archives` (https://perma.cc/docs/developer#view-folder-archives).
    * Requires an API key.
-   * 
+   *
    * @param {number} folderId
    * @param {number} [limit=10]
    * @param {number} [offset=0]
    * @return {Promise<PermaArchivesPage>}
-   * @async 
+   * @async
    */
-   async pullFolderArchives(folderId, limit=10, offset=0) {
+  async pullFolderArchives(folderId, limit = 10, offset = 0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
     folderId = this.validateFolderId(folderId);
@@ -663,15 +668,15 @@ export class PermaAPI {
   }
 
   /**
-   * Retrieves the full list of ongoing capture jobs for the current user. 
-   * Wraps [GET] `/v1/capture_jobs/` (https://perma.cc/docs/developer#get-user-capture-jobs). 
+   * Retrieves the full list of ongoing capture jobs for the current user.
+   * Wraps [GET] `/v1/capture_jobs/` (https://perma.cc/docs/developer#get-user-capture-jobs).
    * Requires an API key.
-   * 
+   *
    * @param {number} [limit=100]
    * @param {number} [offset=0]
    * @returns {Promise<PermaCaptureJobsPage>}
    */
-  async pullOngoingCaptureJobs(limit=100, offset=0) {
+  async pullOngoingCaptureJobs(limit = 100, offset = 0) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
 
     const response = await fetch(`${this.#baseUrl}/v1/capture_jobs?${searchParams}`, {
@@ -683,10 +688,10 @@ export class PermaAPI {
   }
 
   /**
-   * Pulls the latest capture job details for a given archive id. 
-   * Wraps [GET] `/v1/capture_jobs/{archiveId}` (https://perma.cc/docs/developer#get-archive-status). 
+   * Pulls the latest capture job details for a given archive id.
+   * Wraps [GET] `/v1/capture_jobs/{archiveId}` (https://perma.cc/docs/developer#get-archive-status).
    * Requires an API key.
-   * 
+   *
    * @param {string} archiveId
    * @returns {Promise<PermaCaptureJob>}
    */
@@ -703,16 +708,16 @@ export class PermaAPI {
 
   /**
    * Creates multiple archives at once (batch).
-   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches). 
+   * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches).
    * Requires an API key.
-   * 
+   *
    * @param {string[]} urls - Must contain valid urls.
    * @param {number} folderId - Destination folder of the resulting archives.
    * @return {Promise<PermaArchivesBatch>}
    * @async
    */
-   async createArchivesBatch(urls, folderId) {
-    for(let url of urls) {
+  async createArchivesBatch(urls, folderId) {
+    for (let url of urls) {
       new URL(url); // Will throw if not a valid URL
     }
 
@@ -726,7 +731,7 @@ export class PermaAPI {
       },
       body: JSON.stringify({
         urls: urls,
-        target_folder: folderId
+        target_folder: folderId,
       }),
     });
 
@@ -734,14 +739,14 @@ export class PermaAPI {
   }
 
   /**
-   * Pulls the status of a given archives batch.    
-   * Wraps [GET] `/v1/archives/batches/{batchId}` (https://perma.cc/docs/developer#get-batch-status). 
+   * Pulls the status of a given archives batch.
+   * Wraps [GET] `/v1/archives/batches/{batchId}` (https://perma.cc/docs/developer#get-batch-status).
    * Requires an API key.
-   * 
-   * @param {number} batchId 
+   *
+   * @param {number} batchId
    * @return {Promise<PermaArchivesBatch>}
    */
-   async pullArchivesBatch(batchId) {
+  async pullArchivesBatch(batchId) {
     batchId = parseInt(String(batchId));
 
     const response = await fetch(`${this.#baseUrl}/v1/archives/batches/${batchId}`, {
@@ -749,7 +754,6 @@ export class PermaAPI {
       headers: { ...this.#getAuthorizationHeader() },
     });
 
-    return await this.#parseAPIResponse(response);    
+    return await this.#parseAPIResponse(response);
   }
-
 }
