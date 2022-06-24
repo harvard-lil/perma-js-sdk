@@ -5,8 +5,9 @@
  * @license MIT
  * @description Integration tests suite for `index`. Requires access to a Perma API instance. 
  * 
- * Important: 
- * - We suggest using an API key to an account used _solely_ for integration tests purposes.
+ * Notes: 
+ * - We suggest running this test in series (`--runInBand`).
+ * - We suggest using an API key for an account used solely for integration tests purposes.
  * - This test series cannot make assumptions regarding the type of account it's pull info from, which is a limiting factor.
  */
 /// <reference path="types.js" />
@@ -17,6 +18,11 @@ import { PermaAPI } from "./index.js";
  * Default URL to archive
  */
 const URL_TO_ARCHIVE = `http://info.cern.ch/hypertext/WWW/TheProject.html`;
+
+/**
+ * Name to give to temporary folder
+ */
+const TMP_FOLDER_NAME = `Temporary`
 
 /**
  * Module-level instance of `PermaAPI` with valid api key.
@@ -192,9 +198,8 @@ describe("PermaAPI.createFolder()", () => {
 
   test("Returns new folder details.", async() => {
     const parentFolder = await getFirstFolder();
-    const name = "Integration Test folder";
 
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, name);
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
     expect(newFolder).toHaveProperty("id");
     expect(newFolder).toHaveProperty("name");
     expect(newFolder).toHaveProperty("has_children");
@@ -210,7 +215,7 @@ describe("PermaAPI.moveFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
 
     expect(async() => await apiNoAuth.moveFolder(newFolder.id, parentFolder.id)).rejects.toThrow();
     expect(async() => await apiBadAuth.moveFolder(newFolder.id, parentFolder.id)).rejects.toThrow();
@@ -227,8 +232,8 @@ describe("PermaAPI.moveFolder()", () => {
     // - Two new folders under `getFirstFolder`
     // - Try to move one of the two one level under
     const parentFolder = await getFirstFolder();
-    const newFolder1 = await apiWithAuth.createFolder(parentFolder.id, "Test 1");
-    const newFolder2 = await apiWithAuth.createFolder(parentFolder.id, "Test 2");
+    const newFolder1 = await apiWithAuth.createFolder(parentFolder.id, `${TMP_FOLDER_NAME} 1`);
+    const newFolder2 = await apiWithAuth.createFolder(parentFolder.id, `${TMP_FOLDER_NAME} 2`);
 
     const movedFolder = await apiWithAuth.moveFolder(newFolder1.id, newFolder2.id);
     expect(movedFolder).toHaveProperty("id");
@@ -246,7 +251,7 @@ describe("PermaAPI.deleteFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
 
     expect(async() => await apiNoAuth.deleteFolder(newFolder.id)).rejects.toThrow();
     expect(async() => await apiBadAuth.deleteFolder(newFolder.id)).rejects.toThrow();
@@ -260,15 +265,13 @@ describe("PermaAPI.deleteFolder()", () => {
 
   test("Deletes a folder and returns a boolean.", async() => {
     const parentFolder = await getFirstFolder();
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
 
     const result = await apiWithAuth.deleteFolder(newFolder.id);
     expect(result).toBe(true);
 
-    // Double check that archive was deleted
+    // Double check that folder was deleted
     expect(async() => await apiWithAuth.pullFolder(newFolder.id)).rejects.toThrow();
-
-    await apiWithAuth.deleteFolder(newFolder.id);
   });
 
 });
@@ -277,7 +280,7 @@ describe("PermaAPI.editFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
     const options = {name: "New folder name"};
 
     expect(async() => await apiNoAuth.editFolder(newFolder.id, options)).rejects.toThrow();
@@ -293,7 +296,7 @@ describe("PermaAPI.editFolder()", () => {
 
   test("Folder details are edited and returned.", async() => {
     const parentFolder = await getFirstFolder();
-    const newFolder = await apiWithAuth.createFolder(parentFolder.id, "This is a new folder");
+    const newFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
     const options = {name: "New folder name"};
 
     const editedFolder = await apiWithAuth.editFolder(newFolder.id, options);
@@ -467,17 +470,17 @@ describe("Perma.moveArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
-    const destinationFolder = await apiWithAuth.createFolder(parentFolder.id, "Test");
+    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
 
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE, {
       parentFolderId: parentFolder.id,
     });
 
-    expect(async() => await apiNoAuth.moveArchive(archive.guid, destinationFolder.id)).rejects.toThrow();
-    expect(async() => await apiBadAuth.moveArchive(archive.guid, destinationFolder.id)).rejects.toThrow();
+    expect(async() => await apiNoAuth.moveArchive(archive.guid, targetFolder.id)).rejects.toThrow();
+    expect(async() => await apiBadAuth.moveArchive(archive.guid, targetFolder.id)).rejects.toThrow();
 
     await apiWithAuth.deleteArchive(archive.guid);
-    await apiWithAuth.deleteFolder(destinationFolder.id);
+    await apiWithAuth.deleteFolder(targetFolder.id);
   });
 
   test("Throws if invalid folder id provided.", async() => {
@@ -497,7 +500,7 @@ describe("Perma.moveArchive()", () => {
 
   test("Moves archive from folder A to B and returns archive details.", async() => {
     const parentFolder = await getFirstFolder();
-    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, "Test Folder");
+    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
 
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE, {
       parentFolderId: parentFolder.id,
@@ -610,7 +613,8 @@ describe("PermaAPI.pullFolderArchives()", () => {
   });
 
   test("Returns paginated results and takes into account pagination limits.", async() => {
-    const results = await apiWithAuth.pullFolderArchives(10, 0);
+    const folder = await getFirstFolder();
+    const results = await apiWithAuth.pullFolderArchives(folder.id, 10, 0);
     expect(results).toHaveProperty("meta");
     expect(results).toHaveProperty("objects");
     expect(results.meta.limit).toBe(10);
@@ -662,6 +666,83 @@ describe("PermaAPI.pullArchiveCaptureJob()", () => {
     expect(captureJob).toHaveProperty("status");
 
     await apiWithAuth.deleteArchive(archive.guid); 
+  });
+
+});
+
+describe("PermaAPI.createArchivesBatch()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    const folder = await getFirstFolder();
+
+    expect(
+      async () => await apiNoAuth.createArchivesBatch([URL_TO_ARCHIVE], folder.id)
+    ).rejects.toThrow();
+
+    expect(
+      async () => await apiBadAuth.createArchivesBatch([URL_TO_ARCHIVE], folder.id)
+    ).rejects.toThrow();
+  });  
+
+  test("Throws if invalid folder id provided.", async() => {
+    expect(
+      async () => await apiWithAuth.createArchivesBatch([URL_TO_ARCHIVE], "FOO")
+    ).rejects.toThrow();
+  });
+
+  test("Creates a batch of archives and returns details.", async() => {
+    const parentFolder = await getFirstFolder();
+    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
+    const urls = [URL_TO_ARCHIVE, URL_TO_ARCHIVE];
+
+    const batch = await apiWithAuth.createArchivesBatch(urls, targetFolder.id);
+    expect(batch).toHaveProperty("id");
+    expect(batch).toHaveProperty("started_on");
+    expect(batch).toHaveProperty("capture_jobs");
+    expect(batch).toHaveProperty("target_folder");
+    expect(batch.target_folder.id).toBe(targetFolder.id);
+
+    // Delete archives and folders created during this batch
+    for (let captureJob of batch.capture_jobs) {
+      await apiWithAuth.deleteArchive(captureJob.guid);
+    }
+
+    await apiWithAuth.deleteFolder(targetFolder.id);
+  });
+
+});
+
+describe("PermaAPI.pullArchivesBatch()", () => {
+
+  test("Throws if no / invalid api key provided.", async() => {
+    expect(async () => await apiNoAuth.pullArchivesBatch(1)).rejects.toThrow();
+    expect(async () => await apiBadAuth.pullArchivesBatch(1)).rejects.toThrow();
+  });  
+
+  test("Throws if invalid batch id provided.", async() => {
+    expect(async () => await apiNoAuth.pullArchivesBatch("FOO")).rejects.toThrow();
+  });
+
+  test("Returns details of a batch.", async() => {
+    const parentFolder = await getFirstFolder();
+    const targetFolder = await apiWithAuth.createFolder(parentFolder.id, TMP_FOLDER_NAME);
+    const urls = [URL_TO_ARCHIVE, URL_TO_ARCHIVE];
+    const batch = await apiWithAuth.createArchivesBatch(urls, targetFolder.id);
+    
+    const pulledBatch = await apiWithAuth.pullArchivesBatch(batch.id);
+    expect(pulledBatch).toHaveProperty("id");
+    expect(pulledBatch).toHaveProperty("started_on");
+    expect(pulledBatch).toHaveProperty("capture_jobs");
+    expect(pulledBatch).toHaveProperty("target_folder");
+    expect(pulledBatch.id).toBe(batch.id);
+    expect(pulledBatch.target_folder.id).toBe(targetFolder.id);
+
+    // Delete archives and folders created during this batch
+    for (let captureJob of batch.capture_jobs) {
+      await apiWithAuth.deleteArchive(captureJob.guid);
+    }
+
+    await apiWithAuth.deleteFolder(targetFolder.id);
   });
 
 });
