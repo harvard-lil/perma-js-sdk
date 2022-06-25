@@ -22,12 +22,6 @@ const DUMMY_API_KEY = "abcedfghijklmnopqrstuvwxyz12345678901234";
 const DUMMY_FORCE_BASE_URL = "https://api.perma.test:8000/";
 
 /**
- * To be used as a mock for `forceThrottleMs`
- * @constant
- */
-const DUMMY_FORCE_THROTTLE_MS = 500;
-
-/**
  * To be used as a mock archive id
  */
 const DUMMY_ARCHIVE_ID = "ABCD-1234";
@@ -71,28 +65,12 @@ describe("PermaAPI.constructor()", () => {
     expect(() => new PermaAPI(null, DUMMY_FORCE_BASE_URL));
   });
 
-  test("Throws if `forceThrottleMs` is provided and its format is invalid.", () => {
-    const invalid = [[], {}, () => {}, "FOO"];
-
-    for (let forceThrottleMs of invalid) {
-      expect(() => new PermaAPI(null, null, forceThrottleMs)).toThrow();
-    }
-  });
-
-  test("Does not throw if `forceThrottleMs` is provided and its format is valid.", () => {
-    expect(() => new PermaAPI(null, null, DUMMY_FORCE_THROTTLE_MS));
-  });
-
   test("Can be instantiated with no args.", () => {
     expect(() => new PermaAPI()).not.toThrow();
   });
 
   test("Can be instantiated with all (valid) args.", () => {
-    expect(() => new PermaAPI(
-      DUMMY_API_KEY, 
-      DUMMY_FORCE_BASE_URL, 
-      DUMMY_FORCE_THROTTLE_MS)
-    ).not.toThrow();
+    expect(() => new PermaAPI(DUMMY_API_KEY, DUMMY_FORCE_BASE_URL)).not.toThrow();
   });
 
 });

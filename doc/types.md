@@ -145,7 +145,7 @@ Information about a given archive (as returned by the API).
 | description | <code>string</code> |  |
 | warc_size | <code>number</code> | Archive size in bytes |
 | warc_download_url | <code>string</code> |  |
-|  | <code>Array.&lt;PermaCapture&gt;</code> |  |
+| captures | <code>Array.&lt;PermaCapture&gt;</code> |  |
 | queue_time | <code>string</code> | Ex: 2022-01-12T16:11:19.516152Z |
 | capture_time | <code>string</code> | Ex: 2022-01-12T16:11:19.516152Z |
 | [notes] | <code>string</code> |  |

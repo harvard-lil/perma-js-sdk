@@ -99,7 +99,7 @@
  * @property {?string} description
  * @property {?number} warc_size - Archive size in bytes
  * @property {?string} warc_download_url
- * @property {PermaCapture[]}
+ * @property {PermaCapture[]} captures
  * @property {string} queue_time - Ex: 2022-01-12T16:11:19.516152Z
  * @property {string} capture_time - Ex: 2022-01-12T16:11:19.516152Z
  * @property {string} [notes]

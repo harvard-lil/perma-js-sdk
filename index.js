@@ -57,22 +57,9 @@ export class PermaAPI {
   #baseUrl = "https://api.perma.cc";
 
   /**
-   * Timestamp at which the last throttled request was sent.
-   * @type {?number}
-   */
-  #lastThrottledRequestTm = null;
-
-  /**
-   * "Rest" time between two throttled requests.
-   * @type {number}
-   */
-  #throttleMs = 10000;
-
-  /**
    * Constructor
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
-   * @param {?number} forceThrottleMs - If provided, will override the "rest" time in-between throttled requests. Express in milliseconds. Defaults to 10000ms. 
    */
   constructor(apiKey = "", forceBaseUrl = null, forceThrottleMs = null) {
     // Check if an API key was provided.
@@ -93,42 +80,6 @@ export class PermaAPI {
       let newBaseUrl = new URL(forceBaseUrl);
       this.#baseUrl = newBaseUrl.origin;
     }
-
-    // Check if throttle time default needs to be replaced.
-    // If a replacement was provided, it needs to be parsable as an integer (will throw otherwise).
-    if (forceThrottleMs !== null) {
-      forceThrottleMs = parseInt(String(forceThrottleMs));
-
-      if (isNaN(forceThrottleMs) || forceThrottleMs < 0) {
-        throw new Error("`forceThrottleMs` must be interpretable as an unsigned integer.");
-      }
-
-      this.#throttleMs = forceThrottleMs;
-    }
-  }
-
-  /**
-   * Allows to add a "wait" in-between requests to the API when necessary.
-   * 
-   * Example:
-   * - The main Perma.cc API needs a ~6.5ms delay between requests manipulating archives. 
-   * 
-   * @return {Promise<null>}
-   * @private
-   */
-  async #throttle() {
-    let throttleMs = 0;
-
-    // Only wait if the last throttled request was made in the last X ms.
-    if (
-      this.#lastThrottledRequestTm &&
-      (this.#lastThrottledRequestTm + this.#throttleMs) > Date.now()
-    ) {
-      throttleMs = this.#throttleMs;
-    }
-
-    this.#lastThrottledRequestTm = Date.now();
-    return await new Promise((resolve) => setTimeout(resolve, throttleMs));
   }
 
   /**
@@ -388,8 +339,6 @@ export class PermaAPI {
       body.notes = String(options.notes);
     }
 
-    await this.#throttle();
-
     const response = await fetch(`${this.#baseUrl}/v1/archives`, {
       method: "POST",
       headers: {
@@ -453,8 +402,6 @@ export class PermaAPI {
 
     archiveId = this.validateArchiveId(archiveId);
 
-    await this.#throttle();
-
     const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "PATCH",
       headers: {
@@ -482,8 +429,6 @@ export class PermaAPI {
     folderId = this.validateFolderId(folderId);
     archiveId = this.validateArchiveId(archiveId);
 
-    await this.#throttle();
-
     const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
       method: "PUT",
       headers: { ...this.#getAuthorizationHeader() },
@@ -498,14 +443,37 @@ export class PermaAPI {
    * Required an API key.
    * Throttled.
    * 
+   * @param {boolean} [safeMode=true] - If `true`, will check that the archive exists and wait until all capture jobs are complete before trying to delete.
+   * @param {number} [safeModeTries=0] - Used to keep track of how many times safe mode pulled info from the archive and waited for capture jobs to complete.
    * @return {Promise<boolean>}
    * @async
    */
-  async deleteArchive(archiveId) {
+  async deleteArchive(archiveId, safeMode = true, safeModeTries = 0) {
     archiveId = this.validateArchiveId(archiveId);
 
-    await this.#throttle();
+    // Safe mode:
+    // - Looks up the archive and waits for any pending capture job to be done before trying to delete
+    // - If it was determined that at least one capture job is pending: wait X seconds and call this function recursively.
+    if (safeMode === true && safeModeTries < 10) {
+      const archive = await this.pullArchive(archiveId); // Will throw if it doesn't exist.
+      let shouldWait = false;
+      
+      if ("captures" in archive) {
+        for (let captureJob of archive.captures) {
+          if (captureJob.status === "pending") {
+            shouldWait = true;
+            break; // We should wait if _any_ job is pending.
+          }
+        }
+      }
 
+      // If any capture job is pending: wait 6 seconds and try again.
+      if (shouldWait) {
+        await new Promise(resolve => setTimeout(resolve, 6000));
+        return await this.deleteArchive(archiveId, true, safeModeTries+1);
+      }
+    }
+    
     const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "DELETE",
       headers: { ...this.#getAuthorizationHeader() },
@@ -522,11 +490,16 @@ export class PermaAPI {
    *
    * @param {number} [limit=10]
    * @param {number} [offset=0]
+   * @param {?string} [url] - If given, will try to fetch all archives matching this url.
    * @return {Promise<PermaArchivesPage>}
    * @async
    */
-  async pullArchives(limit = 10, offset = 0) {
+  async pullArchives(limit = 10, offset = 0, url = null) {
     const searchParams = new URLSearchParams(this.validatePagination(limit, offset));
+
+    if (url !== null) {
+      searchParams.append("url", new URL(url).toString())
+    }
 
     const response = await fetch(`${this.#baseUrl}/v1/archives?${searchParams}`, {
       method: "GET",
@@ -789,8 +762,6 @@ export class PermaAPI {
     }
 
     folderId = this.validateFolderId(folderId);
-
-    await this.#throttle();
 
     const response = await fetch(`${this.#baseUrl}/v1/archives/batches`, {
       method: "POST",

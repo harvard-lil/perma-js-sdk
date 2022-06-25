@@ -73,11 +73,10 @@ beforeEach(async() => {
   const dummyApiKey = "abcedfghijklmnopqrstuvwxyz12345678901234";
   const apiKey = process.env.TESTS_API_KEY; // Throws if not set
   const forceBaseUrl = process.env.TESTS_FORCE_BASE_URL; // Throws if not set
-  const forceThrottleMs = process.env["TESTS_FORCE_THROTTLE_MS"] ? process.env.TESTS_FORCE_THROTTLE_MS : null;
 
-  apiWithAuth = new PermaAPI(apiKey, forceBaseUrl, forceThrottleMs);
-  apiNoAuth = new PermaAPI(null, forceBaseUrl, forceThrottleMs);
-  apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl, forceThrottleMs);
+  apiWithAuth = new PermaAPI(apiKey, forceBaseUrl);
+  apiNoAuth = new PermaAPI(null, forceBaseUrl);
+  apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl);
 });
 
 describe("PermaAPI.pullUser()", () => {
@@ -385,12 +384,34 @@ describe("PermaAPI.pullArchives()", () => {
     expect(async() => await apiBadAuth.pullArchives()).rejects.toThrow();
   });
 
+  test("Throws if invalid url filter provided.", async() => {
+    expect(async() => await apiWithAuth.pullArchives(10, 0, "FOO")).rejects.toThrow();
+  });
+
   test("Returns paginated results and takes into account pagination limits.", async() => {
     const results = await apiWithAuth.pullArchives(10, 0);
     expect(results).toHaveProperty("meta");
     expect(results).toHaveProperty("objects");
     expect(results.meta.limit).toBe(10);
     expect(results.objects.length).toBeLessThanOrEqual(10);
+  });
+
+  test("Filters out archives by url.", async() => {
+    const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
+
+    const shouldHaveResults = await apiWithAuth.pullArchives(10, 0, URL_TO_ARCHIVE);
+    const shouldNotHaveResults = await apiWithAuth.pullArchives(10, 0, URL_TO_ARCHIVE + `?unique=${Math.random()}`);
+
+    expect(shouldHaveResults).toHaveProperty("meta");
+    expect(shouldNotHaveResults).toHaveProperty("meta");
+    expect(shouldHaveResults).toHaveProperty("objects");
+    expect(shouldNotHaveResults).toHaveProperty("objects");
+
+    expect(shouldHaveResults.objects.length).toBeGreaterThanOrEqual(1);
+    expect(shouldHaveResults.objects.length).toBeLessThanOrEqual(10);
+    expect(shouldNotHaveResults.objects.length).toBe(0);
+
+    await apiWithAuth.deleteArchive(archive.guid);
   });
 
 });
