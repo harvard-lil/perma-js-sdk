@@ -9,27 +9,6 @@
 // @ts-check
 
 /**
- * Module-level `fetch()` fallback.
- * - Will be a reference to `globalThis.fetch` if running a version of Node.js with native support for `fetch()`.
- * - Will return a window-bound version of `fetch()` if running in a browser context.
- * - Will return a function dynamically loading `node-fetch` if we're running a version of Node.js that doesn't support `fetch()`.
- */
-const fetch = (() => {
-  if (!("fetch" in globalThis) && "process" in globalThis) {
-    return async (...args) => {
-      const module = await import("node-fetch");
-      return await module.default(...args);
-    };
-  }
-
-  if ("fetch" in globalThis && "window" in globalThis) {
-    return globalThis.fetch.bind(window);
-  }
-
-  return globalThis.fetch;
-})();
-
-/**
  * Wrapper class for Perma.cc's Rest API (v1).
  * 
  * Usage:
@@ -61,7 +40,7 @@ export class PermaAPI {
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
    */
-  constructor(apiKey = "", forceBaseUrl = null, forceThrottleMs = null) {
+  constructor(apiKey = "", forceBaseUrl = null) {
     // Check if an API key was provided.
     // If provided, format must match.
     if (apiKey) {

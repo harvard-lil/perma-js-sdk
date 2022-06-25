@@ -24,10 +24,9 @@
   },
   "homepage": "https://github.com/harvard-lil/perma-js-sdk#readme",
   "dependencies": {
-    "jest": "^28.1.1",
-    "node-fetch": "^3.2.6"
   },
   "devDependencies": {
+    "jest": "^28.1.1",
     "dotenv": "^16.0.1",
     "jsdoc-to-markdown": "^7.1.1",
     "prettier": "^2.7.1"
