@@ -9,7 +9,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
 * [index](#module_index)
     * _static_
         * [.PermaAPI](#module_index.PermaAPI)
-            * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
+            * [new exports.PermaAPI(apiKey, forceBaseUrl, forceThrottleMs)](#new_module_index.PermaAPI_new)
             * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
             * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
             * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
@@ -58,7 +58,7 @@ catch(err) { ... }
 **Kind**: static class of [<code>index</code>](#module_index)  
 
 * [.PermaAPI](#module_index.PermaAPI)
-    * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
+    * [new exports.PermaAPI(apiKey, forceBaseUrl, forceThrottleMs)](#new_module_index.PermaAPI_new)
     * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
     * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
     * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
@@ -89,7 +89,7 @@ catch(err) { ... }
 
 <a name="new_module_index.PermaAPI_new"></a>
 
-#### new exports.PermaAPI(apiKey, forceBaseUrl)
+#### new exports.PermaAPI(apiKey, forceBaseUrl, forceThrottleMs)
 Constructor
 
 
@@ -97,6 +97,7 @@ Constructor
 | --- | --- | --- | --- |
 | apiKey | <code>string</code> |  | If provided, gives access to features that are behind auth. |
 | forceBaseUrl | <code>string</code> | <code>null</code> | If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url. |
+| forceThrottleMs | <code>number</code> | <code></code> | If provided, will override the "rest" time in-between throttled requests. Express in milliseconds. Defaults to 10000ms. |
 
 <a name="module_index.PermaAPI+validateArchiveId"></a>
 
@@ -209,6 +210,7 @@ Requires an API key.
 Creates an archive.
 Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive).
 Requires an API key.
+Throttled.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -240,6 +242,7 @@ Requires an API key.
 Edit details for a given archive.
 Wraps [PATCH] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#move-to-dark-archive).
 Requires an API key.
+Throttled.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -257,6 +260,7 @@ Requires an API key.
 Moves an archive to a different folder.
 Wraps [PUT] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
 Requires an API key.
+Throttled.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 
@@ -271,6 +275,7 @@ Requires an API key.
 Deletes an archive.
 Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive).
 Required an API key.
+Throttled.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 <a name="module_index.PermaAPI+pullArchives"></a>
@@ -433,6 +438,7 @@ Requires an API key.
 Creates multiple archives at once (batch).
 Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches).
 Requires an API key.
+Throttled.
 
 **Kind**: instance method of [<code>PermaAPI</code>](#module_index.PermaAPI)  
 

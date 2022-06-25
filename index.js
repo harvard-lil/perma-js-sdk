@@ -57,11 +57,24 @@ export class PermaAPI {
   #baseUrl = "https://api.perma.cc";
 
   /**
+   * Timestamp at which the last throttled request was sent.
+   * @type {?number}
+   */
+  #lastThrottledRequestTm = null;
+
+  /**
+   * "Rest" time between two throttled requests.
+   * @type {number}
+   */
+  #throttleMs = 10000;
+
+  /**
    * Constructor
    * @param {?string} apiKey - If provided, gives access to features that are behind auth.
    * @param {?string} forceBaseUrl - If provided, will be used instead of "https://api.perma.cc". Needs to be a valid url.
+   * @param {?number} forceThrottleMs - If provided, will override the "rest" time in-between throttled requests. Express in milliseconds. Defaults to 10000ms. 
    */
-  constructor(apiKey = "", forceBaseUrl = null) {
+  constructor(apiKey = "", forceBaseUrl = null, forceThrottleMs = null) {
     // Check if an API key was provided.
     // If provided, format must match.
     if (apiKey) {
@@ -80,6 +93,42 @@ export class PermaAPI {
       let newBaseUrl = new URL(forceBaseUrl);
       this.#baseUrl = newBaseUrl.origin;
     }
+
+    // Check if throttle time default needs to be replaced.
+    // If a replacement was provided, it needs to be parsable as an integer (will throw otherwise).
+    if (forceThrottleMs !== null) {
+      forceThrottleMs = parseInt(String(forceThrottleMs));
+
+      if (isNaN(forceThrottleMs) || forceThrottleMs < 0) {
+        throw new Error("`forceThrottleMs` must be interpretable as an unsigned integer.");
+      }
+
+      this.#throttleMs = forceThrottleMs;
+    }
+  }
+
+  /**
+   * Allows to add a "wait" in-between requests to the API when necessary.
+   * 
+   * Example:
+   * - The main Perma.cc API needs a ~6.5ms delay between requests manipulating archives. 
+   * 
+   * @return {Promise<null>}
+   * @private
+   */
+  async #throttle() {
+    let throttleMs = 0;
+
+    // Only wait if the last throttled request was made in the last X ms.
+    if (
+      this.#lastThrottledRequestTm &&
+      (this.#lastThrottledRequestTm + this.#throttleMs) > Date.now()
+    ) {
+      throttleMs = this.#throttleMs;
+    }
+
+    this.#lastThrottledRequestTm = Date.now();
+    return await new Promise((resolve) => setTimeout(resolve, throttleMs));
   }
 
   /**
@@ -300,6 +349,7 @@ export class PermaAPI {
    * Creates an archive.
    * Wraps [POST] `/v1/archives/` (https://perma.cc/docs/developer#create-an-archive).
    * Requires an API key.
+   * Throttled.
    *
    * @param {string} url
    * @param {Object} [options]
@@ -338,6 +388,8 @@ export class PermaAPI {
       body.notes = String(options.notes);
     }
 
+    await this.#throttle();
+
     const response = await fetch(`${this.#baseUrl}/v1/archives`, {
       method: "POST",
       headers: {
@@ -374,7 +426,8 @@ export class PermaAPI {
    * Edit details for a given archive.
    * Wraps [PATCH] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#move-to-dark-archive).
    * Requires an API key.
-   *
+   * Throttled.
+   * 
    * @param {string} archiveId
    * @param {Object} [options]
    * @param {?boolean} [options.isPrivate] - If set, will toggle an archive between public and private mode.
@@ -400,6 +453,8 @@ export class PermaAPI {
 
     archiveId = this.validateArchiveId(archiveId);
 
+    await this.#throttle();
+
     const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "PATCH",
       headers: {
@@ -416,6 +471,7 @@ export class PermaAPI {
    * Moves an archive to a different folder.
    * Wraps [PUT] `/v1/folders/{folderId}/archives/{archiveId}` (https://perma.cc/docs/developer#move-archive).
    * Requires an API key.
+   * Throttled.
    *
    * @param {string} archiveId - Identifier of the archive to move.
    * @param {number} folderId - Identifier of the folder to move the archive into.
@@ -425,6 +481,8 @@ export class PermaAPI {
   async moveArchive(archiveId, folderId) {
     folderId = this.validateFolderId(folderId);
     archiveId = this.validateArchiveId(archiveId);
+
+    await this.#throttle();
 
     const response = await fetch(`${this.#baseUrl}/v1/folders/${folderId}/archives/${archiveId}`, {
       method: "PUT",
@@ -438,12 +496,15 @@ export class PermaAPI {
    * Deletes an archive.
    * Wraps [DELETE] `/v1/archives/{archiveId}` (https://perma.cc/docs/developer#delete-archive).
    * Required an API key.
-   *
+   * Throttled.
+   * 
    * @return {Promise<boolean>}
    * @async
    */
   async deleteArchive(archiveId) {
     archiveId = this.validateArchiveId(archiveId);
+
+    await this.#throttle();
 
     const response = await fetch(`${this.#baseUrl}/v1/archives/${archiveId}`, {
       method: "DELETE",
@@ -715,6 +776,7 @@ export class PermaAPI {
    * Creates multiple archives at once (batch).
    * Wraps [POST] `/v1/archives/batches` (https://perma.cc/docs/developer#batches).
    * Requires an API key.
+   * Throttled.
    *
    * @param {string[]} urls - Must contain valid urls.
    * @param {number} folderId - Destination folder of the resulting archives.
@@ -727,6 +789,8 @@ export class PermaAPI {
     }
 
     folderId = this.validateFolderId(folderId);
+
+    await this.#throttle();
 
     const response = await fetch(`${this.#baseUrl}/v1/archives/batches`, {
       method: "POST",

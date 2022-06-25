@@ -64,14 +64,20 @@ const getFirstFolder = async() => {
 }
 let _getFirstFolder = null; // Module-level memoization for `getFirstFolder`
 
-beforeEach(() => {
+/**
+ * Before each test:
+ * Instantiate three separate `PermaAPI` instances with different level of authentication.
+ * These instances use credentials and settings provided by `TESTS_XYZ` environment variables (see README.md).
+ */
+beforeEach(async() => {
+  const dummyApiKey = "abcedfghijklmnopqrstuvwxyz12345678901234";
   const apiKey = process.env.TESTS_API_KEY; // Throws if not set
   const forceBaseUrl = process.env.TESTS_FORCE_BASE_URL; // Throws if not set
-  const dummyApiKey = "abcedfghijklmnopqrstuvwxyz12345678901234";
+  const forceThrottleMs = process.env["TESTS_FORCE_THROTTLE_MS"] ? process.env.TESTS_FORCE_THROTTLE_MS : null;
 
-  apiWithAuth = new PermaAPI(apiKey, forceBaseUrl);
-  apiNoAuth = new PermaAPI(null, forceBaseUrl);
-  apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl);
+  apiWithAuth = new PermaAPI(apiKey, forceBaseUrl, forceThrottleMs);
+  apiNoAuth = new PermaAPI(null, forceBaseUrl, forceThrottleMs);
+  apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl, forceThrottleMs);
 });
 
 describe("PermaAPI.pullUser()", () => {
