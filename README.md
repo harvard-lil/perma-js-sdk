@@ -3,6 +3,7 @@
 # perma-js-sdk
 A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/docs/developer).
 
+[![Test suite](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml/badge.svg?branch=develop)](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml)
 
 ---
 
@@ -19,6 +20,30 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 ---
 
 ## Getting started
+
+### As a dependency
+```
+npm install @harvard-lil/perma-js-sdk
+```
+
+```javascript
+import { PermaAPI, PermaAPIError } from "perma-js-sdk";
+
+try {
+  const api = new PermaAPI(apiKey);
+  const archive = await api.createArchive("https://lil.harvard.edu/");
+  // ...
+}
+catch(err) {
+  // ...
+}
+```
+
+### Directly in the browser
+```javascript
+import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
+// ...
+```
 
 [☝️ Back to summary](#summary)
 
@@ -43,6 +68,9 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 ---
 
 ## Environment variables
+
+### Scope: Integration tests
+The following environment variables are only used in the context of [the integration tests suite](#testing).
 
 | Name | Required? | Description |
 | --- | --- | --- |
