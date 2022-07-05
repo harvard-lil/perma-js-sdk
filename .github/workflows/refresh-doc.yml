@@ -26,7 +26,7 @@ jobs:
       run: |
         git config user.email "lil@law.harvard.edu"
         git config user.name "Github Actions"
-        if [[ $(git diff-index HEAD --) ]] ; then
+        if [[ $(git diff-index HEAD --) > 0 ]] ; then
           git commit -m "Auto doc update"
           git push origin develop
         fi
