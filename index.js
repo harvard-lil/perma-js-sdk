@@ -778,7 +778,7 @@ export class PermaAPI {
 /**
  * Custom exception type for errors coming back from the API.
  */
-class PermaAPIError extends Error {
+export class PermaAPIError extends Error {
   /**
    * @type {?number}
    * @description HTTP Status code, as returned by the API.

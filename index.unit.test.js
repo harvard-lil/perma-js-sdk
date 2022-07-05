@@ -7,7 +7,7 @@
  */
 /// <reference path="types.js" />
 
-import { PermaAPI } from "./index.js";
+import { PermaAPI, PermaAPIError } from "./index.js";
 
 /**
  * To be used as a mock API key.
