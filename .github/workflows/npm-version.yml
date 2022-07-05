@@ -1,0 +1,28 @@
+name: Bump NPM package version (minor)
+
+on:
+  # On PR to `develop`
+  pull_request:
+    branches: [ develop ]
+  # On demand
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: "Install Node"
+      uses: actions/setup-node@v2
+      with:
+        node-version: "18"
+    - name: "Install dependencies"
+      run: npm install
+    - name: "Bump version (minor)"
+      run: npm version minor 
+    - name: "Commit and push changes (if any)"
+      run: |
+        git config user.email "lil@law.harvard.edu";
+        git config user.name "Github Actions"; 
+        git status -s || (git commit -m "Bumped NPM package version number" && git push);

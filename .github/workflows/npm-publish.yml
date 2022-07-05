@@ -1,5 +1,4 @@
-
-name: Publish minor version
+name: Publish package on NPM
 
 on:
   # On push / merge to `main`
@@ -11,7 +10,7 @@ on:
 env:
   TESTS_API_KEY: ${{ secrets.TESTS_API_KEY }}
   TESTS_FORCE_BASE_URL: ${{ secrets.TESTS_FORCE_BASE_URL }}
-  NPM_ORG_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
 
 jobs:
   build:
@@ -28,12 +27,5 @@ jobs:
       run: npm install
     - name: "Run tests"
       run: npm run test
-    - name: "Bump package version number"
-      run: npm version minor
-    - name: "Commit changes (if any)"
-      run: |
-        git config user.email "lil@law.harvard.edu";
-        git config user.name "Github Actions"; 
-        git status -s || (git commit -m "NPM version update" && git push);
     - name: "Publish to NPM"
       run: npm publish --access public
