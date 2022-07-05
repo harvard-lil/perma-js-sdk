@@ -1,10 +1,8 @@
 name: On pull request
 
 on:
-  # On PR to `develop`
   pull_request:
     branches: [ main, develop ]
-  # On demand
   workflow_dispatch:
 
 env:
@@ -14,7 +12,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.repository == 'harvard-lil/perma-js-sdk'
 
     steps:
     - uses: actions/checkout@v2
@@ -22,11 +19,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: "18"
-
-    - name: "Setup Git Commit info"
-      run: |
-        git config user.email "lil@law.harvard.edu";
-        git config user.name "Github Actions"; 
 
     - name: "Install dependencies"
       run: npm install
@@ -36,10 +28,3 @@ jobs:
 
     - name: "Run integration tests"
       run: npm run test-integration
-
-    - name: "Generate docs"
-      run: npm run docgen
-
-    - name: "Commit changes (if any)"
-      run: git status -s || (git commit -m "Updated docs" && git push -u origin HEAD);
-
