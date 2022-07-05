@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --testTimeout=90000",
-    "test-local": "export NODE_TLS_REJECT_UNAUTHORIZED='0'; NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --testTimeout=90000 --setupFiles dotenv/config",
+    "test-unit": "NODE_OPTIONS=--experimental-vm-modules npx jest index.unit.test.js",
+    "test-integration": "NODE_OPTIONS=--experimental-vm-modules npx jest index.integration.test.js --runInBand --testTimeout=90000",
+    "test-integration-local": "export NODE_TLS_REJECT_UNAUTHORIZED='0'; NODE_OPTIONS=--experimental-vm-modules npx jest index.integration.test.js --runInBand --testTimeout=90000 --setupFiles dotenv/config",
     "docgen": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
   },
   "repository": {

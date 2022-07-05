@@ -1,9 +1,9 @@
-name: On PR to `develop`
+name: On pull request
 
 on:
   # On PR to `develop`
-  pull_request_target:
-    branches: [ develop ]
+  pull_request:
+    branches: [ main, develop ]
   # On demand
   workflow_dispatch:
 
@@ -14,6 +14,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.repository == 'harvard-lil/perma-js-sdk'
 
     steps:
     - uses: actions/checkout@v2
@@ -30,16 +31,8 @@ jobs:
     - name: "Install dependencies"
       run: npm install
 
-    - name: "Run tests"
-      run: npm run test
+    - name: "Run unit tests"
+      run: npm run test-unit
 
-    - name: "Generate docs"
-      run: npm run docgen
-    - name: "Commit changes (if any)"
-      run: git status -s || git commit -m "Updated docs";
-
-    - name: "Bump NPM package version"
-      run: npm version minor --no-git-tag-version;
-
-    - name: "Commit and push changes "
-      run: git status -s || git commit -m "Updated NPM package version && git push";
+    - name: "Run integration tests"
+      run: npm run test-integration
