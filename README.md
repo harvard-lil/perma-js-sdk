@@ -87,11 +87,7 @@ This library:
 - [Associated types documentation](/doc/types.md)
 
 ### Notes
-This project uses [JSDoc](https://jsdoc.app/) and is compatible with IntelliSense. 
-
-![](https://user-images.githubusercontent.com/625889/177423585-f92c491e-d98c-4476-8250-544d535b6ecc.png)
-
-![](https://user-images.githubusercontent.com/625889/177424359-23906796-1c62-418e-996a-f0265c1f6be6.png)
+This project uses [JSDoc](https://jsdoc.app/) and is compatible with IntelliSense (Examples: [[1]](https://user-images.githubusercontent.com/625889/177423585-f92c491e-d98c-4476-8250-544d535b6ecc.png) [[2]](https://user-images.githubusercontent.com/625889/177424359-23906796-1c62-418e-996a-f0265c1f6be6.png)). 
 
 ### Misc
 - [Perma.cc's REST API reference](https://perma.cc/docs/developer)
