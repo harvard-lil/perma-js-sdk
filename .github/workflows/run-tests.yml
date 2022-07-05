@@ -2,9 +2,9 @@
 name: Run tests
 
 on:
-  # On PR to `main` and `develop`
+  # On PR to `develop`
   pull_request:
-    branches: [ main, develop ]
+    branches: [ develop ]
   # On demand
   workflow_dispatch:
 

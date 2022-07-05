@@ -22,8 +22,8 @@ jobs:
       run: npm install
     - name: "Generate docs"
       run: npm run docgen
-    - name: Commit changes if any
+    - name: "Commit changes if any"
       run: |
         git config user.email "lil@law.harvard.edu";
         git config user.name "Github Actions"; 
-        git status -s || (git commit -m "Auto doc update" && git push);
+        git status -s || (git commit -m "Published new version to NPM" && git push);
