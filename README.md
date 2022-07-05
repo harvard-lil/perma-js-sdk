@@ -60,6 +60,8 @@ catch(err) {
 
 ## Design and stack
 
+> 🚧 TODO
+
 [☝️ Back to summary](#summary)
 
 ---
@@ -79,6 +81,20 @@ This library:
 ---
 
 ## API documentation
+
+### Reference
+- [`PermaAPI` class documentation](/doc/index.md)
+- [Associated types documentation](/doc/types.md)
+
+### Notes
+This project uses [JSDoc](https://jsdoc.app/) and is compatible with IntelliSense. 
+
+![](https://user-images.githubusercontent.com/625889/177423585-f92c491e-d98c-4476-8250-544d535b6ecc.png)
+
+![](https://user-images.githubusercontent.com/625889/177424359-23906796-1c62-418e-996a-f0265c1f6be6.png)
+
+### Misc
+- [Perma.cc's REST API reference](https://perma.cc/docs/developer)
 
 [☝️ Back to summary](#summary)
 
@@ -100,16 +116,22 @@ The following environment variables are only used in the context of [the integra
 
 ## CLI Commands
 
+> 🚧 TODO
+
 [☝️ Back to summary](#summary)
 
 ---
 
 ## Testing
 
+> 🚧 TODO
+
 [☝️ Back to summary](#summary)
 
 ---
 
 ## Publishing a new version
+
+> 🚧 TODO
 
 [☝️ Back to summary](#summary)
