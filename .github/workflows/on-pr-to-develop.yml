@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: "18"
 
-    - name: "Setup Git Commit info"
+    - name: "Making arbitrary changes to prove a point"
       run: |
         git config user.email "lil@law.harvard.edu";
         git config user.name "Github Actions"; 
