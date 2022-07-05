@@ -2,8 +2,8 @@
 name: Refresh auto-generated docs
 
 on:
-  # On push / merge to `develop`
-  push:
+  # On PR to `develop`
+  pull_request_target:
     branches: [ develop ]
   # On demand
   workflow_dispatch:
@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.repository == 'harvard-lil/perma-js-sdk'
 
     steps:
     - uses: actions/checkout@v2

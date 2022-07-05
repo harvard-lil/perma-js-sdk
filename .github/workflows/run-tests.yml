@@ -2,7 +2,7 @@ name: Run tests
 
 on:
   # On PR to `develop`
-  pull_request:
+  pull_request_target:
     branches: [ develop ]
   # On demand
   workflow_dispatch:

@@ -15,6 +15,7 @@ A JavaScript library to interact with Perma.cc's REST API
 - [API documentation](#api-documentation)
 - [Environment variables](#environment-variables)
 - [Testing](#testing)
+- [CI and Automation](#ci-and-automation)
 - [Publishing a new version](#publishing-a-new-version)
 
 ---
@@ -55,6 +56,12 @@ A JavaScript library to interact with Perma.cc's REST API
 ---
 
 ## Testing
+
+[☝️ Back to summary](#summary)
+
+---
+
+## CI and automation
 
 [☝️ Back to summary](#summary)
 
