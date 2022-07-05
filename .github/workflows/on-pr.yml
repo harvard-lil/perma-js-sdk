@@ -36,3 +36,10 @@ jobs:
 
     - name: "Run integration tests"
       run: npm run test-integration
+
+    - name: "Generate docs"
+      run: npm run docgen
+
+    - name: "Commit changes (if any)"
+      run: git status -s || (git commit -m "Updated docs" && git push -u origin HEAD);
+

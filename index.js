@@ -18,7 +18,9 @@
  *   const user = await perma.user();
  *   // ...
  * }
- * catch(err) { ... }
+ * catch(err) {
+ *   // Errors coming from the server will be of PermaAPIError type.
+ * }
  * ```
  * 
  */
