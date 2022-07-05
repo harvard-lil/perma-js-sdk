@@ -2,9 +2,9 @@
 name: Refresh auto-generated docs
 
 on:
-  # On PR to `develop`
-  pull_request:
-    branches: [ main, develop ]
+  # On push / merge to `develop`
+  push:
+    branches: [ develop ]
   # On demand
   workflow_dispatch:
 
@@ -24,9 +24,6 @@ jobs:
       run: npm run docgen
     - name: Commit changes if any
       run: |
-        git config user.email "lil@law.harvard.edu"
-        git config user.name "Github Actions"
-        if [[ $(git diff-index HEAD --) > 0 ]] ; then
-          git commit -m "Auto doc update"
-          git push origin develop
-        fi
+        git config user.email "lil@law.harvard.edu";
+        git config user.name "Github Actions"; 
+        git diff-index --quiet HEAD || (git commit -m "Auto doc update" && git push);
