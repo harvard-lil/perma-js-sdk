@@ -45,12 +45,12 @@ catch(err) {
 ```
 
 ### Directly in the browser
-`perma-js-sdk` can be consumed directly from `unpkg.com`.
+`perma-js-sdk` can be consumed as a module - pulled for example from `unpkg.com` - and run directly in the browser.  
 
 ```javascript
 import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
-// ...
 ```
+
 
 [☝️ Back to summary](#summary)
 
@@ -63,8 +63,14 @@ import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/ind
 ---
 
 ## Compatibility notes
-- This library uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
-- This library is an ES module and doesn't support CommonJS syntax.
+This library:
+- [...] uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
+- [...] is an ES module and doesn't support CommonJS syntax.
+- [...] was written so it can be run without transpiling in:
+  - Latest Chromium
+  - Latest Gecko
+  - Latest WebKit
+  - Latest Node.js _(+ latest Node.js LTS with `node-fetch`)_
 
 [☝️ Back to summary](#summary)
 
