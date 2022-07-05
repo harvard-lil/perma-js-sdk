@@ -41,5 +41,5 @@ jobs:
     - name: "Bump NPM package version"
       run: npm version minor
 
-    - name: "Commit changes (if any)"
-      run: git status -s || git commit -m "Updated NPM package version";
+    - name: "Commit and push changes "
+      run: git status -s || git commit -m "Updated NPM package version && git push";
