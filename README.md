@@ -3,9 +3,7 @@
 # perma-js-sdk
 A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/docs/developer).
 
-[![Test suite](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml/badge.svg?branch=develop)](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml)
-
-[![npm version](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk.svg)](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk)
+[![Test suite](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml/badge.svg?branch=develop)](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml) [![npm version](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk.svg)](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk)
 
 ---
 
@@ -24,34 +22,37 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 
 ## Getting started
 
-### As a dependency
+### Installation as a dependency
 You may use `npm` or your favorite JavaScript package manager to install `perma-js-sdk` as a dependency.
 
 ```bash
 npm install @harvard-lil/perma-js-sdk
 ```
 
-**Usage:**
-```javascript
-import { PermaAPI, PermaAPIError } from "perma-js-sdk";
-
-try {
-  const api = new PermaAPI(apiKey);
-  const archive = await api.createArchive("https://lil.harvard.edu/");
-  // ...
-}
-catch(err) {
-  // ...
-}
-```
-
 ### Directly in the browser
-`perma-js-sdk` can be consumed as a module - pulled for example from `unpkg.com` - and run directly in the browser.  
+This library can be run directly in the browser. 
+You may use a service such as [`unpkg.com`](https://unpkg.com) to import the latest version of the library from `npmjs.org`. 
 
 ```javascript
 import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
 ```
 
+### Hands-on: Creating an archive
+Here a quick how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc). 
+See [API Documentation](#api-documentation) for details.
+
+```javascript
+import { PermaAPI } from "perma-js-sdk";
+
+try {
+  const api = new PermaAPI(API_KEY);
+  const archive = await api.createArchive("https://lil.harvard.edu");
+  console.log(`Archive created -- guid: ${archive.guid}`);
+}
+catch(err) {
+  // ...
+}
+```
 
 [☝️ Back to summary](#summary)
 
