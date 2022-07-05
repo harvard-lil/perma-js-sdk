@@ -30,7 +30,7 @@ npm install @harvard-lil/perma-js-sdk
 ```
 
 ### Directly in the browser
-This library can be run directly in the browser. 
+This library can be run directly in the browser.<br>
 You may use a service such as [`unpkg.com`](https://unpkg.com) to import the latest version of the library from `npmjs.org`. 
 
 ```javascript
@@ -38,7 +38,7 @@ import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/ind
 ```
 
 ### Example: Creating an archive
-Here a quick example of how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc). 
+Here a quick example of how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc).<br>
 See the [API Documentation](#api-documentation) for details.
 
 ```javascript
@@ -68,7 +68,7 @@ catch(err) {
 
 ## Compatibility notes
 This library:
-- [...] uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
+- [...] uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).<br>Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
 - [...] is an ES module and doesn't support CommonJS syntax.
 - [...] was written so it can be run without transpiling in:
   - Latest Chromium
@@ -83,11 +83,11 @@ This library:
 ## API documentation
 
 ### Reference
-- [`PermaAPI` class documentation](/doc/index.md)
-- [Associated types documentation](/doc/types.md)
+- [`PermaAPI` class documentation](/doc/index.md) _(Automatically generated)_
+- [Associated types documentation](/doc/types.md) _(Automatically generated)_
 
 ### Notes
-This project uses [JSDoc](https://jsdoc.app/) and is compatible with IntelliSense (Examples: [[1]](https://user-images.githubusercontent.com/625889/177423585-f92c491e-d98c-4476-8250-544d535b6ecc.png) [[2]](https://user-images.githubusercontent.com/625889/177424359-23906796-1c62-418e-996a-f0265c1f6be6.png)). 
+- This project uses [JSDoc](https://jsdoc.app/) and is compatible with IntelliSense (Examples: [[1]](https://user-images.githubusercontent.com/625889/177423585-f92c491e-d98c-4476-8250-544d535b6ecc.png) [[2]](https://user-images.githubusercontent.com/625889/177424359-23906796-1c62-418e-996a-f0265c1f6be6.png)). 
 
 ### Misc
 - [Perma.cc's REST API reference](https://perma.cc/docs/developer)
