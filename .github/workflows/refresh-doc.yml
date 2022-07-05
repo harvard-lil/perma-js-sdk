@@ -1,5 +1,5 @@
 
-name: Refreshes automatically-generated documentation
+name: Refresh auto-generated docs
 
 on:
   # On PR to `develop`
@@ -22,9 +22,11 @@ jobs:
       run: npm install
     - name: "Run tests"
       run: npm run docgen
-    - name: Commit changes
+    - name: Commit changes if any
       run: |
         git config user.email "lil@law.harvard.edu"
         git config user.name "Github Actions"
-        git commit -m "Auto doc update"
-        git push origin develop
+        if [[ `git diff-index HEAD --` ]] ; then
+          git commit -m "Auto doc update"
+          git push origin develop
+        fi
