@@ -78,9 +78,9 @@ export class PermaAPI {
    * Tries to parse an API response as JSON.
    *
    * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information.
-   * For example: `HTTP 401 Invalid token.`.
    *
    * @param {Response} response - Fetch API response
+   * @throws {PermaAPIError}
    * @returns {Promise<Object>}
    * @private
    * @async
@@ -98,24 +98,20 @@ export class PermaAPI {
     try {
       data = await response.json();
     } 
-    catch (err) {
-      /*Some routes do not return any data. */
-    }
+    catch (err) { /*Some routes do not return any data. */ }
 
     // Return parsed data "as is" if HTTP 2XX
     if (Math.floor(response.status / 100) === 2) {
       return data;
     }
 
+    //
     // Throw error with details given by the API (if any) otherwise
-    message = `HTTP ${response.status}`;
-
-    if (data.detail) {
-      // See `PermaApiError`
-      message += ` ${data.detail}`;
-    }
-
-    throw new Error(message);
+    //
+    const error = new PermaAPIError(`HTTP ${response.status} ${data?.detail ? data.detail : ""}`);
+    error.httpStatusCode = response.status;
+    error.detail = data?.detail;
+    throw error;
   }
 
   /**
@@ -775,4 +771,22 @@ export class PermaAPI {
 
     return await this.#parseAPIResponse(response);
   }
+}
+
+/**
+ * Custom exception type for errors coming back from the API.
+ */
+class PermaAPIError extends Error {
+  /**
+   * @type {?number}
+   * @description HTTP Status code, as returned by the API.
+   */
+  httpStatusCode = null;
+
+  /**
+   * Error details, as returned by the API.
+   * @type {string}
+   * @description HTTP Status code, as returned by the API.
+   */
+  detail = "";
 }

@@ -24,7 +24,7 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
             * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
             * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
             * [.deleteArchive([safeMode], [safeModeTries])](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
-            * [.pullArchives([url], [limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+            * [.pullArchives([limit], [offset], [url])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
             * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
             * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
             * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
@@ -38,7 +38,9 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
             * [.createArchivesBatch(urls, folderId)](#module_index.PermaAPI+createArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
             * [.pullArchivesBatch(batchId)](#module_index.PermaAPI+pullArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
     * _inner_
-        * [~fetch](#module_index..fetch)
+        * [~PermaAPIError](#module_index..PermaAPIError)
+            * [.httpStatusCode](#module_index..PermaAPIError+httpStatusCode) : <code>number</code>
+            * [.detail](#module_index..PermaAPIError+detail) : <code>string</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -73,7 +75,7 @@ catch(err) { ... }
     * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
     * [.deleteArchive([safeMode], [safeModeTries])](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
-    * [.pullArchives([url], [limit], [offset])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+    * [.pullArchives([limit], [offset], [url])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
     * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
     * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
     * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
@@ -285,7 +287,7 @@ Throttled.
 
 <a name="module_index.PermaAPI+pullArchives"></a>
 
-#### permaAPI.pullArchives([url], [limit], [offset]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+#### permaAPI.pullArchives([limit], [offset], [url]) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
 Fetches a subset of all the archives the user has access to.
 Wraps [GET] `/v1/archives` (https://perma.cc/docs/developer#view-all-archives-of-one-user).
 Requires an API key.
@@ -294,9 +296,9 @@ Requires an API key.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [url] | <code>string</code> | <code>null</code> | If given, will try to fetch all archives matching this url. |
 | [limit] | <code>number</code> | <code>10</code> |  |
 | [offset] | <code>number</code> | <code>0</code> |  |
+| [url] | <code>string</code> | <code>null</code> | If given, will try to fetch all archives matching this url. |
 
 <a name="module_index.PermaAPI+pullTopLevelFolders"></a>
 
@@ -466,12 +468,26 @@ Requires an API key.
 | --- | --- |
 | batchId | <code>number</code> | 
 
-<a name="module_index..fetch"></a>
+<a name="module_index..PermaAPIError"></a>
 
-### index~fetch
-Module-level `fetch()` fallback.
-- Will be a reference to `globalThis.fetch` if running a version of Node.js with native support for `fetch()`.
-- Will return a window-bound version of `fetch()` if running in a browser context.
-- Will return a function dynamically loading `node-fetch` if we're running a version of Node.js that doesn't support `fetch()`.
+### index~PermaAPIError
+Custom exception type for errors coming back from the API.
 
-**Kind**: inner constant of [<code>index</code>](#module_index)  
+**Kind**: inner class of [<code>index</code>](#module_index)  
+
+* [~PermaAPIError](#module_index..PermaAPIError)
+    * [.httpStatusCode](#module_index..PermaAPIError+httpStatusCode) : <code>number</code>
+    * [.detail](#module_index..PermaAPIError+detail) : <code>string</code>
+
+<a name="module_index..PermaAPIError+httpStatusCode"></a>
+
+#### permaAPIError.httpStatusCode : <code>number</code>
+HTTP Status code, as returned by the API.
+
+**Kind**: instance property of [<code>PermaAPIError</code>](#module_index..PermaAPIError)  
+<a name="module_index..PermaAPIError+detail"></a>
+
+#### permaAPIError.detail : <code>string</code>
+HTTP Status code, as returned by the API.
+
+**Kind**: instance property of [<code>PermaAPIError</code>](#module_index..PermaAPIError)  

@@ -7,7 +7,7 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
 **License**: MIT  
 
 * [types](#module_types)
-    * [~PermaApiError](#module_types..PermaApiError) : <code>Object</code>
+    * [~PermaError](#module_types..PermaError) : <code>Object</code>
     * [~PermaPaginationMeta](#module_types..PermaPaginationMeta) : <code>Object</code>
     * [~PermaOrganization](#module_types..PermaOrganization) : <code>Object</code>
     * [~PermaOrganizationsPage](#module_types..PermaOrganizationsPage) : <code>Object</code>
@@ -21,9 +21,9 @@ JSDoc type definitions for `perma-js-sdk`. Mainly describes objects coming back 
     * [~PermaCaptureJob](#module_types..PermaCaptureJob) : <code>Object</code>
     * [~PermaCaptureJobsPage](#module_types..PermaCaptureJobsPage) : <code>Object</code>
 
-<a name="module_types..PermaApiError"></a>
+<a name="module_types..PermaError"></a>
 
-### types~PermaApiError : <code>Object</code>
+### types~PermaError : <code>Object</code>
 Error objects as returned by the API.
 
 **Kind**: inner typedef of [<code>types</code>](#module_types)  
