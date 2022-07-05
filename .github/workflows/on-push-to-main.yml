@@ -1,15 +1,16 @@
-name: Run tests
+name: On push to main
 
 on:
-  # On PR to `develop`
-  pull_request_target:
-    branches: [ develop ]
+  # On push / merge to `main`
+  push:
+    branches: [ main ]
   # On demand
   workflow_dispatch:
 
 env:
   TESTS_API_KEY: ${{ secrets.TESTS_API_KEY }}
   TESTS_FORCE_BASE_URL: ${{ secrets.TESTS_FORCE_BASE_URL }}
+  NPM_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
 
 jobs:
   build:
@@ -21,7 +22,12 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: "18"
+        registry-url: https://registry.npmjs.org/
     - name: "Install dependencies"
       run: npm install
+
     - name: "Run tests"
       run: npm run test
+      
+    - name: "Publish to NPM"
+      run: npm publish --access public
