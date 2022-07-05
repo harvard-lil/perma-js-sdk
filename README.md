@@ -37,9 +37,9 @@ You may use a service such as [`unpkg.com`](https://unpkg.com) to import the lat
 import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
 ```
 
-### Hands-on: Creating an archive
-Here a quick how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc). 
-See [API Documentation](#api-documentation) for details.
+### Example: Creating an archive
+Here a quick example of how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc). 
+See the [API Documentation](#api-documentation) for details.
 
 ```javascript
 import { PermaAPI } from "perma-js-sdk";
