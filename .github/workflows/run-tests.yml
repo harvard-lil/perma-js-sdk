@@ -1,0 +1,28 @@
+
+name:  Run tests
+
+on:
+  # On PR to `main` and `develop`
+  pull_request:
+    branches: [ main, develop ]
+  # On demand
+  workflow_dispatch:
+
+env:
+  TESTS_API_KEY: ${{ secrets.TESTS_API_KEY }}
+  TESTS_FORCE_BASE_URL: ${{ secrets.TESTS_FORCE_BASE_URL }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: "Install Node"
+      uses: actions/setup-node@v2
+      with:
+        node-version: "18"
+    - name: "Install dependencies"
+      run: npm install
+    - name: "Run tests"
+      run: npm run test
