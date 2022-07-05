@@ -5,12 +5,14 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 
 [![Test suite](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml/badge.svg?branch=develop)](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml)
 
+[![npm version](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk.svg)](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk)
+
 ---
 
 ## Summary
 
 - [Getting started](#getting-started)
-- [Design and stack](#design-and-tech-stack)
+- [Design and stack](#design-and-stack)
 - [Compatibility](#compatibility)
 - [API documentation](#api-documentation)
 - [Environment variables](#environment-variables)
@@ -22,10 +24,13 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 ## Getting started
 
 ### As a dependency
-```
+You may use `npm` or your favorite JavaScript package manager to install `perma-js-sdk` as a dependency.
+
+```bash
 npm install @harvard-lil/perma-js-sdk
 ```
 
+**Usage:**
 ```javascript
 import { PermaAPI, PermaAPIError } from "perma-js-sdk";
 
@@ -40,6 +45,8 @@ catch(err) {
 ```
 
 ### Directly in the browser
+`perma-js-sdk` can be consumed directly from `unpkg.com`.
+
 ```javascript
 import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
 // ...
