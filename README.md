@@ -13,7 +13,7 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 
 - [Getting started](#getting-started)
 - [Design and stack](#design-and-stack)
-- [Compatibility](#compatibility)
+- [Compatibility notes](#compatibility-notes)
 - [API documentation](#api-documentation)
 - [Environment variables](#environment-variables)
 - [Testing](#testing)
@@ -62,7 +62,9 @@ import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/ind
 
 ---
 
-## Compatibility
+## Compatibility notes
+- This library uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch). Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
+- This library is an ES module and doesn't support CommonJS syntax.
 
 [☝️ Back to summary](#summary)
 
