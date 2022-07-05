@@ -39,7 +39,7 @@ jobs:
       run: git status -s || git commit -m "Updated docs";
 
     - name: "Bump NPM package version"
-      run: npm version minor
+      run: npm version minor --no-git-tag-version;
 
     - name: "Commit and push changes "
       run: git status -s || git commit -m "Updated NPM package version && git push";
