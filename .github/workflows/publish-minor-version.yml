@@ -28,10 +28,12 @@ jobs:
       run: npm install
     - name: "Run tests"
       run: npm run test
-    - name: "Publish to NPM"
-      run: npm version minor && npm publish --access public
-    - name: "Commit changes if any"
+    - name: "Bump package version number"
+      run: npm version minor
+    - name: "Commit changes (if any)"
       run: |
         git config user.email "lil@law.harvard.edu";
         git config user.name "Github Actions"; 
-        git status -s || (git commit -m "Auto doc update" && git push);
+        git status -s || (git commit -m "NPM version update" && git push);
+    - name: "Publish to NPM"
+      run: npm publish --access public
