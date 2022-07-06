@@ -78,8 +78,7 @@ export class PermaAPI {
 
   /**
    * Tries to parse an API response as JSON.
-   *
-   * If the status code isn't 2XX and/or an error message was provided, will throw an exception with that information.
+   * If the status code isn't 2XX and/or an error message was provided, will throw a `PermaAPIError` exception with that information. 
    *
    * @param {Response} response - Fetch API response
    * @throws {PermaAPIError}

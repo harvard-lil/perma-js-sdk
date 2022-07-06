@@ -1,7 +1,7 @@
-> 🚧 Work in progress
-
 # perma-js-sdk
 A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/docs/developer).
+
+> ⚠️ This is an early version.
 
 [![Test suite](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml/badge.svg?branch=develop)](https://github.com/harvard-lil/perma-js-sdk/actions/workflows/run-tests-on-pr.yml) [![npm version](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk.svg)](https://badge.fury.io/js/@harvard-lil%2Fperma-js-sdk)
 
@@ -131,7 +131,7 @@ Same as `test-integration` but:
 ## Environment variables
 
 ### Scope: Integration tests
-The following environment variables are only used in the context of [the integration tests suite](#testing).
+The following environment variables are only used in the context of [the integration tests suite](#testing).<br>
 
 | Name | Required? | Description |
 | --- | --- | --- |
