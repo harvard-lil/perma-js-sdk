@@ -153,6 +153,8 @@ The following environment variables are only used in the context of [the integra
 6. Commit and push changes to `develop`
 7. PR and merge to `main`, with version number as PR title.
 
+> ℹ️ Steps 1-5 can be replaced by `./test-and-publish.sh`
+
 You will need access to the `@harvard-lil` organization on `npmjs.org` to publish new versions of the package.
 
 [☝️ Back to summary](#summary)
