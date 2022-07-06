@@ -30,14 +30,14 @@ npm install @harvard-lil/perma-js-sdk
 ```
 
 ### Directly in the browser
-This library can be run directly in the browser.<br>
-You may use a service such as [`unpkg.com`](https://unpkg.com) to import the latest version of the library from `npmjs.org`. 
+This library can be imported directly in the browser.<br>
+You may use a service such as [`unpkg.com`](https://unpkg.com) to import its latest version from `npmjs.org`. 
 
 ```javascript
 import { PermaAPI } from "https://unpkg.com/@harvard-lil/perma-js-sdk@latest/index.js";
 ```
 
-### Example: Creating an archive
+### Quick Example
 Here a quick example of how to use the `PermaAPI` class to interact with [Perma.cc's API](https://perma.cc).<br>
 See the [API Documentation](#api-documentation) for details.
 
@@ -61,6 +61,8 @@ catch(err) {
 ## Design and stack
 
 > 🚧 TODO
+
+This library, by design, has no runtime dependency and does not _require_ a build step. 
 
 [☝️ Back to summary](#summary)
 
@@ -112,7 +114,36 @@ The following environment variables are only used in the context of [the integra
 
 ## CLI Commands
 
-> 🚧 TODO
+### docgen
+```bash
+npm run docgen
+```
+
+Refreshes files under `/doc` using `JSDoc` comments in `index.js` and `types.js`.
+
+### test-unit
+```bash
+npm run test-unit
+```
+
+Runs `index.unit.test.js` using Jest.
+
+### test-integration
+```bash
+npm run test-integration
+```
+
+Runs `index.integration.test.js` using Jest. 
+This test suite requires the `TESTS_API_KEY` and `TESTS_FORCE_BASE_URL` environment variables to be set.
+
+### test-integration-local
+```bash
+npm run test-integration-local
+```
+
+Same as `test-integration` but: 
+- Reads environment variables from `.env` file if available
+- Ignores TLS certificates errors _(so the tests can be run against a local instance of the Perma API)_
 
 [☝️ Back to summary](#summary)
 
