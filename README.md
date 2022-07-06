@@ -10,12 +10,10 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 ## Summary
 
 - [Getting started](#getting-started)
-- [Design and stack](#design-and-stack)
-- [Compatibility notes](#compatibility-notes)
+- [Stack and compatibility](#stack-and-compatibility)
 - [API documentation](#api-documentation)
 - [Environment variables](#environment-variables)
 - [CLI Commands](#cli-commands)
-- [Testing](#testing)
 - [Publishing a new version](#publishing-a-new-version)
 
 ---
@@ -58,20 +56,15 @@ catch(err) {
 
 ---
 
-## Design and stack
+## Stack and compatibility
 
-> 🚧 TODO
+### Stack
+This library, by design, has no runtime dependency and does not _require_ a build step in most cases.<br> 
 
-This library, by design, has no runtime dependency and does not _require_ a build step. 
-
-[☝️ Back to summary](#summary)
-
----
-
-## Compatibility notes
+### Compatibility notes
 This library:
 - [...] uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).<br>Versions of Node.js that do not support `fetch()` may instead use [`node-fetch` and make it globally accessible](https://github.com/node-fetch/node-fetch#providing-global-access).
-- [...] is an ES module and doesn't support CommonJS syntax.
+- [...] is ES module-based and doesn't support CommonJS syntax.
 - [...] was written so it can be run without transpiling in:
   - Latest Chromium
   - Latest Gecko
@@ -133,7 +126,7 @@ Runs `index.unit.test.js` using Jest.
 npm run test-integration
 ```
 
-Runs `index.integration.test.js` using Jest. 
+Runs `index.integration.test.js` using Jest.<br> 
 This test suite requires the `TESTS_API_KEY` and `TESTS_FORCE_BASE_URL` environment variables to be set.
 
 ### test-integration-local
@@ -149,16 +142,17 @@ Same as `test-integration` but:
 
 ---
 
-## Testing
-
-> 🚧 TODO
-
-[☝️ Back to summary](#summary)
-
----
-
 ## Publishing a new version
 
-> 🚧 TODO
+Once changes have been merged to `develop` and a new version is ready, please follow these steps to deploy a new version of the package:
+- `npm run test-unit`: To double check that all tests pass
+- `npm run test-integration-local`: _(Same)_
+- `npm run docgen`: Update documentation
+- `npm version minor --no-git-tag-version`:  Will update the package version without creating a commit
+- `npm publish --access public`: Will release 
+- **Commit and push changes to:** `develop`
+- **PR and merge to:** `main`
+
+You will need access to the `@harvard-lil` organization on `npmjs.org` to publish new versions of the package.
 
 [☝️ Back to summary](#summary)
