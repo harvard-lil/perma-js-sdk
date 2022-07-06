@@ -1,6 +1,6 @@
 {
   "name": "@harvard-lil/perma-js-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A JavaScript library to interact with Perma.cc's REST API",
   "main": "index.js",
   "type": "module",
@@ -24,8 +24,7 @@
     "url": "https://github.com/harvard-lil/perma-js-sdk/issues"
   },
   "homepage": "https://github.com/harvard-lil/perma-js-sdk#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "jest": "^28.1.1",
     "dotenv": "^16.0.1",

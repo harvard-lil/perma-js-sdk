@@ -59,7 +59,7 @@ catch(err) {
 ## Stack and compatibility
 
 ### Stack
-This library, by design, has no runtime dependency and does not _require_ a build step in most cases.<br> 
+This library, by design, has no runtime dependency and does not _require_ a build step in most cases.
 
 ### Compatibility notes
 This library:
@@ -135,7 +135,7 @@ The following environment variables are only used in the context of [the integra
 
 | Name | Required? | Description |
 | --- | --- | --- |
-| `TESTS_API_KEY` | Yes | API key to be used to perform integration tests. |
+| `TESTS_API_KEY` | Yes | API key to be used to perform integration tests. Can be of any type of account. |
 | `TESTS_FORCE_BASE_URL` | No | Base API url to be used to perform integration tests. If not set, will default to `https://api.perma.cc`. |  
 
 [☝️ Back to summary](#summary)
@@ -144,14 +144,14 @@ The following environment variables are only used in the context of [the integra
 
 ## Publishing a new version
 
-Once changes have been merged to `develop` and a new version is ready, please follow these steps to deploy a new version of the package:
-- `npm run test-unit`: To double check that all tests pass
-- `npm run test-integration-local`: _(Same)_
-- `npm run docgen`: Update documentation
-- `npm version minor --no-git-tag-version`:  Will update the package version without creating a commit
-- `npm publish --access public`: Will push a new version of the package to `npmjs.org`
-- **Commit and push changes to:** `develop`
-- **PR and merge to:** `main`
+**Once changes have been merged to `develop` and a new version is ready, please follow these steps to deploy a new version of the package:**
+1. Run unit tests: `npm run test-unit`
+2. Run integration tests: `npm run test-integration-local`
+3. Update documentation: `npm run docgen`
+4. Update NPM package version number: `npm version patch --no-git-tag-version`
+5. Publish on NPM: `npm publish --access public`
+6. Commit and push changes to `develop`
+7. PR and merge to `main`, with version number as PR title.
 
 You will need access to the `@harvard-lil` organization on `npmjs.org` to publish new versions of the package.
 

@@ -7,40 +7,38 @@ A JavaScript library to interact with Perma.cc's REST API (https://perma.cc/docs
 **License**: MIT  
 
 * [index](#module_index)
-    * _static_
-        * [.PermaAPI](#module_index.PermaAPI)
-            * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
-            * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
-            * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
-            * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
-            * [.validatePagination(limit, offset)](#module_index.PermaAPI+validatePagination) ⇒ <code>Object</code>
-            * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-            * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-            * [.pullUser()](#module_index.PermaAPI+pullUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
-            * [.pullOrganizations()](#module_index.PermaAPI+pullOrganizations) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
-            * [.pullOrganization(organizationId)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
-            * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-            * [.pullArchive(archiveId)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-            * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-            * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
-            * [.deleteArchive([safeMode], [safeModeTries])](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
-            * [.pullArchives([limit], [offset], [url])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-            * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
-            * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-            * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
-            * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-            * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-            * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
-            * [.deleteFolder(folderId)](#module_index.PermaAPI+deleteFolder) ⇒ <code>Promise.&lt;boolean&gt;</code>
-            * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
-            * [.pullOngoingCaptureJobs([limit], [offset])](#module_index.PermaAPI+pullOngoingCaptureJobs) ⇒ <code>Promise.&lt;PermaCaptureJobsPage&gt;</code>
-            * [.pullArchiveCaptureJob(archiveId)](#module_index.PermaAPI+pullArchiveCaptureJob) ⇒ <code>Promise.&lt;PermaCaptureJob&gt;</code>
-            * [.createArchivesBatch(urls, folderId)](#module_index.PermaAPI+createArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
-            * [.pullArchivesBatch(batchId)](#module_index.PermaAPI+pullArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
-    * _inner_
-        * [~PermaAPIError](#module_index..PermaAPIError)
-            * [.httpStatusCode](#module_index..PermaAPIError+httpStatusCode) : <code>number</code>
-            * [.detail](#module_index..PermaAPIError+detail) : <code>string</code>
+    * [.PermaAPI](#module_index.PermaAPI)
+        * [new exports.PermaAPI(apiKey, forceBaseUrl)](#new_module_index.PermaAPI_new)
+        * [.validateArchiveId(archiveId)](#module_index.PermaAPI+validateArchiveId) ⇒ <code>string</code>
+        * [.validateFolderId(folderId)](#module_index.PermaAPI+validateFolderId) ⇒ <code>number</code>
+        * [.validateOrganizationId(organizationId)](#module_index.PermaAPI+validateOrganizationId) ⇒ <code>number</code>
+        * [.validatePagination(limit, offset)](#module_index.PermaAPI+validatePagination) ⇒ <code>Object</code>
+        * [.pullPublicArchives([limit], [offset])](#module_index.PermaAPI+pullPublicArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+        * [.pullPublicArchive(archiveId)](#module_index.PermaAPI+pullPublicArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.pullUser()](#module_index.PermaAPI+pullUser) ⇒ <code>Promise.&lt;PermaUser&gt;</code>
+        * [.pullOrganizations()](#module_index.PermaAPI+pullOrganizations) ⇒ <code>Promise.&lt;PermaOrganizationsPage&gt;</code>
+        * [.pullOrganization(organizationId)](#module_index.PermaAPI+pullOrganization) ⇒ <code>Promise.&lt;PermaOrganization&gt;</code>
+        * [.createArchive(url, [options])](#module_index.PermaAPI+createArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.pullArchive(archiveId)](#module_index.PermaAPI+pullArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.editArchive(archiveId, [options])](#module_index.PermaAPI+editArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.moveArchive(archiveId, folderId)](#module_index.PermaAPI+moveArchive) ⇒ <code>Promise.&lt;PermaArchive&gt;</code>
+        * [.deleteArchive([safeMode], [safeModeTries])](#module_index.PermaAPI+deleteArchive) ⇒ <code>Promise.&lt;boolean&gt;</code>
+        * [.pullArchives([limit], [offset], [url])](#module_index.PermaAPI+pullArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+        * [.pullTopLevelFolders([limit], [offset])](#module_index.PermaAPI+pullTopLevelFolders) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+        * [.pullFolder(folderId)](#module_index.PermaAPI+pullFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.pullFolderChildren(parentFolderId, [limit], [offset])](#module_index.PermaAPI+pullFolderChildren) ⇒ <code>Promise.&lt;PermaFoldersPage&gt;</code>
+        * [.createFolder(parentFolderId, name)](#module_index.PermaAPI+createFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.editFolder(folderId, [options])](#module_index.PermaAPI+editFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.moveFolder(folderId, parentFolderId)](#module_index.PermaAPI+moveFolder) ⇒ <code>Promise.&lt;PermaFolder&gt;</code>
+        * [.deleteFolder(folderId)](#module_index.PermaAPI+deleteFolder) ⇒ <code>Promise.&lt;boolean&gt;</code>
+        * [.pullFolderArchives(folderId, [limit], [offset])](#module_index.PermaAPI+pullFolderArchives) ⇒ <code>Promise.&lt;PermaArchivesPage&gt;</code>
+        * [.pullOngoingCaptureJobs([limit], [offset])](#module_index.PermaAPI+pullOngoingCaptureJobs) ⇒ <code>Promise.&lt;PermaCaptureJobsPage&gt;</code>
+        * [.pullArchiveCaptureJob(archiveId)](#module_index.PermaAPI+pullArchiveCaptureJob) ⇒ <code>Promise.&lt;PermaCaptureJob&gt;</code>
+        * [.createArchivesBatch(urls, folderId)](#module_index.PermaAPI+createArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+        * [.pullArchivesBatch(batchId)](#module_index.PermaAPI+pullArchivesBatch) ⇒ <code>Promise.&lt;PermaArchivesBatch&gt;</code>
+    * [.PermaAPIError](#module_index.PermaAPIError)
+        * [.httpStatusCode](#module_index.PermaAPIError+httpStatusCode) : <code>number</code>
+        * [.detail](#module_index.PermaAPIError+detail) : <code>string</code>
 
 <a name="module_index.PermaAPI"></a>
 
@@ -54,7 +52,9 @@ try {
   const user = await perma.user();
   // ...
 }
-catch(err) { ... }
+catch(err) {
+  // Errors coming from the server will be of PermaAPIError type.
+}
 ```
 
 **Kind**: static class of [<code>index</code>](#module_index)  
@@ -468,26 +468,26 @@ Requires an API key.
 | --- | --- |
 | batchId | <code>number</code> | 
 
-<a name="module_index..PermaAPIError"></a>
+<a name="module_index.PermaAPIError"></a>
 
-### index~PermaAPIError
+### index.PermaAPIError
 Custom exception type for errors coming back from the API.
 
-**Kind**: inner class of [<code>index</code>](#module_index)  
+**Kind**: static class of [<code>index</code>](#module_index)  
 
-* [~PermaAPIError](#module_index..PermaAPIError)
-    * [.httpStatusCode](#module_index..PermaAPIError+httpStatusCode) : <code>number</code>
-    * [.detail](#module_index..PermaAPIError+detail) : <code>string</code>
+* [.PermaAPIError](#module_index.PermaAPIError)
+    * [.httpStatusCode](#module_index.PermaAPIError+httpStatusCode) : <code>number</code>
+    * [.detail](#module_index.PermaAPIError+detail) : <code>string</code>
 
-<a name="module_index..PermaAPIError+httpStatusCode"></a>
+<a name="module_index.PermaAPIError+httpStatusCode"></a>
 
 #### permaAPIError.httpStatusCode : <code>number</code>
 HTTP Status code, as returned by the API.
 
-**Kind**: instance property of [<code>PermaAPIError</code>](#module_index..PermaAPIError)  
-<a name="module_index..PermaAPIError+detail"></a>
+**Kind**: instance property of [<code>PermaAPIError</code>](#module_index.PermaAPIError)  
+<a name="module_index.PermaAPIError+detail"></a>
 
 #### permaAPIError.detail : <code>string</code>
 HTTP Status code, as returned by the API.
 
-**Kind**: instance property of [<code>PermaAPIError</code>](#module_index..PermaAPIError)  
+**Kind**: instance property of [<code>PermaAPIError</code>](#module_index.PermaAPIError)  
