@@ -12,8 +12,8 @@ A JavaScript library to interact with [Perma.cc's REST API](https://perma.cc/doc
 - [Getting started](#getting-started)
 - [Stack and compatibility](#stack-and-compatibility)
 - [API documentation](#api-documentation)
+- [Development CLI](#development-cli)
 - [Environment variables](#environment-variables)
-- [CLI Commands](#cli-commands)
 - [Publishing a new version](#publishing-a-new-version)
 
 ---
@@ -91,21 +91,7 @@ This library:
 
 ---
 
-## Environment variables
-
-### Scope: Integration tests
-The following environment variables are only used in the context of [the integration tests suite](#testing).
-
-| Name | Required? | Description |
-| --- | --- | --- |
-| `TESTS_API_KEY` | Yes | API key to be used to perform integration tests. |
-| `TESTS_FORCE_BASE_URL` | No | Base API url to be used to perform integration tests. If not set, will default to `https://api.perma.cc`. |  
-
-[☝️ Back to summary](#summary)
-
----
-
-## CLI Commands
+## Development CLI
 
 ### docgen
 ```bash
@@ -142,6 +128,20 @@ Same as `test-integration` but:
 
 ---
 
+## Environment variables
+
+### Scope: Integration tests
+The following environment variables are only used in the context of [the integration tests suite](#testing).
+
+| Name | Required? | Description |
+| --- | --- | --- |
+| `TESTS_API_KEY` | Yes | API key to be used to perform integration tests. |
+| `TESTS_FORCE_BASE_URL` | No | Base API url to be used to perform integration tests. If not set, will default to `https://api.perma.cc`. |  
+
+[☝️ Back to summary](#summary)
+
+---
+
 ## Publishing a new version
 
 Once changes have been merged to `develop` and a new version is ready, please follow these steps to deploy a new version of the package:
@@ -149,7 +149,7 @@ Once changes have been merged to `develop` and a new version is ready, please fo
 - `npm run test-integration-local`: _(Same)_
 - `npm run docgen`: Update documentation
 - `npm version minor --no-git-tag-version`:  Will update the package version without creating a commit
-- `npm publish --access public`: Will release 
+- `npm publish --access public`: Will push a new version of the package to `npmjs.org`
 - **Commit and push changes to:** `develop`
 - **PR and merge to:** `main`
 
