@@ -40,7 +40,7 @@ Here a quick example of how to use the `PermaAPI` class to interact with [Perma.
 See the [API Documentation](#api-documentation) for details.
 
 ```javascript
-import { PermaAPI } from "perma-js-sdk";
+import { PermaAPI } from "@harvard-lil/perma-js-sdk";
 
 try {
   const api = new PermaAPI(API_KEY);
