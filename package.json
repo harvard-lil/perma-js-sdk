@@ -1,0 +1,34 @@
+{
+  "name": "@harvard-lil/perma-js-sdk",
+  "version": "0.0.3",
+  "description": "A JavaScript library to interact with Perma.cc's REST API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test-unit": "NODE_OPTIONS=--experimental-vm-modules npx jest index.unit.test.js",
+    "test-integration": "NODE_OPTIONS=--experimental-vm-modules npx jest index.integration.test.js --runInBand --testTimeout=90000",
+    "test-integration-local": "export NODE_TLS_REJECT_UNAUTHORIZED='0'; NODE_OPTIONS=--experimental-vm-modules npx jest index.integration.test.js --runInBand --testTimeout=90000 --setupFiles dotenv/config",
+    "docgen": "jsdoc2md index.js > doc/index.md; jsdoc2md types.js > doc/types.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harvard-lil/perma-js-sdk.git"
+  },
+  "keywords": [
+    "web-archiving",
+    "libraries"
+  ],
+  "author": "Harvard Library Innovation Lab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/harvard-lil/perma-js-sdk/issues"
+  },
+  "homepage": "https://github.com/harvard-lil/perma-js-sdk#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^28.1.1",
+    "dotenv": "^16.0.1",
+    "jsdoc-to-markdown": "^7.1.1",
+    "prettier": "^2.7.1"
+  }
+}
