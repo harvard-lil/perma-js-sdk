@@ -150,6 +150,7 @@
  * @property {string} guid
  * @property {string} status - Can be "pending", "in_progress", "completed", "deleted", "failed", "invalid"
  * @property {?string} message
+ * @property {?string} submitted_url 
  * @property {number} attempt
  * @property {number} step_count
  * @property {?string} step_description

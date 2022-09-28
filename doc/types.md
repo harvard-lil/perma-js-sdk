@@ -217,6 +217,7 @@ Information about an individual capture job (as returned by the API).
 | guid | <code>string</code> |  |
 | status | <code>string</code> | Can be "pending", "in_progress", "completed", "deleted", "failed", "invalid" |
 | message | <code>string</code> |  |
+| submitted_url | <code>string</code> |  |
 | attempt | <code>number</code> |  |
 | step_count | <code>number</code> |  |
 | step_description | <code>string</code> |  |

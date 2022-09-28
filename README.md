@@ -40,7 +40,7 @@ Here a quick example of how to use the `PermaAPI` class to interact with [Perma.
 See the [API Documentation](#api-documentation) for details.
 
 ```javascript
-import { PermaAPI } from "perma-js-sdk";
+import { PermaAPI } from "@harvard-lil/perma-js-sdk";
 
 try {
   const api = new PermaAPI(API_KEY);
@@ -152,6 +152,8 @@ The following environment variables are only used in the context of [the integra
 5. Publish on NPM: `npm publish --access public`
 6. Commit and push changes to `develop`
 7. PR and merge to `main`, with version number as PR title.
+
+> ℹ️ Steps 1-5 can be replaced by `./test-and-publish.sh`
 
 You will need access to the `@harvard-lil` organization on `npmjs.org` to publish new versions of the package.
 
