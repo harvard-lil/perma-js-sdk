@@ -45,7 +45,6 @@ Pagination metadata (as returned by the API). Served alongside paginated queries
 | --- | --- | --- |
 | limit | <code>number</code> |  |
 | offset | <code>number</code> |  |
-| total_count | <code>number</code> |  |
 | next | <code>string</code> | Url to the next "page", if any. |
 | previous | <code>string</code> | Url to the previous "page", if any. |
 
