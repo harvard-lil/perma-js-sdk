@@ -23,7 +23,6 @@
  * @typedef {Object} PermaPaginationMeta
  * @property {!number} limit 
  * @property {!number} offset
- * @property {!number} total_count
  * @property {?string} next - Url to the next "page", if any.
  * @property {?string} previous - Url to the previous "page", if any.
  */
