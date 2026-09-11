@@ -4,3 +4,4 @@ tmp.js
 test.html
 test.sh
 .env
+coverage

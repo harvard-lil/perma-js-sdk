@@ -14,6 +14,9 @@
 
 import { PermaAPI } from "./index.js";
 
+const describeLive = process.env.TESTS_API_KEY ? describe : describe.skip;
+const LOCAL_API_BASE_URL = "http://localhost:8000";
+
 /**
  * Default URL to archive
  */
@@ -71,15 +74,15 @@ let _getFirstFolder = null; // Module-level memoization for `getFirstFolder`
  */
 beforeEach(async() => {
   const dummyApiKey = "abcedfghijklmnopqrstuvwxyz12345678901234";
-  const apiKey = process.env.TESTS_API_KEY; // Throws if not set
-  const forceBaseUrl = process.env.TESTS_FORCE_BASE_URL; // Throws if not set
+  const apiKey = process.env.TESTS_API_KEY;
+  const forceBaseUrl = process.env.TESTS_FORCE_BASE_URL || LOCAL_API_BASE_URL;
 
   apiWithAuth = new PermaAPI(apiKey, forceBaseUrl);
   apiNoAuth = new PermaAPI(null, forceBaseUrl);
   apiBadAuth = new PermaAPI(dummyApiKey, forceBaseUrl);
 });
 
-describe("PermaAPI.pullUser()", () => {
+describeLive("PermaAPI.pullUser()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullUser()).rejects.toThrow();
@@ -94,7 +97,7 @@ describe("PermaAPI.pullUser()", () => {
 
 });
 
-describe("PermaAPI.pullOrganizations()", () => {
+describeLive("PermaAPI.pullOrganizations()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullOrganizations()).rejects.toThrow();
@@ -112,7 +115,7 @@ describe("PermaAPI.pullOrganizations()", () => {
 });
 
 // Ideally: Add a test pulling actual organization details.
-describe("PermaAPI.pullOrganization()", () => {
+describeLive("PermaAPI.pullOrganization()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullOrganization(1)).rejects.toThrow();
@@ -129,7 +132,7 @@ describe("PermaAPI.pullOrganization()", () => {
 
 });
 
-describe("PermaAPI.pullTopLevelFolders()", () => {
+describeLive("PermaAPI.pullTopLevelFolders()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullTopLevelFolders()).rejects.toThrow();
@@ -146,7 +149,7 @@ describe("PermaAPI.pullTopLevelFolders()", () => {
 
 });
 
-describe("PermaAPI.pullFolder()", () => {
+describeLive("PermaAPI.pullFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const folderId = (await getFirstFolder()).id;
@@ -164,7 +167,7 @@ describe("PermaAPI.pullFolder()", () => {
 
 });
 
-describe("PermaAPI.pullFolderChildren()", () => {
+describeLive("PermaAPI.pullFolderChildren()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const folderId = (await getFirstFolder()).id;
@@ -187,7 +190,7 @@ describe("PermaAPI.pullFolderChildren()", () => {
 
 });
 
-describe("PermaAPI.createFolder()", () => {
+describeLive("PermaAPI.createFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
@@ -216,7 +219,7 @@ describe("PermaAPI.createFolder()", () => {
 
 });
 
-describe("PermaAPI.moveFolder()", () => {
+describeLive("PermaAPI.moveFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
@@ -252,7 +255,7 @@ describe("PermaAPI.moveFolder()", () => {
 
 });
 
-describe("PermaAPI.deleteFolder()", () => {
+describeLive("PermaAPI.deleteFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
@@ -281,7 +284,7 @@ describe("PermaAPI.deleteFolder()", () => {
 
 });
 
-describe("PermaAPI.editFolder()", () => {
+describeLive("PermaAPI.editFolder()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
@@ -315,7 +318,7 @@ describe("PermaAPI.editFolder()", () => {
 
 });
 
-describe("PermaAPI.createArchive()", () => {
+describeLive("PermaAPI.createArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.createArchive(URL_TO_ARCHIVE)).rejects.toThrow();
@@ -377,7 +380,7 @@ describe("PermaAPI.createArchive()", () => {
 
 });
 
-describe("PermaAPI.pullArchives()", () => {
+describeLive("PermaAPI.pullArchives()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullArchives()).rejects.toThrow();
@@ -416,7 +419,7 @@ describe("PermaAPI.pullArchives()", () => {
 
 });
 
-describe("PermaAPI.pullArchive()", () => {
+describeLive("PermaAPI.pullArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
@@ -449,7 +452,7 @@ describe("PermaAPI.pullArchive()", () => {
 
 });
 
-describe("Perma.editArchive()", () => {
+describeLive("Perma.editArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
@@ -493,7 +496,7 @@ describe("Perma.editArchive()", () => {
 
 });
 
-describe("Perma.moveArchive()", () => {
+describeLive("Perma.moveArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const parentFolder = await getFirstFolder();
@@ -556,7 +559,7 @@ describe("Perma.moveArchive()", () => {
 
 });
 
-describe("Perma.deleteArchive()", () => {
+describeLive("Perma.deleteArchive()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
@@ -587,7 +590,7 @@ describe("Perma.deleteArchive()", () => {
 
 });
 
-describe("PermaAPI.pullPublicArchives()", () => {
+describeLive("PermaAPI.pullPublicArchives()", () => {
 
   test("Returns paginated results and takes into account pagination limits, regardless of auth status.", async() => {
     for (let api of [apiNoAuth, apiBadAuth, apiWithAuth]) {
@@ -601,7 +604,7 @@ describe("PermaAPI.pullPublicArchives()", () => {
 
 });
 
-describe("PermaAPI.pullPublicArchive()", () => {
+describeLive("PermaAPI.pullPublicArchive()", () => {
 
   test("Throws if no / invalid archive id provided..", async() => {
     const invalidArchiveIds = [null, "FOO", [], {}, 12];
@@ -627,7 +630,7 @@ describe("PermaAPI.pullPublicArchive()", () => {
 
 });
 
-describe("PermaAPI.pullFolderArchives()", () => {
+describeLive("PermaAPI.pullFolderArchives()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const folder = await getFirstFolder();
@@ -650,7 +653,7 @@ describe("PermaAPI.pullFolderArchives()", () => {
 
 });
 
-describe("PermaAPI.pullOngoingCaptureJobs()", () => {
+describeLive("PermaAPI.pullOngoingCaptureJobs()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async() => await apiNoAuth.pullOngoingCaptureJobs()).rejects.toThrow();
@@ -666,7 +669,7 @@ describe("PermaAPI.pullOngoingCaptureJobs()", () => {
 
 });
 
-describe("PermaAPI.pullArchiveCaptureJob()", () => {
+describeLive("PermaAPI.pullArchiveCaptureJob()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const archive = await apiWithAuth.createArchive(URL_TO_ARCHIVE);
@@ -697,7 +700,7 @@ describe("PermaAPI.pullArchiveCaptureJob()", () => {
 
 });
 
-describe("PermaAPI.createArchivesBatch()", () => {
+describeLive("PermaAPI.createArchivesBatch()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     const folder = await getFirstFolder();
@@ -739,7 +742,7 @@ describe("PermaAPI.createArchivesBatch()", () => {
 
 });
 
-describe("PermaAPI.pullArchivesBatch()", () => {
+describeLive("PermaAPI.pullArchivesBatch()", () => {
 
   test("Throws if no / invalid api key provided.", async() => {
     expect(async () => await apiNoAuth.pullArchivesBatch(1)).rejects.toThrow();

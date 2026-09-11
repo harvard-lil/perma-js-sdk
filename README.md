@@ -100,29 +100,29 @@ npm run docgen
 
 Refreshes files under `/doc` using `JSDoc` comments in `index.js` and `types.js`.
 
-### test-unit
+### test
 ```bash
-npm run test-unit
+npm test
 ```
 
-Runs `index.unit.test.js` using Jest.
+Runs the unit tests and the complete mocked HTTP-contract suite. These tests do
+not contact Perma or require credentials, and are the tests required in CI.
 
-### test-integration
+### test-live
 ```bash
-npm run test-integration
+npm run test-live
 ```
 
-Runs `index.integration.test.js` using Jest.<br> 
-This test suite requires the `TESTS_API_KEY` and `TESTS_FORCE_BASE_URL` environment variables to be set.
+Runs the optional live integration suite against a local Perma API. Environment
+variables are loaded from `.env` when present. If `TESTS_API_KEY` is absent, the
+suite is skipped successfully. `TESTS_FORCE_BASE_URL` defaults to
+`http://localhost:8000`; set it explicitly to use another non-production test
+instance.
 
-### test-integration-local
-```bash
-npm run test-integration-local
-```
-
-Same as `test-integration` but: 
-- Reads environment variables from `.env` file if available
-- Ignores TLS certificates errors _(so the tests can be run against a local instance of the Perma API)_
+The older `test-integration` and `test-integration-local` commands remain as
+aliases for `test-live`. Certificate validation is never disabled. For a local
+HTTPS instance with a development certificate, trust its CA with
+`NODE_EXTRA_CA_CERTS`.
 
 [☝️ Back to summary](#summary)
 
@@ -135,8 +135,8 @@ The following environment variables are only used in the context of [the integra
 
 | Name | Required? | Description |
 | --- | --- | --- |
-| `TESTS_API_KEY` | Yes | API key to be used to perform integration tests. Can be of any type of account. |
-| `TESTS_FORCE_BASE_URL` | No | Base API url to be used to perform integration tests. If not set, will default to `https://api.perma.cc`. |  
+| `TESTS_API_KEY` | No | API key for a disposable account on the target test instance. The live suite is skipped when absent. |
+| `TESTS_FORCE_BASE_URL` | No | Base URL of the test API. Defaults to `http://localhost:8000`. Production must be selected explicitly. |
 
 [☝️ Back to summary](#summary)
 
@@ -145,8 +145,8 @@ The following environment variables are only used in the context of [the integra
 ## Publishing a new version
 
 **Once changes have been merged to `develop` and a new version is ready, please follow these steps to deploy a new version of the package:**
-1. Run unit tests: `npm run test-unit`
-2. Run integration tests: `npm run test-integration-local`
+1. Run hermetic tests: `npm test`
+2. Optionally run live integration tests against a local test instance: `npm run test-live`
 3. Update documentation: `npm run docgen`
 4. Update NPM package version number: `npm version patch --no-git-tag-version`
 5. Publish on NPM: `npm publish --access public`
