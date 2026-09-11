@@ -5,26 +5,23 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
-env:
-  TESTS_API_KEY: ${{ secrets.TESTS_API_KEY }}
-  TESTS_FORCE_BASE_URL: ${{ secrets.TESTS_FORCE_BASE_URL }}
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: "Install Node"
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
-        node-version: "18"
+        node-version: "22"
+        cache: "npm"
 
     - name: "Install dependencies"
-      run: npm install
+      run: npm ci
 
-    - name: "Run unit tests"
-      run: npm run test-unit
-
-    - name: "Run integration tests"
-      run: npm run test-integration
+    - name: "Run hermetic test suite"
+      run: npm test
